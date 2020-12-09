@@ -1,0 +1,233 @@
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true
+intents:
+- greet
+- goodbye
+- affirm
+- deny
+- mood_great
+- mood_unhappy
+- bot_challenge
+- new_id_card
+- claim_status
+- get_a_quote
+- inform
+- update_member_info
+entities:
+- claim_id
+slots:
+  AA_CONTINUE_FORM:
+    type: any
+    influence_conversation: false
+  address_city:
+    type: any
+    influence_conversation: false
+  address_state:
+    type: any
+    influence_conversation: false
+  address_street:
+    type: any
+    influence_conversation: false
+  address_zip:
+    type: any
+    influence_conversation: false
+  age:
+    type: any
+    influence_conversation: false
+  claim_id:
+    type: any
+    influence_conversation: false
+  knows_claim_id:
+    type: any
+    influence_conversation: false
+  recent_claims:
+    type: any
+    influence_conversation: false
+  repeated_validation_failures:
+    type: any
+    influence_conversation: false
+  requested_slot:
+    type: any
+    influence_conversation: false
+  verify_address:
+    type: any
+    influence_conversation: false
+  zz_confirm_form:
+    type: any
+    influence_conversation: false
+responses:
+  utter_ask_address_street:
+  - text: What is your mailing street number and name?
+  utter_ask_address_city:
+  - text: What city do you live in?
+  utter_ask_address_state:
+  - text: What state do you live in?
+  utter_ask_address_zip:
+  - text: What is your mailing zip code?
+  utter_ask_quote_form_AA_CONTINUE_FORM:
+  - buttons:
+    - payload: /affirm
+      title: Yes
+    - payload: /deny
+      title: No
+    text: Would you like to continue with your quote?
+  utter_ask_quote_form_zz_confirm_form:
+  - buttons:
+    - payload: /affirm
+      title: Yes
+    - payload: /deny
+      title: No
+    text: Would you like a quote for a {age} year old?
+  utter_age_invalid:
+  - text: Age is invalid. Please enter a positive number for your age.
+  utter_anything_else:
+  - text: Is there anything else I can help you with?
+  utter_ask_quote_form_age:
+  - text: What is your age?
+  utter_ask_claim_status_form_AA_CONTINUE_FORM:
+  - buttons:
+    - payload: /affirm
+      title: Yes
+    - payload: /deny
+      title: No
+    text: Would you like to continue checking your claim status?
+  utter_ask_claim_status_form_zz_confirm_form:
+  - buttons:
+    - payload: /affirm
+      title: Yes
+    - payload: /deny
+      title: No
+    text: Would you like to check the claim status for claim {claim_id}?
+  utter_ask_claim_status_form_knows_claim_id:
+  - buttons:
+    - payload: /affirm
+      title: Yes
+    - payload: /deny
+      title: No
+    text: Do you know the ID of the claim?
+  utter_ask_claim_status_form_claim_id:
+  - text: What is the claim ID you'd like to lookup?
+  utter_ask_get_claim_form_claim_id:
+  - text: What is the ID of the claim you'd like to lookup?
+  utter_confirm_address:
+  - buttons:
+    - payload: /affirm
+      title: Yes
+    - payload: /deny
+      title: No
+    text: Is this your current address?
+  utter_get_a_quote:
+  - text: Quote here. Have a form to ask what type of insurance, age, gender, state
+      etc. to fulfill request.
+  utter_new_id_card:
+  - text: Sure, I can help you get a new id card!
+  utter_claim_id_provided:
+  - text: Let me get the status for claim {claim_id}
+  utter_claim_status:
+  - text: Get the claim status. Ask for claim ID. Maybe suggest latest claim?
+  utter_greet:
+  - text: Hey! How are you?
+  utter_cheer_up:
+  - image: https://i.imgur.com/nGF1K8f.jpg
+    text: 'Here is something to cheer you up:'
+  utter_did_that_help:
+  - text: Did that help you?
+  utter_happy:
+  - text: Great, carry on!
+  utter_goodbye:
+  - text: Bye
+  utter_iamabot:
+  - text: I am a bot, powered by Rasa.
+actions:
+- validate_quote_form
+- action_get_quote
+- action_claim_status
+- validate_claim_status_form
+- action_ask_recent_claim
+- validate_get_claim_form
+- action_ask_verify_address
+- action_ask_recent_claims
+forms:
+  new_id_card_form:
+    verify_address:
+    - intent: affirm
+      type: from_intent
+      value: yes
+    - intent: deny
+      type: from_intent
+      value: no
+    - intent:
+      - inform
+      - new_id_card_form
+      type: from_text
+  quote_form:
+    AA_CONTINUE_FORM:
+    - intent: affirm
+      type: from_intent
+      value: yes
+    - intent: deny
+      type: from_intent
+      value: no
+    - intent:
+      - inform
+      - quote_form
+      type: from_text
+    age:
+    - entity: age
+      type: from_text
+    zz_confirm_form:
+    - intent: affirm
+      type: from_intent
+      value: yes
+    - intent: deny
+      type: from_intent
+      value: no
+    - intent:
+      - inform
+      - quote_form
+      type: from_text
+  claim_status_form:
+    AA_CONTINUE_FORM:
+    - intent: affirm
+      type: from_intent
+      value: yes
+    - intent: deny
+      type: from_intent
+      value: no
+    - intent:
+      - inform
+      - claim_status_form
+      type: from_text
+    knows_claim_id:
+    - entity: knows_claim_id
+      type: from_text
+    zz_confirm_form:
+    - intent: affirm
+      type: from_intent
+      value: yes
+    - intent: deny
+      type: from_intent
+      value: no
+    - intent:
+      - inform
+      - claim_status_form
+      type: from_text
+  get_claim_form:
+    claim_id:
+    - entity: claim_id
+      type: from_entity
+    - type: from_text
+  change_address_form:
+    address_city:
+    - entity: address_city
+      type: from_text
+    address_state:
+    - entity: address_state
+      type: from_text
+    address_street:
+    - entity: address_street
+      type: from_text
+    address_zip:
+    - entity: address_zip
+      type: from_text

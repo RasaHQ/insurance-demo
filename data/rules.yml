@@ -1,0 +1,22 @@
+version: "2.0"
+
+rules:
+
+- rule: Say goodbye anytime the user says goodbye
+  steps:
+  - intent: goodbye
+  - action: utter_goodbye
+
+- rule: Say 'I am a bot' anytime the user challenges
+  steps:
+  - intent: bot_challenge
+  - action: utter_iamabot
+
+- rule: Update address if user fails to verify
+  condition:
+  # this condition allows stories to handle form switching
+  - active_loop: null
+  steps:
+    - intent: update_member_info
+    - action: change_address_form
+    - active_loop: change_address_form

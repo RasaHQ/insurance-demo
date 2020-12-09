@@ -1,0 +1,77 @@
+version: "2.0"
+stories:
+- story: member wants a new insurance quote
+  steps:
+  - intent: get_a_quote
+  - action: quote_form
+  - active_loop: quote_form
+  - active_loop: null
+  - action: action_get_quote
+  - action: utter_anything_else
+- story: member needs a new ID card (happy path)
+  steps:
+  - intent: new_id_card
+  - action: new_id_card_form
+  - active_loop: new_id_card_form
+  - active_loop: null
+  - action: utter_anything_else
+- story: member needs a new ID card (requires address change)
+  steps:
+  - intent: new_id_card
+  - action: new_id_card_form
+  - active_loop: new_id_card_form
+  - intent: deny
+  - action: change_address_form
+  - action: new_id_card_form
+  - active_loop: new_id_card_form
+  - active_loop: null
+  - action: utter_goodbye
+- story: member wants to know the status of a claim
+  steps:
+  - intent: claim_status
+  - action: claim_status_form
+  - active_loop: claim_status_form
+  - active_loop: null
+  - action: action_claim_status
+  - action: utter_anything_else
+- story: member wants to check status of a specific claim
+  steps:
+  - intent: claim_status
+    entities:
+    - claim_id: 123456
+  - action: get_claim_form
+  - active_loop: get_claim_form
+  - active_loop: null
+  - action: action_claim_status
+  - action: utter_anything_else
+- story: happy path
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_great
+  - action: utter_happy
+- story: sad path 1
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_unhappy
+  - action: utter_cheer_up
+  - action: utter_did_that_help
+  - intent: affirm
+  - action: utter_happy
+- story: sad path 2
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_unhappy
+  - action: utter_cheer_up
+  - action: utter_did_that_help
+  - intent: deny
+  - action: utter_goodbye
+- story: member updates their info
+  steps:
+  - intent: update_member_info
+  - action: change_address_form
+  - active_loop: change_address_form
+  - active_loop: null
+  - action: utter_anything_else
