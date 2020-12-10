@@ -11,6 +11,7 @@ from rasa_sdk.events import (
     Restarted,
     FollowupAction,
     UserUtteranceReverted,
+    ActionExecutionRejected
 )
 from rasa_sdk import Tracker
 from rasa_sdk.executor import CollectingDispatcher
@@ -75,38 +76,76 @@ class AskConfirmAddress(Action):
         self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
     ) -> List[EventType]:
         dispatcher.utter_message(template="utter_confirm_address")
+
         return []
+
+
+class ActionUpdateAddress(Action):
+
+    def name(self) -> Text:
+        return "action_update_address"
+
+    def run(
+        self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
+    ) -> List[EventType]:
+
+        address_street = tracker.get_slot("address_street")
+        address_city = tracker.get_slot("address_city")
+        address_state = tracker.get_slot("address_state")
+        address_zip = tracker.get_slot("address_zip")
+
+        address_line_two = f"{address_city}, {address_state} {address_zip}"
+        full_address = "\n".join([address_street, address_line_two])
+
+        dispatcher.utter_message("Thank you! Your address has been changed to:")
+        dispatcher.utter_message(full_address)
+
+        return [SlotSet("verify_address", None)]
 
 
 class ActionNewIdCard(Action):
 
     def name(self) -> Text:
-        return "action_new_id_card_form"
+        return "action_new_id_card"
+
+    def run(
+        self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
+    ) -> List[EventType]:
+
+        dispatcher.utter_message("Thank you! We'll send you a new ID card.")
+
+        return []
 
 
-class ValidateNewIdCardForm(CustomFormValidationAction):
-    """Validates data entered into the Claim Status Form."""
+class ActionVerifyAddress(Action):
 
     def name(self) -> Text:
-        """Unique identifier for the action."""
-        return "validate_new_id_card_form"
+        return "action_verify_address_form"
 
-    async def required_slots(
-        self,
-        slots_mapped_in_domain: List[Text],
-        dispatcher: CollectingDispatcher,
-        tracker: Tracker,
-        domain: DomainDict,
-    ) -> Optional[List[Text]]:
-        additional_slots = []
+    def run(
+        self, dispather: CollectingDispatcher, tracker: Tracker, domain: Dict
+    ) -> List[EventType]:
 
-        # If a member knows their claim ID then ask them. Otherwise, show them the status of some recent claims.
-        if tracker.slots.get("verify_address") == "/affirm":
-            additional_slots.append("claim_id")
-        elif tracker.slots.get("verify_address") == "/deny":
-            additional_slots.append("recent_claims")
+        verify_address = tracker.get_slot("verify_address")
 
-        return additional_slots + slots_mapped_in_domain
+        return [SlotSet("verify_address", verify_address)]
+
+
+class ValidateVerifyAddressForm(FormValidationAction):
+
+    def name(self) -> Text:
+        return "validate_verify_address_form"
+
+    async def validate_verify_address(
+            self,
+            value: Text,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+        verify_address = tracker.get_slot("verify_address")
+
+        return {"verify_address": verify_address}
 
 
 class ValidateQuoteForm(CustomFormValidationAction):

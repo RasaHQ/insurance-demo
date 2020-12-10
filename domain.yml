@@ -51,8 +51,8 @@ slots:
     type: any
     influence_conversation: false
   verify_address:
-    type: any
-    influence_conversation: false
+    type: bool
+    influence_conversation: true
   zz_confirm_form:
     type: any
     influence_conversation: false
@@ -120,6 +120,9 @@ responses:
   utter_get_a_quote:
   - text: Quote here. Have a form to ask what type of insurance, age, gender, state
       etc. to fulfill request.
+  utter_new_id_address_change:
+  - text: Okay. Let's update your address so your new ID cards are sent to the right
+      address.
   utter_new_id_card:
   - text: Sure, I can help you get a new id card!
   utter_claim_id_provided:
@@ -148,15 +151,19 @@ actions:
 - validate_get_claim_form
 - action_ask_verify_address
 - action_ask_recent_claims
+- validate_verify_address_form
+- action_verify_address_form
+- action_new_id_card
+- action_update_address
 forms:
-  new_id_card_form:
+  verify_address_form:
     verify_address:
     - intent: affirm
       type: from_intent
-      value: yes
+      value: true
     - intent: deny
       type: from_intent
-      value: no
+      value: false
     - intent:
       - inform
       - new_id_card_form

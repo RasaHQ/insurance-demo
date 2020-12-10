@@ -11,21 +11,32 @@ stories:
 - story: member needs a new ID card (happy path)
   steps:
   - intent: new_id_card
-  - action: new_id_card_form
-  - active_loop: new_id_card_form
+  - action: verify_address_form
+  - active_loop: verify_address_form
+  - slot_was_set:
+    - verify_address: true
   - active_loop: null
+  - action: action_new_id_card
   - action: utter_anything_else
 - story: member needs a new ID card (requires address change)
   steps:
   - intent: new_id_card
-  - action: new_id_card_form
-  - active_loop: new_id_card_form
-  - intent: deny
-  - action: change_address_form
-  - action: new_id_card_form
-  - active_loop: new_id_card_form
+  - action: verify_address_form
+  - active_loop: verify_address_form
+  - slot_was_set:
+    - verify_address: false
   - active_loop: null
-  - action: utter_goodbye
+  - action: action_verify_address_form
+  - action: utter_new_id_address_change
+  - action: change_address_form
+  - active_loop: change_address_form
+  - active_loop: null
+  - action: action_update_address
+  - action: verify_address_form
+  - active_loop: verify_address_form
+  - active_loop: null
+  - action: action_new_id_card
+  - action: utter_anything_else
 - story: member wants to know the status of a claim
   steps:
   - intent: claim_status

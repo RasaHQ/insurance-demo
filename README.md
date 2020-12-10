@@ -22,10 +22,8 @@ between forms, but I think the individual pieces are here.
 
 1. User provides the claim id up front in the intent (i.e. what is the status of claim xyz). This is the simplest access
 method. On the backend verify if the claim is valid for the user. If it is then provide the details. If not prompt to correct
-the ID they provided.
-
-One thing I'm noticing in this workflow is the claim ID entity is validated multiple times if it is invalid... need to
-look into some more.
+the ID they provided. One thing I'm noticing in this workflow is the claim ID entity is validated multiple times if it 
+is invalid. Need to look into some more.
 
 2. User does not provide the claim ID upfront. This is likely the most common use case. User's will be prompted if they 
 know the claim id or not. If they don't an assumption is made for this demo pack that they're asking about a recent-ish

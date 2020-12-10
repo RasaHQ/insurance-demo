@@ -11,12 +11,3 @@ rules:
   steps:
   - intent: bot_challenge
   - action: utter_iamabot
-
-- rule: Update address if user fails to verify
-  condition:
-  # this condition allows stories to handle form switching
-  - active_loop: null
-  steps:
-    - intent: update_member_info
-    - action: change_address_form
-    - active_loop: change_address_form
