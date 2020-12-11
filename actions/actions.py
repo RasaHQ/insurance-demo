@@ -1,5 +1,6 @@
 """Custom actions"""
 import json
+import datetime
 from typing import Dict, Text, Any, List, Optional
 import logging
 from dateutil import parser
@@ -183,23 +184,6 @@ class ActionGetQuote(Action):
         return [SlotSet(slot, value) for slot, value in slots.items()]
 
 
-class ActionRecentClaims(Action):
-
-    def name(self) -> Text:
-        return "action_ask_recent_claims"
-
-    async def run(
-        self,
-        dispatcher: CollectingDispatcher,
-        tracker: Tracker,
-        domain: Dict[Text, Any],
-    ) -> List[Dict]:
-
-        dispatcher.utter_message("Here are your claims...")
-
-        return []
-
-
 class ValidateQuoteForm(CustomFormValidationAction):
     """Validates Slots for the Quote form."""
 
@@ -238,6 +222,44 @@ class ValidateQuoteForm(CustomFormValidationAction):
         return {}
 
 
+class ActionRecentClaims(Action):
+
+    def name(self) -> Text:
+        return "action_ask_recent_claims"
+
+    async def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict]:
+
+        # Get the claims on the page.
+        claim_page = tracker.get_slot("page")
+
+        if claim_page is not None:
+            claim_page += 1
+        else:
+            claim_page = 0
+
+        idx_start = claim_page * 3
+        idx_end = idx_start + 3
+
+        # Get claims on the page.
+        page_claims = MOCK_DATA["claims"][idx_start:idx_end]
+        for clm in page_claims:
+            formatted_date = str(datetime.datetime.strptime(str(clm["claim_date"]), "%Y%m%d").date())
+            clm_params = {
+                "claim_date": formatted_date,
+                "claim_id": clm["claim_id"],
+                "claim_balance": f"${str(clm['claim_balance'])}",
+                "claim_status": clm["claim_status"]
+            }
+            dispatcher.utter_message(template="utter_claim_detail", **clm_params)
+
+        return [SlotSet("page", claim_page)]
+
+
 class ActionClaimStatus(Action):
     """Gets the status of the user's last claim."""
 
@@ -252,8 +274,22 @@ class ActionClaimStatus(Action):
         domain: Dict[Text, Any],
     ) -> List[Dict]:
 
-        # TODO: Update for the profile data once it's created.
-        dispatcher.utter_message("Your claim is still under review.")
+        # Get the claim provided by the user.
+        user_clm_id = tracker.get_slot("claim_id")
+        clm = next((c for c in MOCK_DATA["claims"] if str(c["claim_id"]) == user_clm_id), None)
+
+        # Display details about the selected claims.
+        if clm:
+            formatted_date = str(datetime.datetime.strptime(str(clm["claim_date"]), "%Y%m%d").date())
+            clm_params = {
+                "claim_date": formatted_date,
+                "claim_id": clm["claim_id"],
+                "claim_balance": f"${str(clm['claim_balance'])}",
+                "claim_status": clm["claim_status"]
+            }
+            dispatcher.utter_message(template="utter_claim_detail", **clm_params)
+        else:
+            dispatcher.utter_message("I don't know that claim...")
 
         reset_slots = ["knows_claim_id", "AA_CONTINUE_FORM", "zz_confirm_form"]
         return [SlotSet(slot, None) for slot in reset_slots]
@@ -274,16 +310,10 @@ class ValidateGetClaimForm(FormValidationAction):
             domain: Dict[Text, Any],
     ) -> Dict[Text, Any]:
         """Checks if the claim ID is valid for the member."""
-        valid_claims = [
-            "123456",
-            "234567"
-        ]
+        user_claims = MOCK_DATA["claims"]
         claim_id = tracker.get_slot("claim_id")
 
-        print("claim", claim_id)
-        print(tracker.slots)
-
-        if str(claim_id) not in valid_claims:
+        if str(claim_id) not in [clm["claim_id"] for clm in user_claims]:
             dispatcher.utter_message("The Claim ID you entered is not valid. Please check and try again.")
             return {"claim_id": None}
         else:

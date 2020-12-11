@@ -38,13 +38,35 @@ stories:
   - active_loop: null
   - action: action_new_id_card
   - action: utter_anything_else
-- story: member wants to know the status of a claim
+- story: member wants to know the status of a claim; prompt for claim id.
   steps:
   - intent: claim_status
-  - action: claim_status_form
-  - active_loop: claim_status_form
+  - action: utter_ask_knows_claim_id
+  - intent: affirm
+  - slot_was_set:
+    - knows_claim_id: true
+  - action: get_claim_form
+  - active_loop: get_claim_form
   - active_loop: null
   - action: action_claim_status
+  - action: utter_anything_else
+- story: member wants to check claim status; does not know claim id; scroll pages of claims.
+  steps:
+  - intent: claim_status
+  - action: utter_ask_knows_claim_id
+  - intent: deny
+    entities:
+    - knows_claim_id: 'false'
+  - slot_was_set:
+    - knows_claim_id: 'false'
+  - action: action_ask_recent_claims
+  - slot_was_set:
+      - page: 0
+  - action: utter_show_more_start
+  - slot_was_set:
+    - show_more: true
+  - intent: affirm
+  - action: action_ask_recent_claims
   - action: utter_anything_else
 - story: member wants to check status of a specific claim
   steps:

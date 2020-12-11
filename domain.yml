@@ -17,6 +17,7 @@ intents:
 - pay_claim
 entities:
 - claim_id
+- knows_claim_id
 slots:
   AA_CONTINUE_FORM:
     type: any
@@ -42,6 +43,9 @@ slots:
   knows_claim_id:
     type: any
     influence_conversation: false
+  page:
+    type: any
+    influence_conversation: false
   payment_amount:
     type: any
     influence_conversation: false
@@ -54,6 +58,9 @@ slots:
   requested_slot:
     type: any
     influence_conversation: false
+  show_more:
+    type: bool
+    influence_conversation: true
   verify_address:
     type: bool
     influence_conversation: true
@@ -69,6 +76,13 @@ responses:
   - text: What state do you live in?
   utter_ask_address_zip:
   - text: What is your mailing zip code?
+  utter_ask_knows_claim_id:
+  - buttons:
+    - payload: /affirm{{"knows_claim_id":"true"}}
+      title: Yes
+    - payload: /deny{{"knows_claim_id":"false"}}
+      title: No
+    text: Do you know the claim ID you want to check?
   utter_ask_quote_form_AA_CONTINUE_FORM:
   - buttons:
     - payload: /affirm
@@ -117,7 +131,7 @@ responses:
   utter_ask_pay_claim_form_claim_id:
   - text: What claim would you like to make a payment for?
   utter_ask_pay_claim_form_payment_amount:
-  - text: "How much would you like to pay for claim {claim_id}?"
+  - text: How much would you like to pay for claim {claim_id}?
   utter_confirm_address:
   - buttons:
     - payload: /affirm
@@ -133,6 +147,16 @@ responses:
       address.
   utter_new_id_card:
   - text: Sure, I can help you get a new id card!
+  utter_show_more_start:
+  - buttons:
+    - payload: /affirm{{"show_more":"true"}}
+      title: Yes
+    - payload: /deny{{"show_more":"false"}}
+      title: No
+    text: Would you like to see more?
+  utter_claim_detail:
+  - text: 'Claim ID: {claim_id}\nClaim Date: {claim_date}\nAmount Owed: {claim_balance}\nClaim
+      Status: {claim_status}'
   utter_claim_id_provided:
   - text: Let me get the status for claim {claim_id}
   utter_claim_status:
