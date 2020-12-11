@@ -16,6 +16,7 @@ stories:
   - slot_was_set:
     - verify_address: true
   - active_loop: null
+  - action: action_verify_address_form
   - action: action_new_id_card
   - action: utter_anything_else
 - story: member needs a new ID card (requires address change)
@@ -54,6 +55,13 @@ stories:
   - active_loop: get_claim_form
   - active_loop: null
   - action: action_claim_status
+  - action: utter_anything_else
+- story: member wants to pay a claim
+  steps:
+  - intent: pay_claim
+  - action: pay_claim_form
+  - active_loop: pay_claim_form
+  - active_loop: null
   - action: utter_anything_else
 - story: happy path
   steps:

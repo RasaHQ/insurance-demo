@@ -24,6 +24,16 @@ nlu:
     - i want to check the status of my claim
     - what is the status of claim [123456](claim_id)
     - has claim [4567890](claim_id) been paid?
+- intent: pay_claim
+  examples: |
+    - pay a claim
+    - make a payment
+    - pay off a claim
+    - pay what i owe
+    - pay my bill
+    - submit a payment
+    - pay claim
+    - pay bill
 - intent: inform
   examples: |
     - 34

@@ -1,4 +1,5 @@
 """Custom actions"""
+import json
 from typing import Dict, Text, Any, List, Optional
 import logging
 from dateutil import parser
@@ -22,6 +23,137 @@ from actions.custom_forms import CustomFormValidationAction
 
 
 logger = logging.getLogger(__name__)
+
+MOCK_DATA = json.load(open("actions/mock_data.json", "r"))
+
+US_STATES = ["AZ", "AL", "AK", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY",
+             "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH",
+             "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
+
+
+class AskConfirmAddress(Action):
+    """Retrieves existing user address and asks for the user to verify the address."""
+
+    def name(self) -> Text:
+        return "action_ask_verify_address"
+
+    def run(
+        self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
+    ) -> List[EventType]:
+        # Load the member address from the JSON document.
+        address_slots = {
+            "address_street": MOCK_DATA["member_info"]["home_address"]["address_street"],
+            "address_city": MOCK_DATA["member_info"]["home_address"]["address_city"],
+            "address_state": MOCK_DATA["member_info"]["home_address"]["address_state"],
+            "address_zip": MOCK_DATA["member_info"]["home_address"]["address_zip"]
+        }
+
+        # Build the full address.
+        address_line_two = f"{address_slots['address_city']}, {address_slots['address_state']} " \
+                           f"{address_slots['address_zip']}"
+        full_address = "\n".join([address_slots['address_street'], address_line_two])
+        address_slots["full_address"] = full_address
+
+        dispatcher.utter_message(template="utter_confirm_address", **address_slots)
+
+        return [SlotSet(k, v) for k, v in address_slots.items()]
+
+
+class ActionVerifyAddress(Action):
+    """Checks if the user confirms their address or not."""
+
+    def name(self) -> Text:
+        return "action_verify_address_form"
+
+    def run(
+        self, dispather: CollectingDispatcher, tracker: Tracker, domain: Dict
+    ) -> List[EventType]:
+        address_slots = ["address_street",
+                         "address_city",
+                         "address_state",
+                         "address_zip"]
+
+        verify_address = tracker.get_slot("verify_address")
+
+        # Reset the address slots if user doesn't verify address so the change address form can collect new address.
+        if not verify_address:
+            return [SlotSet(a, None) for a in address_slots]
+
+        return [SlotSet("verify_address", verify_address)]
+
+
+class ValidateVerifyAddressForm(FormValidationAction):
+
+    def name(self) -> Text:
+        return "validate_verify_address_form"
+
+    async def validate_verify_address(
+            self,
+            value: Text,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+        verify_address = tracker.get_slot("verify_address")
+
+        return {"verify_address": verify_address}
+
+
+class ActionUpdateAddress(Action):
+
+    def name(self) -> Text:
+        return "action_update_address"
+
+    def run(
+        self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
+    ) -> List[EventType]:
+
+        address_street = tracker.get_slot("address_street")
+        address_city = tracker.get_slot("address_city")
+        address_state = tracker.get_slot("address_state")
+        address_zip = tracker.get_slot("address_zip")
+
+        address_line_two = f"{address_city}, {address_state} {address_zip}"
+        full_address = "\n".join([address_street, address_line_two])
+
+        dispatcher.utter_message("Thank you! Your address has been changed to:")
+        dispatcher.utter_message(full_address)
+
+        return [SlotSet("verify_address", None)]
+
+
+class ValidateChangeAddressForm(FormValidationAction):
+    """Validates the user has filled out the change of address form correctly."""
+
+    def name(self) -> Text:
+        return "validate_change_address_form"
+
+    async def validate_address_state(
+            self,
+            value: Text,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]
+    ) -> Dict[Text, Any]:
+        if value not in US_STATES:
+            dispatcher.utter_message(f"{value} is invalid. Please provide a valid state.")
+            return {"address_state": None}
+
+        return {"address_state": value}
+
+
+class ActionNewIdCard(Action):
+
+    def name(self) -> Text:
+        return "action_new_id_card"
+
+    def run(
+        self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
+    ) -> List[EventType]:
+
+        dispatcher.utter_message("Thank you! We'll send you a new ID card.")
+
+        return []
 
 
 class ActionGetQuote(Action):
@@ -66,86 +198,6 @@ class ActionRecentClaims(Action):
         dispatcher.utter_message("Here are your claims...")
 
         return []
-
-
-class AskConfirmAddress(Action):
-    def name(self) -> Text:
-        return "action_ask_verify_address"
-
-    def run(
-        self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
-    ) -> List[EventType]:
-        dispatcher.utter_message(template="utter_confirm_address")
-
-        return []
-
-
-class ActionUpdateAddress(Action):
-
-    def name(self) -> Text:
-        return "action_update_address"
-
-    def run(
-        self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
-    ) -> List[EventType]:
-
-        address_street = tracker.get_slot("address_street")
-        address_city = tracker.get_slot("address_city")
-        address_state = tracker.get_slot("address_state")
-        address_zip = tracker.get_slot("address_zip")
-
-        address_line_two = f"{address_city}, {address_state} {address_zip}"
-        full_address = "\n".join([address_street, address_line_two])
-
-        dispatcher.utter_message("Thank you! Your address has been changed to:")
-        dispatcher.utter_message(full_address)
-
-        return [SlotSet("verify_address", None)]
-
-
-class ActionNewIdCard(Action):
-
-    def name(self) -> Text:
-        return "action_new_id_card"
-
-    def run(
-        self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
-    ) -> List[EventType]:
-
-        dispatcher.utter_message("Thank you! We'll send you a new ID card.")
-
-        return []
-
-
-class ActionVerifyAddress(Action):
-
-    def name(self) -> Text:
-        return "action_verify_address_form"
-
-    def run(
-        self, dispather: CollectingDispatcher, tracker: Tracker, domain: Dict
-    ) -> List[EventType]:
-
-        verify_address = tracker.get_slot("verify_address")
-
-        return [SlotSet("verify_address", verify_address)]
-
-
-class ValidateVerifyAddressForm(FormValidationAction):
-
-    def name(self) -> Text:
-        return "validate_verify_address_form"
-
-    async def validate_verify_address(
-            self,
-            value: Text,
-            dispatcher: CollectingDispatcher,
-            tracker: Tracker,
-            domain: Dict[Text, Any],
-    ) -> Dict[Text, Any]:
-        verify_address = tracker.get_slot("verify_address")
-
-        return {"verify_address": verify_address}
 
 
 class ValidateQuoteForm(CustomFormValidationAction):

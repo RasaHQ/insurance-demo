@@ -1,0 +1,36 @@
+{
+  "claims": [
+    {
+      "claim_id": 123456,
+      "claim_date": 20201004,
+      "amount_owe": 0,
+      "claim_status": "Final"
+    },
+    {
+      "claim_id": 234567,
+      "claim_date": 20200312,
+      "amount_owe": 5000,
+      "claim_status": "Pending"
+    },
+    {
+      "claim_id": 345678,
+      "claim_date": 20201130,
+      "amount_owe": 200,
+      "claim_status": "Submitted"
+    },
+    {
+      "claim_id": 456789,
+      "claim_date": 20200903,
+      "amount_owe": 500,
+      "claim_status": "Final"
+    }
+  ],
+  "member_info": {
+    "home_address": {
+      "address_street": "7 Maple Ave.",
+      "address_city": "Lynn",
+      "address_state": "MA",
+      "address_zip": "01902"
+    }
+  }
+}

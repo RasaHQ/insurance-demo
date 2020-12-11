@@ -14,6 +14,7 @@ intents:
 - get_a_quote
 - inform
 - update_member_info
+- pay_claim
 entities:
 - claim_id
 slots:
@@ -39,6 +40,9 @@ slots:
     type: any
     influence_conversation: false
   knows_claim_id:
+    type: any
+    influence_conversation: false
+  payment_amount:
     type: any
     influence_conversation: false
   recent_claims:
@@ -110,13 +114,17 @@ responses:
   - text: What is the claim ID you'd like to lookup?
   utter_ask_get_claim_form_claim_id:
   - text: What is the ID of the claim you'd like to lookup?
+  utter_ask_pay_claim_form_claim_id:
+  - text: What claim would you like to make a payment for?
+  utter_ask_pay_claim_form_payment_amount:
+  - text: "How much would you like to pay for claim {claim_id}?"
   utter_confirm_address:
   - buttons:
     - payload: /affirm
       title: Yes
     - payload: /deny
       title: No
-    text: Is this your current address?
+    text: Is this your current address?\n{full_address}
   utter_get_a_quote:
   - text: Quote here. Have a form to ask what type of insurance, age, gender, state
       etc. to fulfill request.
@@ -155,6 +163,7 @@ actions:
 - action_verify_address_form
 - action_new_id_card
 - action_update_address
+- validate_change_address_form
 forms:
   verify_address_form:
     verify_address:
@@ -237,4 +246,12 @@ forms:
       type: from_text
     address_zip:
     - entity: address_zip
+      type: from_text
+  pay_claim_form:
+    claim_id:
+    - entity: claim_id
+      type: from_entity
+    - type: from_text
+    payment_amount:
+    - entity: payment_amount
       type: from_text
