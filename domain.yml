@@ -18,6 +18,7 @@ intents:
 entities:
 - claim_id
 - knows_claim_id
+- quote_insurance_type
 slots:
   AA_CONTINUE_FORM:
     type: any
@@ -47,6 +48,20 @@ slots:
     type: any
     influence_conversation: false
   payment_amount:
+    type: any
+    influence_conversation: false
+  quote_insurance_type:
+    type: categorical
+    influence_conversation: false
+    values:
+      - life
+      - home
+      - auto
+      - health
+  quote_number_persons:
+    type: any
+    influence_conversation: false
+  quote_state:
     type: any
     influence_conversation: false
   recent_claims:
@@ -83,20 +98,21 @@ responses:
     - payload: /deny{{"knows_claim_id":"false"}}
       title: No
     text: Do you know the claim ID you want to check?
-  utter_ask_quote_form_AA_CONTINUE_FORM:
+  utter_ask_quote_form_quote_insurance_type:
   - buttons:
-    - payload: /affirm
-      title: Yes
-    - payload: /deny
-      title: No
-    text: Would you like to continue with your quote?
-  utter_ask_quote_form_zz_confirm_form:
-  - buttons:
-    - payload: /affirm
-      title: Yes
-    - payload: /deny
-      title: No
-    text: Would you like a quote for a {age} year old?
+    - payload: /inform{{"quote_insurance_type":"health"}}
+      title: Health
+    - payload: /inform{{"quote_insurance_type":"life"}}
+      title: Life
+    - payload: /inform{{"quote_insurance_type":"auto"}}
+      title: Auto
+    - payload: /inform{{"quote_insurance_type":"home"}}
+      title: Home
+    text: What type of insurance do you want a quote for?
+  utter_ask_quote_form_quote_number_persons:
+    - text: How many people do you want to include on the policy for your quote?
+  utter_ask_quote_form_quote_state:
+    - text: What state would you like your quote for?
   utter_age_invalid:
   - text: Age is invalid. Please enter a positive number for your age.
   utter_anything_else:
@@ -139,6 +155,9 @@ responses:
     - payload: /deny
       title: No
     text: Is this your current address?\n{full_address}
+  utter_final_quote:
+  - text: "Your monthly payment given the information provided is: ${final_quote} per month\n\nInsurance Type:
+   {insurance_type}\nPolicy State: {quote_state}\nNumber of people on policy: {n_persons}"
   utter_get_a_quote:
   - text: Quote here. Have a form to ask what type of insurance, age, gender, state
       etc. to fulfill request.
@@ -202,31 +221,18 @@ forms:
       - new_id_card_form
       type: from_text
   quote_form:
-    AA_CONTINUE_FORM:
-    - intent: affirm
-      type: from_intent
-      value: yes
-    - intent: deny
-      type: from_intent
-      value: no
-    - intent:
-      - inform
-      - quote_form
-      type: from_text
-    age:
-    - entity: age
-      type: from_text
-    zz_confirm_form:
-    - intent: affirm
-      type: from_intent
-      value: yes
-    - intent: deny
-      type: from_intent
-      value: no
-    - intent:
-      - inform
-      - quote_form
-      type: from_text
+    quote_insurance_type:
+    - entity: quote_insurance_type
+      type: from_entity
+    - type: from_text
+    quote_state:
+    - entity: quote_state
+      type: from_entity
+    - type: from_text
+    quote_number_persons:
+    - entity: quote_number_persons
+      type: from_entity
+    - type: from_text
   claim_status_form:
     AA_CONTINUE_FORM:
     - intent: affirm

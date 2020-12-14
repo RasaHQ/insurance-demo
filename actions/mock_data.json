@@ -38,5 +38,13 @@
       "address_state": "MA",
       "address_zip": "01902"
     }
+  },
+  "policy_quote": {
+    "insurance_type": {
+      "home": 50,
+      "auto": 100,
+      "life": 30,
+      "health": 500
+    }
   }
 }

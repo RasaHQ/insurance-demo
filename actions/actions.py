@@ -171,27 +171,35 @@ class ActionGetQuote(Action):
         domain: Dict[Text, Any],
     ) -> List[Dict]:
         """Executes the action"""
-        slots = {
-            "AA_CONTINUE_FORM": None,
-            "zz_confirm_form": None,
-            "age": None
+        slots = ["quote_insurance_type", "quote_state", "quote_number_persons"]
+
+        # Build the quote from the provided data.
+        insurance_type = tracker.get_slot("quote_insurance_type")
+        n_persons = int(tracker.get_slot("quote_number_persons"))
+
+        baseline_rate = MOCK_DATA["policy_quote"]["insurance_type"][insurance_type]
+        final_quote = baseline_rate * n_persons
+
+        msg_params = {
+            "final_quote": final_quote,
+            "insurance_type": insurance_type.capitalize(),
+            "quote_state": tracker.get_slot("quote_state"),
+            "n_persons": n_persons
         }
-        if tracker.get_slot("zz_confirm_form") == "yes":
-            dispatcher.utter_message("Here is your quote...")
-        else:
-            dispatcher.utter_message("Canceled.")
+        dispatcher.utter_message(template="utter_final_quote", **msg_params)
 
-        return [SlotSet(slot, value) for slot, value in slots.items()]
+        # Reset the slot values.
+        return [SlotSet(slot, None) for slot in slots]
 
 
-class ValidateQuoteForm(CustomFormValidationAction):
+class ValidateQuoteForm(FormValidationAction):
     """Validates Slots for the Quote form."""
 
     def name(self) -> Text:
         """Unique identifier for the action."""
         return "validate_quote_form"
 
-    async def validate_age(
+    async def validate_quote_insurance_type(
             self,
             value: Text,
             dispatcher: CollectingDispatcher,
@@ -199,27 +207,47 @@ class ValidateQuoteForm(CustomFormValidationAction):
             domain: Dict[Text, Any],
     ) -> Dict[Text, Any]:
         """Validates value of 'amount-of-money' slot"""
-        age = tracker.get_slot("age")
+        insurance_type = tracker.get_slot("quote_insurance_type")
 
-        try:
-            int(age) == age
-        except ValueError:
-            dispatcher.utter_message(template="utter_age_invalid")
-            return {"age": None}
+        if insurance_type.lower() not in ["auto", "health", "life", "home"]:
+            dispatcher.utter_message("Must select a valid type of insurance")
+            return {"quote_insurance_type": None}
 
-        return {"age": age}
+        return {"quote_insurance_type": insurance_type}
 
-    async def explain_age(
-        self,
-        value: Text,
-        dispatcher: CollectingDispatcher,
-        tracker: Tracker,
-        domain: Dict[Text, Any],
+    async def validate_quote_state(
+            self,
+            value: Text,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any],
     ) -> Dict[Text, Any]:
-        """Explains 'credit_card' slot"""
-        dispatcher.utter_message("Actions Age")
+        """Validates the state provided by user to get an insurance quote."""
+        if value not in US_STATES:
+            dispatcher.utter_message(f"{value} is invalid. Please provide a valid state.")
+            return {"quote_state": None}
 
-        return {}
+        return {"quote_state": value}
+
+    async def validate_quote_number_persons(
+            self,
+            value: Text,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]
+    ) -> Dict[Text, Any]:
+        """Validates the number of persons entered is valid."""
+        try:
+            int(value)
+        except TypeError:
+            dispatcher.utter_message(f"Number of persons must be an integer.")
+            return {"quote_number_persons": None}
+
+        if int(value) <= 0:
+            dispatcher.utter_message("Number of people on policy must be >= 1.")
+            return {"quote_number_persons": None}
+
+        return {"quote_number_persons": value}
 
 
 class ActionRecentClaims(Action):
@@ -242,8 +270,8 @@ class ActionRecentClaims(Action):
         else:
             claim_page = 0
 
-        idx_start = claim_page * 3
-        idx_end = idx_start + 3
+        idx_start = claim_page * 1
+        idx_end = idx_start + 1
 
         # Get claims on the page.
         page_claims = MOCK_DATA["claims"][idx_start:idx_end]

@@ -42,10 +42,17 @@ nlu:
     - 75
     - i don't know
     - 1234567
+    - health
+    - life
+    - car
+    - home
 - intent: get_a_quote
   examples: |
     - i need insurance
     - i need a quote
+    - i need a quote for [car](quote_insurance_type) insurance
+    - how much will [healthcare](quote_insurance_type) insurance cost?
+    - can you give me a quote for [life](quote_insurance_type) insurance?
     - quote
     - insurance quote
     - can you give me a quote?
@@ -144,3 +151,11 @@ nlu:
 - regex: claim_id
   examples: |
     - \d{5,7}
+- synonym: auto
+  examples: |
+    - car
+    - automobile
+- synonym: healh
+  examples: |
+    - healthcare
+    - health care
