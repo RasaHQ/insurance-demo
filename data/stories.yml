@@ -67,6 +67,11 @@ stories:
     - show_more: true
   - intent: affirm
   - action: action_ask_recent_claims
+  - action: scroll_claims_form
+  - active_loop: scroll_claims_form
+  - slot_was_set:
+      - scroll_status: stop
+  - active_loop: null
   - action: utter_anything_else
 - story: member wants to check status of a specific claim
   steps:

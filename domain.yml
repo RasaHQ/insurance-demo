@@ -19,6 +19,7 @@ entities:
 - claim_id
 - knows_claim_id
 - quote_insurance_type
+- scroll_status
 slots:
   AA_CONTINUE_FORM:
     type: any
@@ -73,6 +74,9 @@ slots:
   requested_slot:
     type: any
     influence_conversation: false
+  scroll_status:
+    type: text
+    influence_conversation: true
   show_more:
     type: bool
     influence_conversation: true
@@ -173,6 +177,15 @@ responses:
     - payload: /deny{{"show_more":"false"}}
       title: No
     text: Would you like to see more?
+  utter_ask_scroll_status:
+  - buttons:
+    - payload: /inform{{"scroll_status":"prev"}}
+      title: Previous
+    - payload: /inform{{"scroll_status":"next"}}
+      title: Next
+    - payload: /inform{{"scroll_status":"cancel"}}
+      title: Cancel
+    text: Would you like to see more of your claims?
   utter_claim_detail:
   - text: 'Claim ID: {claim_id}\nClaim Date: {claim_date}\nAmount Owed: {claim_balance}\nClaim
       Status: {claim_status}'
@@ -207,6 +220,7 @@ actions:
 - action_new_id_card
 - action_update_address
 - validate_change_address_form
+- validate_scroll_claims_form
 forms:
   verify_address_form:
     verify_address:
@@ -285,3 +299,8 @@ forms:
     payment_amount:
     - entity: payment_amount
       type: from_text
+  scroll_claims_form:
+    scroll_status:
+    - entity: scroll_status
+      type: from_entity
+    - type: from_text

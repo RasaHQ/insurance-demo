@@ -265,27 +265,16 @@ class ActionRecentClaims(Action):
         # Get the claims on the page.
         claim_page = tracker.get_slot("page")
 
-        if claim_page is not None:
-            claim_page += 1
+        # Get the first initial page of claims.
+        if claim_page is None:
+            scroll_response = claims_scroll(claim_page, "init")
         else:
-            claim_page = 0
+            scroll_response = claims_scroll(claim_page, "next")
 
-        idx_start = claim_page * 1
-        idx_end = idx_start + 1
+        for c in scroll_response["claims"]:
+            dispatcher.utter_message(template="utter_claim_detail", **c)
 
-        # Get claims on the page.
-        page_claims = MOCK_DATA["claims"][idx_start:idx_end]
-        for clm in page_claims:
-            formatted_date = str(datetime.datetime.strptime(str(clm["claim_date"]), "%Y%m%d").date())
-            clm_params = {
-                "claim_date": formatted_date,
-                "claim_id": clm["claim_id"],
-                "claim_balance": f"${str(clm['claim_balance'])}",
-                "claim_status": clm["claim_status"]
-            }
-            dispatcher.utter_message(template="utter_claim_detail", **clm_params)
-
-        return [SlotSet("page", claim_page)]
+        return [SlotSet("page", scroll_response["page"])]
 
 
 class ActionClaimStatus(Action):
@@ -410,3 +399,66 @@ class ValidateClaimStatusForm(CustomFormValidationAction):
 
         return {"claim_id": claim_id}
 
+
+class ActionValidateScrollClaims(FormValidationAction):
+
+    def name(self) -> Text:
+        return "validate_scroll_claims_form"
+
+    async def validate_scroll_status(
+        self,
+        value: Text,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+
+        # Get the claims on the page.
+        claim_page = tracker.get_slot("page")
+        scroll_status = value
+
+        if scroll_status == "cancel":
+            return {"scroll_status": "stop"}
+
+        scroll_response = claims_scroll(claim_page, scroll_status)
+
+        for c in scroll_response["claims"]:
+            dispatcher.utter_message(template="utter_claim_detail", **c)
+
+        return {"scroll_status": None, "page": scroll_response["page"]}
+
+
+def claims_scroll(curr_page, scroll_status):
+    """Performs the query to get claims on the specified page."""
+    if curr_page is None:
+        curr_page = 0
+
+    if scroll_status == "next":
+        if curr_page >= 0:
+            curr_page += 1
+        idx_start = curr_page * 2
+        idx_end = idx_start + 2
+    elif scroll_status == "init":
+        idx_start = 0
+        idx_end = idx_start + 2
+    else:
+        if curr_page > 0:
+            curr_page -= 1
+        idx_start = curr_page * 2
+        idx_end = idx_start + 2
+
+    # Get claims on the page.
+    page_claims = MOCK_DATA["claims"][idx_start:idx_end]
+    formatted_claims = []
+    for clm in page_claims:
+        formatted_date = str(datetime.datetime.strptime(str(clm["claim_date"]), "%Y%m%d").date())
+        clm_params = {
+            "claim_date": formatted_date,
+            "claim_id": clm["claim_id"],
+            "claim_balance": f"${str(clm['claim_balance'])}",
+            "claim_status": clm["claim_status"]
+        }
+
+        formatted_claims.append(clm_params)
+
+    return {"page": curr_page, "claims": formatted_claims}
