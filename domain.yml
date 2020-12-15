@@ -185,6 +185,17 @@ responses:
   utter_get_a_quote:
   - text: Quote here. Have a form to ask what type of insurance, age, gender, state
       etc. to fulfill request.
+  utter_greet:
+  - buttons:
+    - payload: /claim_status
+      title: "Check Claim Status"
+    - payload: /new_id_card
+      title: "Order New ID Card"
+    - payload: /pay_claim
+      title: "Pay a Claim"
+    - payload: /get_a_quote
+      title: "Get a Quote"
+    text: Howdy! What can I help you with today?
   utter_new_id_address_change:
   - text: Okay. Let's update your address so your new ID cards are sent to the right
       address.
@@ -213,8 +224,6 @@ responses:
   - text: Let me get the status for claim {claim_id}
   utter_claim_status:
   - text: Get the claim status. Ask for claim ID. Maybe suggest latest claim?
-  utter_greet:
-  - text: Hey! How are you?
   utter_cheer_up:
   - image: https://i.imgur.com/nGF1K8f.jpg
     text: 'Here is something to cheer you up:'

@@ -120,6 +120,14 @@ class ActionUpdateAddress(Action):
         dispatcher.utter_message("Thank you! Your address has been changed to:")
         dispatcher.utter_message(full_address)
 
+        # Update the address in the data.
+        MOCK_DATA["member_info"]["home_address"] = {
+            "address_street": address_street,
+            "address_city": address_city,
+            "address_state": address_state,
+            "address_zip": address_zip
+        }
+
         return [SlotSet("verify_address", None)]
 
 
