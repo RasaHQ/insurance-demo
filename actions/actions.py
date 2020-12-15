@@ -428,6 +428,145 @@ class ActionValidateScrollClaims(FormValidationAction):
         return {"scroll_status": None, "page": scroll_response["page"]}
 
 
+class ActionPayClaim(Action):
+    """Gets the status of the user's last claim."""
+
+    def name(self) -> Text:
+        """Unique identifier for the action."""
+        return "action_pay_claim"
+
+    async def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict]:
+        # Get the claim provided by the user.
+        user_clm_id = tracker.get_slot("claim_id")
+        amount_to_pay = tracker.get_slot("payment_amount")
+        claim_balance = tracker.get_slot("claim_balance")
+
+        msg_params = {
+            "claim_id": user_clm_id,
+            "amount_to_pay": amount_to_pay,
+            "claim_balance": claim_balance - amount_to_pay
+        }
+        for c in MOCK_DATA["claims"]:
+            if c["claim_id"] == user_clm_id:
+                c.update({"claim_balance": claim_balance - amount_to_pay})
+
+        dispatcher.utter_message(template="utter_claim_payment_success", **msg_params)
+
+        reset_slots = ["claim_balance", "payment_amount", "confirm_payment"]
+        return [SlotSet(slot, None) for slot in reset_slots]
+
+
+class ActionCancelPayment(Action):
+    """Cancels the payment form."""
+
+    def name(self) -> Text:
+        return "action_cancel_payment"
+
+    async def run(
+            self,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any],
+    ) -> List[Dict]:
+        dispatcher.utter_message(template="utter_cancel_payment")
+
+        reset_slots = ["claim_balance", "payment_amount", "claim_id", "confirm_payment"]
+        return [SlotSet(slot, None) for slot in reset_slots]
+
+
+class ValidatePayClaimForm(FormValidationAction):
+
+    def name(self) -> Text:
+        return "validate_pay_claim_form"
+
+    async def required_slots(
+        self,
+        slots_mapped_in_domain: List[Text],
+        dispatcher: CollectingDispatcher,
+        tracker: "Tracker",
+        domain: "DomainDict",
+    ) -> Optional[List[Text]]:
+        additional_slots = []
+        if tracker.slots.get("claim_balance"):
+            claim_id = tracker.slots.get("claim_id")
+            if tracker.slots.get("claim_balance") > 0:
+                additional_slots.append("payment_amount")
+                additional_slots.append("confirm_payment")
+
+        return additional_slots + slots_mapped_in_domain
+
+    async def extract_payment_amount(
+            self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
+    ) -> Dict[Text, Any]:
+        if tracker.slots["requested_slot"] == "payment_amount":
+            text_of_last_user_message = tracker.latest_message.get("text")
+
+            return {"payment_amount": text_of_last_user_message}
+
+    async def extract_confirm_payment(
+            self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
+    ) -> Dict[Text, Any]:
+        if tracker.slots["requested_slot"] == "confirm_payment":
+            text_of_last_user_message = tracker.latest_message.get("text")
+
+            return {"confirm_payment": text_of_last_user_message}
+
+    async def validate_claim_id(
+            self,
+            value: Text,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+        """Checks if the claim ID is valid for the member."""
+        user_claims = MOCK_DATA["claims"]
+        claim_id = tracker.get_slot("claim_id")
+
+        if str(claim_id) not in [clm["claim_id"] for clm in user_claims]:
+            dispatcher.utter_message("The Claim ID you entered is not valid. Please check and try again.")
+            return {"claim_id": None}
+        else:
+            clm = next((c for c in MOCK_DATA["claims"] if str(c["claim_id"]) == claim_id), None)
+            return {"claim_id": claim_id, "claim_balance": clm["claim_balance"]}
+
+    async def validate_payment_amount(
+            self,
+            value: Text,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+        user_claims = MOCK_DATA["claims"]
+        claim_id = tracker.get_slot("claim_id")
+        payment_amount = tracker.get_slot("payment_amount")
+        clm = next((c for c in MOCK_DATA["claims"] if str(c["claim_id"]) == claim_id), None)
+
+        # Check that a valid number is provided.
+        try:
+            payment_amount = float(payment_amount)
+        except TypeError:
+            dispatcher.utter_message("Please enter a valid number as your payment amount.")
+            return {"payment_amount": None}
+
+        # Check that the payment is greater than zero.
+        if payment_amount <= 0:
+            dispatcher.utter_message("Your payment must be greater than $0.")
+            return {"payment_amount": None}
+
+        # Check that the payment amount doesn't exceed the amount owed on the claim.
+        if payment_amount > clm["claim_balance"]:
+            dispatcher.utter_message(f"The amount you want to pay, ${str(payment_amount)}, is greater than the amount "
+                                     f"owed, ${str(clm['claim_balance'])}")
+            return {"payment_amount": clm["claim_balance"], "claim_balance": clm["claim_balance"]}
+
+        return {"payment_amount": payment_amount, "claim_balance": clm["claim_balance"]}
+
+
 def claims_scroll(curr_page, scroll_status):
     """Performs the query to get claims on the specified page."""
     if curr_page is None:

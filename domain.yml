@@ -20,6 +20,7 @@ entities:
 - knows_claim_id
 - quote_insurance_type
 - scroll_status
+- confirm_payment
 slots:
   AA_CONTINUE_FORM:
     type: any
@@ -39,9 +40,15 @@ slots:
   age:
     type: any
     influence_conversation: false
+  claim_balance:
+    type: any
+    influence_conversation: false
   claim_id:
     type: any
     influence_conversation: false
+  confirm_payment:
+    type: bool
+    influence_conversation: true
   knows_claim_id:
     type: any
     influence_conversation: false
@@ -55,10 +62,10 @@ slots:
     type: categorical
     influence_conversation: false
     values:
-      - life
-      - home
-      - auto
-      - health
+    - life
+    - home
+    - auto
+    - health
   quote_number_persons:
     type: any
     influence_conversation: false
@@ -114,9 +121,9 @@ responses:
       title: Home
     text: What type of insurance do you want a quote for?
   utter_ask_quote_form_quote_number_persons:
-    - text: How many people do you want to include on the policy for your quote?
+  - text: How many people do you want to include on the policy for your quote?
   utter_ask_quote_form_quote_state:
-    - text: What state would you like your quote for?
+  - text: What state would you like your quote for?
   utter_age_invalid:
   - text: Age is invalid. Please enter a positive number for your age.
   utter_anything_else:
@@ -150,8 +157,20 @@ responses:
   - text: What is the ID of the claim you'd like to lookup?
   utter_ask_pay_claim_form_claim_id:
   - text: What claim would you like to make a payment for?
+  utter_ask_pay_claim_form_confirm_payment:
+  - buttons:
+    - payload: /affirm{{"confirm_payment":"true"}}
+      title: Yes
+    - payload: /deny{{"confirm_payment":"false"}}
+      title: No
+    text: 'Would you like to pay ${payment_amount} for claim {claim_id}?'
   utter_ask_pay_claim_form_payment_amount:
   - text: How much would you like to pay for claim {claim_id}?
+  utter_cancel_payment:
+  - text: Payment for claim {claim_id} has been canceled.
+  utter_claim_payment_success:
+  - text: "Thank you for your claim payment of ${amount_to_pay} for claim {claim_id}.\n\nThe remaining balance for
+  the claim is ${claim_balance}"
   utter_confirm_address:
   - buttons:
     - payload: /affirm
@@ -160,8 +179,9 @@ responses:
       title: No
     text: Is this your current address?\n{full_address}
   utter_final_quote:
-  - text: "Your monthly payment given the information provided is: ${final_quote} per month\n\nInsurance Type:
-   {insurance_type}\nPolicy State: {quote_state}\nNumber of people on policy: {n_persons}"
+  - text: "Your monthly payment given the information provided is: ${final_quote}\
+      \ per month\n\nInsurance Type: {insurance_type}\nPolicy State: {quote_state}\n\
+      Number of people on policy: {n_persons}"
   utter_get_a_quote:
   - text: Quote here. Have a form to ask what type of insurance, age, gender, state
       etc. to fulfill request.
@@ -206,6 +226,8 @@ responses:
   - text: Bye
   utter_iamabot:
   - text: I am a bot, powered by Rasa.
+  utter_zero_balance:
+  - text: Claim {claim_id} is fully paid.
 actions:
 - validate_quote_form
 - action_get_quote
@@ -221,6 +243,9 @@ actions:
 - action_update_address
 - validate_change_address_form
 - validate_scroll_claims_form
+- action_pay_claim
+- action_cancel_payment
+- validate_pay_claim_form
 forms:
   verify_address_form:
     verify_address:
@@ -239,12 +264,12 @@ forms:
     - entity: quote_insurance_type
       type: from_entity
     - type: from_text
-    quote_state:
-    - entity: quote_state
-      type: from_entity
-    - type: from_text
     quote_number_persons:
     - entity: quote_number_persons
+      type: from_entity
+    - type: from_text
+    quote_state:
+    - entity: quote_state
       type: from_entity
     - type: from_text
   claim_status_form:
@@ -296,9 +321,6 @@ forms:
     - entity: claim_id
       type: from_entity
     - type: from_text
-    payment_amount:
-    - entity: payment_amount
-      type: from_text
   scroll_claims_form:
     scroll_status:
     - entity: scroll_status
