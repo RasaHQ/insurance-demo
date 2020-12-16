@@ -15,6 +15,7 @@ intents:
 - inform
 - update_member_info
 - pay_claim
+- file_a_claim
 entities:
 - claim_id
 - knows_claim_id
@@ -40,12 +41,18 @@ slots:
   age:
     type: any
     influence_conversation: false
+  claim_amount_submit:
+    type: any
+    influence_conversation: false
   claim_balance:
     type: any
     influence_conversation: false
   claim_id:
     type: any
     influence_conversation: false
+  confirm_file_new_claim:
+    type: bool
+    influence_conversation: true
   confirm_payment:
     type: bool
     influence_conversation: true
@@ -102,6 +109,15 @@ responses:
   - text: What state do you live in?
   utter_ask_address_zip:
   - text: What is your mailing zip code?
+  utter_ask_file_new_claim_form_claim_amount_submit:
+  - text: How much are you claiming?
+  utter_ask_file_new_claim_form_confirm_file_new_claim:
+  - buttons:
+    - payload: /affirm
+      title: Yes
+    - payload: /deny
+      title: No
+    text: Would you like to move forward submitting your claim?
   utter_ask_knows_claim_id:
   - buttons:
     - payload: /affirm{{"knows_claim_id":"true"}}
@@ -169,8 +185,8 @@ responses:
   utter_cancel_payment:
   - text: Payment for claim {claim_id} has been canceled.
   utter_claim_payment_success:
-  - text: "Thank you for your claim payment of ${amount_to_pay} for claim {claim_id}.\n\nThe remaining balance for
-  the claim is ${claim_balance}"
+  - text: "Thank you for your claim payment of ${amount_to_pay} for claim {claim_id}.\n\
+      \nThe remaining balance for the claim is ${claim_balance}"
   utter_confirm_address:
   - buttons:
     - payload: /affirm
@@ -188,13 +204,13 @@ responses:
   utter_greet:
   - buttons:
     - payload: /claim_status
-      title: "Check Claim Status"
+      title: Check Claim Status
     - payload: /new_id_card
-      title: "Order New ID Card"
+      title: Order New ID Card
     - payload: /pay_claim
-      title: "Pay a Claim"
+      title: Pay a Claim
     - payload: /get_a_quote
-      title: "Get a Quote"
+      title: Get a Quote
     text: Howdy! What can I help you with today?
   utter_new_id_address_change:
   - text: Okay. Let's update your address so your new ID cards are sent to the right
@@ -255,6 +271,8 @@ actions:
 - action_pay_claim
 - action_cancel_payment
 - validate_pay_claim_form
+- action_file_new_claim_form
+- validate_file_new_claim_form
 forms:
   verify_address_form:
     verify_address:
@@ -282,30 +300,8 @@ forms:
       type: from_entity
     - type: from_text
   claim_status_form:
-    AA_CONTINUE_FORM:
-    - intent: affirm
-      type: from_intent
-      value: yes
-    - intent: deny
-      type: from_intent
-      value: no
-    - intent:
-      - inform
-      - claim_status_form
-      type: from_text
     knows_claim_id:
     - entity: knows_claim_id
-      type: from_text
-    zz_confirm_form:
-    - intent: affirm
-      type: from_intent
-      value: yes
-    - intent: deny
-      type: from_intent
-      value: no
-    - intent:
-      - inform
-      - claim_status_form
       type: from_text
   get_claim_form:
     claim_id:
@@ -335,3 +331,18 @@ forms:
     - entity: scroll_status
       type: from_entity
     - type: from_text
+  file_new_claim_form:
+    claim_amount_submit:
+    - entity: claim_amount
+      type: from_text
+    confirm_file_new_claim:
+    - intent: affirm
+      type: from_intent
+      value: yes
+    - intent: deny
+      type: from_intent
+      value: no
+    - intent:
+      - inform
+      - claim_status_form
+      type: from_text

@@ -1,5 +1,6 @@
 """Custom actions"""
 import json
+import random
 import datetime
 from typing import Dict, Text, Any, List, Optional
 import logging
@@ -345,7 +346,7 @@ class ValidateGetClaimForm(FormValidationAction):
             return {"claim_id": claim_id}
 
 
-class ValidateClaimStatusForm(CustomFormValidationAction):
+class ValidateClaimStatusForm(FormValidationAction):
     """Validates data entered into the Claim Status Form."""
 
     def name(self) -> Text:
@@ -406,6 +407,65 @@ class ValidateClaimStatusForm(CustomFormValidationAction):
             return {"claim_id": None}
 
         return {"claim_id": claim_id}
+
+
+class ActionFileNewClaimForm(Action):
+
+    def name(self) -> Text:
+        return "action_file_new_claim_form"
+
+    async def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict]:
+
+        # Submit a new claim.
+        claim_id = "".join([str(random.randint(0, 9)) for i in range(6)])
+        claim_obj = {
+            "claim_id": claim_id,
+            "claim_balance": tracker.get_slot("claim_amount_submit"),
+            "claim_date": datetime.datetime.strftime(datetime.datetime.today(), "%Y%m%d"),
+            "claim_status": "Pending"
+        }
+
+        MOCK_DATA["claims"].append(claim_obj)
+
+        dispatcher.utter_message(f"Your claim has been submitted.\n\nFor reference the claim id is: {claim_id}")
+
+        reset_slots = ["claim_amount_submit", "confirm_file_new_claim"]
+        return [SlotSet(slot, None) for slot in reset_slots]
+
+
+class ValidateFileNewClaimForm(FormValidationAction):
+
+    def name(self) -> Text:
+        return "validate_file_new_claim_form"
+
+    async def validate_claim_amount_submit(
+            self,
+            value: Text,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+
+        # Submitted amount must be a number.
+        try:
+            submitted_amount = float(value)
+        except ValueError:
+            dispatcher.utter_message("You must submit a numeric value for the claim amount.")
+            return {"claim_amount_submit": None}
+
+        # Submitted amount must be greater than 0.
+        try:
+            assert submitted_amount > 0
+        except AssertionError:
+            dispatcher.utter_message("The amount you are claiming must be greater than zero.")
+            return {"claim_amount_submit": None}
+
+        return {"claim_amount_submit": submitted_amount}
 
 
 class ActionValidateScrollClaims(FormValidationAction):

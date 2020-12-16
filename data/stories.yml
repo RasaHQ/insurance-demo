@@ -8,6 +8,16 @@ stories:
   - active_loop: null
   - action: action_get_quote
   - action: utter_anything_else
+- story: member wants to file a new claim (happy path)
+  steps:
+  - intent: file_a_claim
+  - action: file_new_claim_form
+  - active_loop: file_new_claim_form
+  - slot_was_set:
+    - confirm_file_new_claim: true
+  - active_loop: null
+  - action: action_file_new_claim_form
+  - action: utter_anything_else
 - story: member needs a new ID card (happy path)
   steps:
   - intent: new_id_card
@@ -44,7 +54,7 @@ stories:
   - action: utter_ask_knows_claim_id
   - intent: affirm
   - slot_was_set:
-    - knows_claim_id: true
+    - knows_claim_id: 'true'
   - action: get_claim_form
   - active_loop: get_claim_form
   - active_loop: null
@@ -149,4 +159,52 @@ stories:
   - action: change_address_form
   - active_loop: change_address_form
   - active_loop: null
+  - action: utter_anything_else
+- story: Story from Conversation ID 19a0951d4f954aca8926e24f87c8eb2b
+  steps:
+  - intent: file_a_claim
+  - action: file_new_claim_form
+  - active_loop: file_new_claim_form
+  - slot_was_set:
+    - requested_slot: claim_amount_submit
+  - slot_was_set:
+    - claim_amount_submit: 100.0
+  - slot_was_set:
+    - requested_slot: confirm_file_new_claim
+  - slot_was_set:
+    - confirm_file_new_claim: yes
+  - slot_was_set:
+    - requested_slot: null
+  - active_loop: null
+  - action: action_file_new_claim_form
+  - slot_was_set:
+    - claim_amount_submit: null
+  - slot_was_set:
+    - confirm_file_new_claim: null
+  - action: utter_anything_else
+  - intent: claim_status
+  - action: utter_ask_knows_claim_id
+  - intent: affirm
+    entities:
+    - knows_claim_id: 'true'
+  - slot_was_set:
+    - knows_claim_id: 'true'
+  - action: get_claim_form
+  - active_loop: get_claim_form
+  - slot_was_set:
+    - requested_slot: claim_id
+  - intent: inform
+  - action: get_claim_form
+  - slot_was_set:
+    - claim_id: '995602'
+  - slot_was_set:
+    - requested_slot: null
+  - active_loop: null
+  - action: action_claim_status
+  - slot_was_set:
+    - knows_claim_id: null
+  - slot_was_set:
+    - AA_CONTINUE_FORM: null
+  - slot_was_set:
+    - zz_confirm_form: null
   - action: utter_anything_else
