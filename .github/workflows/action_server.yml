@@ -12,24 +12,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Login to DockerHub
-      run: echo "${{secrets.DOCKER_HUB_PASSWORD }}" | docker login -u {{env.DOCKER_HUB_LOGIN}} --password-stdin || true
-
-    - name: Pull latest
-      run: docker pull mvielkind/insurance-demo:latest || true
-
-    - name: Build Docker image
-      run: docker build . --tag mvielkind/insurance-demo:latest --cache-from mvielkind/insurance-demo:latest
-
-    - name: Push image with tag
-      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-      run: docker push mvielkind/insurance-demo:latest
-
-#    - id: action_server
-#      name: Build Insurance Pack Action Server from custom image
-#      uses: RasaHQ/action-server-gha@master
-#      with:
-#        docker_image_name: 'mvielkind/insurance_pack'
-#        docker_registry_login: ${{ secrets.DOCKER_HUB_LOGIN }}
-#        docker_registry_password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-#        docker_image_tag: ${{ github.sha }}
+    - id: action_server
+      name: Build Insurance Pack Action Server from custom image
+      uses: RasaHQ/action-server-gha@master
+      with:
+        docker_image_name: 'mvielkind/insurance_pack'
+        docker_registry_login: ${{ secrets.DOCKER_HUB_LOGIN }}
+        docker_registry_password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+        docker_image_tag: ${{ github.sha }}
