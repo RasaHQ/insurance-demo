@@ -1,9 +1,8 @@
+name: Build Action Server
 on:
   push:
     branches:
       - master
-    paths:
-    - 'actions/**'
 
 jobs:
   build_and_deploy:
