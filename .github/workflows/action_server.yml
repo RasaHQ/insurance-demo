@@ -1,0 +1,23 @@
+on:
+  push:
+    branches:
+      - main
+    paths:
+    - 'actions/**'
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    name: Build Action Server Image for Insurance Pack
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - id: action_server
+      name: Build Insurance Pack Action Server from custom image
+      uses: RasaHQ/action-server-gha@master
+      with:
+        docker_image_name: 'mvielkind/insurance_pack'
+        docker_registry_login: ${{ secrets.DOCKER_HUB_LOGIN }}
+        docker_registry_password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+        docker_image_tag: ${{ github.sha }}
