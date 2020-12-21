@@ -19,4 +19,5 @@ jobs:
         docker_image_name: 'mvielkind/insurance_pack'
         docker_registry_login: ${{ secrets.DOCKER_HUB_LOGIN }}
         docker_registry_password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+        requirements_file: "actions/requirements.txt"
         docker_image_tag: ${{ github.sha }}
