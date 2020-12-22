@@ -59,6 +59,7 @@ stories:
   - active_loop: get_claim_form
   - active_loop: null
   - action: action_claim_status
+  - action: utter_claims_scroll_exit_suggest_action
   - action: utter_anything_else
 - story: member wants to check claim status; does not know claim id; scroll pages of claims.
   steps:
@@ -69,19 +70,11 @@ stories:
     - knows_claim_id: 'false'
   - slot_was_set:
     - knows_claim_id: 'false'
-  - action: action_ask_recent_claims
-  - slot_was_set:
-    - page: 0
-  - action: utter_show_more_start
-  - slot_was_set:
-    - show_more: true
-  - intent: affirm
-  - action: action_ask_recent_claims
   - action: scroll_claims_form
   - active_loop: scroll_claims_form
-  - slot_was_set:
-    - scroll_status: stop
   - active_loop: null
+  - action: action_scroll_claims_form_exit
+  - action: utter_claims_scroll_exit_suggest_action
   - action: utter_anything_else
 - story: member wants to check status of a specific claim
   steps:
@@ -92,6 +85,7 @@ stories:
   - active_loop: get_claim_form
   - active_loop: null
   - action: action_claim_status
+  - action: utter_claims_scroll_exit_suggest_action
   - action: utter_anything_else
 - story: member wants to pay a claim (confirm payment)
   steps:
@@ -159,52 +153,4 @@ stories:
   - action: change_address_form
   - active_loop: change_address_form
   - active_loop: null
-  - action: utter_anything_else
-- story: Story from Conversation ID 19a0951d4f954aca8926e24f87c8eb2b
-  steps:
-  - intent: file_a_claim
-  - action: file_new_claim_form
-  - active_loop: file_new_claim_form
-  - slot_was_set:
-    - requested_slot: claim_amount_submit
-  - slot_was_set:
-    - claim_amount_submit: 100.0
-  - slot_was_set:
-    - requested_slot: confirm_file_new_claim
-  - slot_was_set:
-    - confirm_file_new_claim: yes
-  - slot_was_set:
-    - requested_slot: null
-  - active_loop: null
-  - action: action_file_new_claim_form
-  - slot_was_set:
-    - claim_amount_submit: null
-  - slot_was_set:
-    - confirm_file_new_claim: null
-  - action: utter_anything_else
-  - intent: claim_status
-  - action: utter_ask_knows_claim_id
-  - intent: affirm
-    entities:
-    - knows_claim_id: 'true'
-  - slot_was_set:
-    - knows_claim_id: 'true'
-  - action: get_claim_form
-  - active_loop: get_claim_form
-  - slot_was_set:
-    - requested_slot: claim_id
-  - intent: inform
-  - action: get_claim_form
-  - slot_was_set:
-    - claim_id: '995602'
-  - slot_was_set:
-    - requested_slot: null
-  - active_loop: null
-  - action: action_claim_status
-  - slot_was_set:
-    - knows_claim_id: null
-  - slot_was_set:
-    - AA_CONTINUE_FORM: null
-  - slot_was_set:
-    - zz_confirm_form: null
   - action: utter_anything_else

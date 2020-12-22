@@ -1,5 +1,6 @@
 """Custom actions"""
 import json
+import time
 import random
 import datetime
 from typing import Dict, Text, Any, List, Optional
@@ -468,12 +469,72 @@ class ValidateFileNewClaimForm(FormValidationAction):
         return {"claim_amount_submit": submitted_amount}
 
 
+class ActionScrollClaimsExit(Action):
+    """Cleans up claim scrolling upon form exit."""
+
+    def name(self) -> Text:
+        return "action_scroll_claims_form_exit"
+
+    async def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict]:
+        reset_slots = ["scroll_status", "scroll_claims", "page"]
+
+        return [SlotSet(s, None) for s in reset_slots]
+
+
+class ActionAskScrollClaims(Action):
+    """Gets the status of the user's last claim."""
+
+    def name(self) -> Text:
+        """Unique identifier for the action."""
+        return "action_ask_scroll_claims"
+
+    async def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict]:
+        # Get the claims on the page.
+        claim_page = tracker.get_slot("page")
+        scroll_status = tracker.get_slot("scroll_status")
+
+        msg_template = "utter_scroll_status_prev_next"
+        # Get the first initial page of claims.
+        if claim_page is None:
+            scroll_response = claims_scroll(claim_page, "init")
+            msg_template = "utter_scroll_status_next"
+        else:
+            scroll_response = claims_scroll(claim_page, scroll_status)
+
+        # Check if on last page.
+        if scroll_response["is_last_page"]:
+            msg_template = "utter_scroll_status_prev"
+        elif scroll_response["page"] == 0:
+            msg_template = "utter_scroll_status_next"
+
+        # Formulate the response message to the user.
+        for c in scroll_response["claims"]:
+            dispatcher.utter_message(template="utter_claim_detail", **c)
+            time.sleep(1)
+
+        print(scroll_status, msg_template)
+        time.sleep(1)
+        dispatcher.utter_message(template=msg_template)
+
+        return [SlotSet("page", scroll_response["page"])]
+
+
 class ActionValidateScrollClaims(FormValidationAction):
 
     def name(self) -> Text:
         return "validate_scroll_claims_form"
 
-    async def validate_scroll_status(
+    async def validate_scroll_claims(
         self,
         value: Text,
         dispatcher: CollectingDispatcher,
@@ -482,18 +543,12 @@ class ActionValidateScrollClaims(FormValidationAction):
     ) -> Dict[Text, Any]:
 
         # Get the claims on the page.
-        claim_page = tracker.get_slot("page")
-        scroll_status = value
+        scroll_status = tracker.get_slot("scroll_status")
 
         if scroll_status == "cancel":
-            return {"scroll_status": "stop"}
+            return {"scroll_claims": "stop"}
 
-        scroll_response = claims_scroll(claim_page, scroll_status)
-
-        for c in scroll_response["claims"]:
-            dispatcher.utter_message(template="utter_claim_detail", **c)
-
-        return {"scroll_status": None, "page": scroll_response["page"]}
+        return {"scroll_claims": None}
 
 
 class ActionPayClaim(Action):
@@ -655,6 +710,7 @@ def claims_scroll(curr_page, scroll_status):
         idx_end = idx_start + 2
 
     # Get claims on the page.
+    n_claims = len(MOCK_DATA["claims"])
     page_claims = MOCK_DATA["claims"][idx_start:idx_end]
     formatted_claims = []
     for clm in page_claims:
@@ -668,4 +724,6 @@ def claims_scroll(curr_page, scroll_status):
 
         formatted_claims.append(clm_params)
 
-    return {"page": curr_page, "claims": formatted_claims}
+    return {"page": curr_page,
+            "claims": formatted_claims,
+            "is_last_page": idx_end >= len(MOCK_DATA["claims"])}
