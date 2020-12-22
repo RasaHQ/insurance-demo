@@ -24,6 +24,7 @@ nlu:
     - i want to check the status of my claim
     - what is the status of claim [123456](claim_id)
     - has claim [4567890](claim_id) been paid?
+    - check the status of claim [643421](claim_id)
 - intent: file_a_claim
   examples: |
     - file a claim

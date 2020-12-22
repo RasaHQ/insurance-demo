@@ -56,6 +56,9 @@ slots:
   confirm_payment:
     type: bool
     influence_conversation: true
+  full_address:
+    type: any
+    influence_conversation: false
   knows_claim_id:
     type: any
     influence_conversation: false
@@ -182,7 +185,7 @@ responses:
       title: Yes
     - payload: /deny{{"confirm_payment":"false"}}
       title: No
-    text: 'Would you like to pay ${payment_amount} for claim {claim_id}?'
+    text: Would you like to pay ${payment_amount} for claim {claim_id}?
   utter_ask_pay_claim_form_payment_amount:
   - text: How much would you like to pay for claim {claim_id}?
   utter_cancel_payment:
@@ -196,7 +199,7 @@ responses:
       title: Yes
     - payload: /deny
       title: No
-    text: Is this your current address?\n{full_address}
+    text: "Is this your current address?\n{full_address}"
   utter_final_quote:
   - text: "Your monthly payment given the information provided is: ${final_quote}\
       \ per month\n\nInsurance Type: {insurance_type}\nPolicy State: {quote_state}\n\
@@ -214,6 +217,8 @@ responses:
       title: Pay a Claim
     - payload: /get_a_quote
       title: Get a Quote
+    - payload: /file_a_claim
+      title: File a Claim
     text: Howdy! What can I help you with today?
   utter_new_id_address_change:
   - text: Okay. Let's update your address so your new ID cards are sent to the right
