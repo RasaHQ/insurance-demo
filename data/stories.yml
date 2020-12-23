@@ -154,3 +154,55 @@ stories:
   - active_loop: change_address_form
   - active_loop: null
   - action: utter_anything_else
+- story: Story from Conversation ID ffe0fdf3437d464fb0cbcc812c256f74
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: file_a_claim
+  - action: file_new_claim_form
+  - active_loop: file_new_claim_form
+  - slot_was_set:
+    - requested_slot: claim_amount_submit
+  - slot_was_set:
+    - claim_amount_submit: 1500.0
+  - slot_was_set:
+    - requested_slot: confirm_file_new_claim
+  - slot_was_set:
+    - confirm_file_new_claim: yes
+  - slot_was_set:
+    - requested_slot: null
+  - active_loop: null
+  - action: action_file_new_claim_form
+  - slot_was_set:
+    - claim_amount_submit: null
+  - slot_was_set:
+    - confirm_file_new_claim: null
+  - action: utter_anything_else
+  - intent: affirm
+  - action: utter_main_menu
+- story: Story from Conversation ID ffe0fdf3437d464fb0cbcc812c256f74 (deny)
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: file_a_claim
+  - action: file_new_claim_form
+  - active_loop: file_new_claim_form
+  - slot_was_set:
+    - requested_slot: claim_amount_submit
+  - slot_was_set:
+    - claim_amount_submit: 1500.0
+  - slot_was_set:
+    - requested_slot: confirm_file_new_claim
+  - slot_was_set:
+    - confirm_file_new_claim: yes
+  - slot_was_set:
+    - requested_slot: null
+  - active_loop: null
+  - action: action_file_new_claim_form
+  - slot_was_set:
+    - claim_amount_submit: null
+  - slot_was_set:
+    - confirm_file_new_claim: null
+  - action: utter_anything_else
+  - intent: deny
+  - action: utter_goodbye

@@ -25,6 +25,7 @@ nlu:
     - what is the status of claim [123456](claim_id)
     - has claim [4567890](claim_id) been paid?
     - check the status of claim [643421](claim_id)
+    - I need to check my claim status
 - intent: file_a_claim
   examples: |
     - file a claim
@@ -101,6 +102,10 @@ nlu:
     - see you around
     - bye bye
     - see you later
+    - oh that's nice thank you
+    - adios
+    - thank you too
+    - ciao
 - intent: affirm
   examples: |
     - yes
@@ -118,6 +123,9 @@ nlu:
     - don't like that
     - no way
     - not really
+    - nope
+    - no thank you
+    - nah
 - intent: mood_great
   examples: |
     - perfect
@@ -162,6 +170,13 @@ nlu:
     - i need to change my address
     - update address
     - update my address
+- intent: ask_for_help
+  examples: |
+    - what can you do?
+    - help
+    - what can you help me with
+    - help me
+    - what else can you do?
 - synonym: auto
   examples: |
     - car
