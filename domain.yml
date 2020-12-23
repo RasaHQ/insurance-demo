@@ -185,11 +185,11 @@ responses:
       title: Yes
     - payload: /deny{{"confirm_payment":"false"}}
       title: No
-    text: Would you like to pay ${payment_amount} for claim {claim_id}?
+    text: "Would you like to pay ${payment_amount} for claim {claim_id}?"
   utter_ask_pay_claim_form_payment_amount:
-  - text: How much would you like to pay for claim {claim_id}?
+  - text: "How much would you like to pay for claim {claim_id}?"
   utter_cancel_payment:
-  - text: Payment for claim {claim_id} has been canceled.
+  - text: "Payment for claim {claim_id} has been canceled."
   utter_claim_payment_success:
   - text: "Thank you for your claim payment of ${amount_to_pay} for claim {claim_id}.\n\
       \nThe remaining balance for the claim is ${claim_balance}"
