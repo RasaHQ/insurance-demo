@@ -1,19 +1,23 @@
 version: "2.0"
-
 rules:
-
 - rule: Show greeting and options whenever user says hello or asks for help.
   conversation_start: true
   steps:
   - intent: greet
   - action: utter_greet
-
 - rule: Say goodbye anytime the user says goodbye
   steps:
   - intent: goodbye
   - action: utter_goodbye
-
 - rule: Say 'I am a bot' anytime the user challenges
   steps:
   - intent: bot_challenge
   - action: utter_iamabot
+- rule: Handle out of scope requests
+  steps:
+  - intent: out_of_scope
+  - action: utter_out_of_scope
+- rule: Ask user to rephrase their question
+  steps:
+  - intent: nlu_fallback
+  - action: utter_please_rephrase

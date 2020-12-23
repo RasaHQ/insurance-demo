@@ -16,6 +16,7 @@ intents:
 - update_member_info
 - pay_claim
 - file_a_claim
+- out_of_scope
 entities:
 - claim_id
 - knows_claim_id
@@ -185,11 +186,11 @@ responses:
       title: Yes
     - payload: /deny{{"confirm_payment":"false"}}
       title: No
-    text: "Would you like to pay ${payment_amount} for claim {claim_id}?"
+    text: 'Would you like to pay ${payment_amount} for claim {claim_id}?'
   utter_ask_pay_claim_form_payment_amount:
-  - text: "How much would you like to pay for claim {claim_id}?"
+  - text: How much would you like to pay for claim {claim_id}?
   utter_cancel_payment:
-  - text: "Payment for claim {claim_id} has been canceled."
+  - text: Payment for claim {claim_id} has been canceled.
   utter_claim_payment_success:
   - text: "Thank you for your claim payment of ${amount_to_pay} for claim {claim_id}.\n\
       \nThe remaining balance for the claim is ${claim_balance}"
@@ -270,6 +271,10 @@ responses:
   - text: I am a bot, powered by Rasa.
   utter_zero_balance:
   - text: Claim {claim_id} is fully paid.
+  utter_out_of_scope:
+  - text: I don't understand what you're asking.
+  utter_please_rephrase:
+  - text: I didn't quite understand that. Could you please rephrase?
 actions:
 - validate_quote_form
 - action_get_quote
