@@ -53,6 +53,8 @@ stories:
   - intent: claim_status
   - action: utter_ask_knows_claim_id
   - intent: affirm
+    entities:
+    - knows_claim_id: 'true'
   - slot_was_set:
     - knows_claim_id: 'true'
   - action: get_claim_form
