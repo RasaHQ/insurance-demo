@@ -339,6 +339,7 @@ class ValidateGetClaimForm(FormValidationAction):
         """Checks if the claim ID is valid for the member."""
         user_claims = MOCK_DATA["claims"]
         claim_id = tracker.get_slot("claim_id")
+        print("claim", claim_id)
 
         if str(claim_id) not in [clm["claim_id"] for clm in user_claims]:
             dispatcher.utter_message("The Claim ID you entered is not valid. Please check and try again.")
@@ -564,10 +565,17 @@ class ActionPayClaim(Action):
         tracker: Tracker,
         domain: Dict[Text, Any],
     ) -> List[Dict]:
+        reset_slots = ["claim_balance", "amount-of-money", "confirm_payment", "number", "claim_id"]
+
         # Get the claim provided by the user.
         user_clm_id = tracker.get_slot("claim_id")
-        amount_to_pay = tracker.get_slot("payment_amount")
+        amount_to_pay = tracker.get_slot("amount-of-money")
         claim_balance = tracker.get_slot("claim_balance")
+
+        if claim_balance == 0:
+            dispatcher.utter_message(template="utter_zero_balance")
+            reset_slots.append("claim_id")
+            return [SlotSet(slot, None) for slot in reset_slots]
 
         msg_params = {
             "claim_id": user_clm_id,
@@ -580,7 +588,6 @@ class ActionPayClaim(Action):
 
         dispatcher.utter_message(template="utter_claim_payment_success", **msg_params)
 
-        reset_slots = ["claim_balance", "payment_amount", "confirm_payment"]
         return [SlotSet(slot, None) for slot in reset_slots]
 
 
@@ -598,7 +605,7 @@ class ActionCancelPayment(Action):
     ) -> List[Dict]:
         dispatcher.utter_message(template="utter_cancel_payment")
 
-        reset_slots = ["claim_balance", "payment_amount", "claim_id", "confirm_payment"]
+        reset_slots = ["claim_balance", "payment_amount", "claim_id", "confirm_payment", "amount-of-money", "number"]
         return [SlotSet(slot, None) for slot in reset_slots]
 
 
@@ -618,18 +625,35 @@ class ValidatePayClaimForm(FormValidationAction):
         if tracker.slots.get("claim_balance"):
             claim_id = tracker.slots.get("claim_id")
             if tracker.slots.get("claim_balance") > 0:
-                additional_slots.append("payment_amount")
+                additional_slots.append("amount-of-money")
                 additional_slots.append("confirm_payment")
 
         return additional_slots + slots_mapped_in_domain
 
-    async def extract_payment_amount(
+    async def extract_amount_of_money(
             self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
     ) -> Dict[Text, Any]:
-        if tracker.slots["requested_slot"] == "payment_amount":
-            text_of_last_user_message = tracker.latest_message.get("text")
+        # Check if the user provided a proper dollar amount.
+        if tracker.slots["requested_slot"] == "amount-of-money":
+            amount_to_pay = None
+            last_message = tracker.latest_message
 
-            return {"payment_amount": text_of_last_user_message}
+            # Check contents of latest message before for a valid dollar amount.
+            try:
+                ent = next(item for item in last_message["entities"] if item["entity"] == "amount-of-money")
+                amount_to_pay = ent["value"]
+                return {"amount-of-money": amount_to_pay}
+            except StopIteration:
+                pass
+
+            try:
+                ent = next(item for item in last_message["entities"] if item["entity"] == "number")
+                amount_to_pay = ent["value"]
+                return {"amount-of-money": amount_to_pay}
+            except StopIteration:
+                pass
+
+            return {"amount-of-money": amount_to_pay}
 
     async def extract_confirm_payment(
             self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict

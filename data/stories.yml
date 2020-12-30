@@ -123,7 +123,7 @@ stories:
   - slot_was_set:
     - claim_balance: 0
   - active_loop: null
-  - action: utter_zero_balance
+  - action: action_pay_claim
   - action: utter_anything_else
 - story: happy path
   steps:

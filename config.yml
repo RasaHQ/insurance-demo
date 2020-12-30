@@ -13,6 +13,11 @@ pipeline:
 - name: EntitySynonymMapper
 - name: ResponseSelector
   epochs: 100
+- name: DucklingEntityExtractor
+  url: http://localhost:8000
+  dimensions:
+  - amount-of-money
+  - number
 - name: FallbackClassifier
   threshold: 0.7
   ambiguity_threshold: 0.1

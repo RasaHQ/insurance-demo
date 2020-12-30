@@ -24,6 +24,8 @@ entities:
 - quote_insurance_type
 - scroll_status
 - confirm_payment
+- amount-of-money
+- number
 slots:
   AA_CONTINUE_FORM:
     type: any
@@ -41,6 +43,9 @@ slots:
     type: any
     influence_conversation: false
   age:
+    type: any
+    influence_conversation: false
+  amount-of-money:
     type: any
     influence_conversation: false
   claim_amount_submit:
@@ -62,6 +67,9 @@ slots:
     type: any
     influence_conversation: false
   knows_claim_id:
+    type: any
+    influence_conversation: false
+  number:
     type: any
     influence_conversation: false
   page:
@@ -187,8 +195,8 @@ responses:
       title: Yes
     - payload: /deny{{"confirm_payment":"false"}}
       title: No
-    text: 'Would you like to pay ${payment_amount} for claim {claim_id}?'
-  utter_ask_pay_claim_form_payment_amount:
+    text: 'Would you like to pay ${amount-of-money} for claim {claim_id}?'
+  utter_ask_pay_claim_form_amount-of-money:
   - text: How much would you like to pay for claim {claim_id}?
   utter_cancel_payment:
   - text: Payment for claim {claim_id} has been canceled.
