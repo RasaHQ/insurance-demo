@@ -12,6 +12,7 @@ nlu:
     - send me a new id card
     - can you send me a new id card?
     - order a new id card
+    - I need a new ID card
 - intent: claim_status
   examples: |
     - what is the status of my claim?
@@ -63,6 +64,9 @@ nlu:
     - 100
     - 234567
     - 123
+    - [221322](claim_id)
+    - [221233](claim_id)
+    - [211233](claim_id)
 - intent: get_a_quote
   examples: |
     - i need insurance
@@ -105,8 +109,25 @@ nlu:
     - bye bye
     - see you later
     - ciao
-    - adios
     - thank you too
+    - oh that's nice thank you
+- intent: mood_unhappy
+  examples: |
+    - adios
+    - my day was horrible
+    - I am sad
+    - I don't feel very well
+    - I am disappointed
+    - super sad
+    - I'm so sad
+    - sad
+    - very sad
+    - unhappy
+    - not good
+    - not very good
+    - extremly sad
+    - so saad
+    - so sad
 - intent: affirm
   examples: |
     - yes
@@ -128,6 +149,7 @@ nlu:
     - no thank you
     - nah
     - No
+    - i doubt it
 - intent: mood_great
   examples: |
     - perfect
@@ -144,22 +166,6 @@ nlu:
     - so so perfect
     - so good
     - so perfect
-- intent: mood_unhappy
-  examples: |
-    - my day was horrible
-    - I am sad
-    - I don't feel very well
-    - I am disappointed
-    - super sad
-    - I'm so sad
-    - sad
-    - very sad
-    - unhappy
-    - not good
-    - not very good
-    - extremly sad
-    - so saad
-    - so sad
 - intent: bot_challenge
   examples: |
     - are you a bot?
@@ -176,10 +182,10 @@ nlu:
   examples: |
     - what is the weather?
     - how is the weather in New York
-    - tell me how to change a tire
     - what's for dinner?
 - intent: nlu_fallback
   examples: |
+    - tell me how to change a tire
     - i crashed my [car]{"entity": "quote_insurance_type", "value": "auto"}
 - synonym: auto
   examples: |
