@@ -37,6 +37,7 @@ nlu:
     - submit a claim
     - submit a new claim
     - make a new claim
+    - i crashed my [car]{"entity": "quote_insurance_type", "value": "auto"}
 - intent: pay_claim
   examples: |
     - pay a claim
@@ -67,6 +68,10 @@ nlu:
     - [221322](claim_id)
     - [221233](claim_id)
     - [211233](claim_id)
+    - 1500
+    - 100000
+    - 1,00,000
+    - 123457
 - intent: get_a_quote
   examples: |
     - i need insurance
@@ -95,6 +100,7 @@ nlu:
     - goodmorning
     - goodevening
     - good afternoon
+    - hi ther
 - intent: goodbye
   examples: |
     - good afternoon
@@ -136,6 +142,7 @@ nlu:
     - of course
     - that sounds good
     - correct
+    - yes obviously
 - intent: deny
   examples: |
     - no
@@ -186,7 +193,6 @@ nlu:
 - intent: nlu_fallback
   examples: |
     - tell me how to change a tire
-    - i crashed my [car]{"entity": "quote_insurance_type", "value": "auto"}
 - synonym: auto
   examples: |
     - car
