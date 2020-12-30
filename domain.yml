@@ -17,6 +17,7 @@ intents:
 - pay_claim
 - file_a_claim
 - out_of_scope
+- nlu_fallback
 entities:
 - claim_id
 - knows_claim_id
@@ -275,6 +276,10 @@ responses:
   - text: I don't understand what you're asking.
   utter_please_rephrase:
   - text: I didn't quite understand that. Could you please rephrase?
+  utter_chitchat:
+  - text: This is a piece of chitchat.
+  utter_default:
+  - text: Sorry I didn't get that. Can you rephrase?
 actions:
 - validate_quote_form
 - action_get_quote
