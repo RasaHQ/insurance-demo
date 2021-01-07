@@ -83,6 +83,12 @@ nlu:
     - [oklahoma](state)
     - [california](state)
     - [Texas](state)
+    - Boston
+    - [MA](state)
+    - AZ
+    - [Arizona](state) is valid
+    - [arizona](state)
+    - NY
 - intent: get_a_quote
   examples: |
     - i need insurance
@@ -175,6 +181,7 @@ nlu:
     - idk
     - i do not know
     - i dont know
+    - i don't know the ID
 - intent: mood_great
   examples: |
     - perfect
