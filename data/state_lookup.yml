@@ -1,0 +1,260 @@
+version: "2.0"
+nlu:
+- lookup: state
+  examples: |
+    - Alabama
+    - Alaska
+    - Arizona
+    - Arkansas
+    - California
+    - Colorado
+    - Connecticut
+    - Delaware
+    - Washington DC
+    - District of columbia
+    - Florida
+    - Georgia
+    - Hawaii
+    - Idaho
+    - Illinois
+    - Indiana
+    - Iowa
+    - Kansas
+    - Kentucky
+    - Louisiana
+    - Maine
+    - Maryland
+    - Massachusetts
+    - Michigan
+    - Minnesota
+    - Mississippi
+    - Missouri
+    - Montana
+    - Nebraska
+    - Nevada
+    - New Hampshire
+    - New Jersey
+    - New Mexico
+    - New York
+    - North Carolina
+    - North Dakota
+    - Ohio
+    - Oklahoma
+    - Oregon
+    - Pennsylvania
+    - Rhode Island
+    - South Carolina
+    - South Dakota
+    - Tennessee
+    - Texas
+    - Utah
+    - Vermont
+    - Washington
+    - West Virginia
+    - Wisconsin
+    - Wyoming
+
+- synonym: AL
+  examples: |
+    - alabama
+
+- synonym: AK
+  examples: |
+    - alaska
+
+- synonym: AZ
+  examples: |
+    - arizona
+
+- synonym: AR
+  examples: |
+    - arkansas
+
+- synonym: CA
+  examples: |
+    - california
+
+- synonym: CO
+  examples: |
+    - colorado
+
+- synonym: CT
+  examples: |
+    - connecticut
+
+- synonym: DE
+  examples: |
+    - delaware
+
+- synonym: DC
+  examples: |
+    - washington dc
+    - district of columbia
+
+- synonym: FL
+  examples: |
+    - florida
+
+- synonym: GA
+  examples: |
+    - georiga
+
+- synonym: HI
+  examples: |
+    - hawaii
+
+- synonym: ID
+  examples: |
+    - idaho
+
+- synonym: IL
+  examples: |
+    - illinois
+
+- synonym: IN
+  examples: |
+    - indiana
+
+- synonym: IA
+  examples: |
+    - iowa
+
+- synonym: KS
+  examples: |
+    - kansas
+
+- synonym: KY
+  examples: |
+    - kentucky
+
+- synonym: LA
+  examples: |
+    - louisiana
+
+- synonym: ME
+  examples: |
+    - maine
+
+- synonym: MD
+  examples: |
+    - maryland
+
+- synonym: MA
+  examples: |
+    - massachusetts
+
+- synonym: MI
+  examples: |
+    - michigan
+
+- synonym: MN
+  examples: |
+    - minnesota
+
+- synonym: MS
+  examples: |
+    - mississippi
+
+- synonym: MO
+  examples: |
+    - missouri
+
+- synonym: MT
+  examples: |
+    - montana
+
+- synonym: NE
+  examples: |
+    - nebraska
+
+- synonym: NV
+  examples: |
+    - nevada
+
+- synonym: NH
+  examples: |
+    - new hampshire
+
+- synonym: NJ
+  examples: |
+    - new jersey
+
+- synonym: NM
+  examples: |
+    - new mexico
+
+- synonym: NY
+  examples: |
+    - new york
+
+- synonym: NC
+  examples: |
+    - north carolina
+
+- synonym: ND
+  examples: |
+    - north dakota
+
+- synonym: OH
+  examples: |
+    - ohio
+
+- synonym: OK
+  examples: |
+    - oklahoma
+
+- synonym: OR
+  examples: |
+    - oregon
+
+- synonym: PA
+  examples: |
+    - pennsylvania
+
+- synonym: RI
+  examples: |
+    - rhode island
+
+- synonym: SC
+  examples: |
+    - south carolina
+
+- synonym: SD
+  examples: |
+    - south dakota
+
+- synonym: TN
+  examples: |
+    - tennessee
+
+- synonym: TX
+  examples: |
+    - texas
+
+- synonym: UT
+  examples: |
+    - utah
+
+- synonym: VT
+  examples: |
+    - vermont
+
+- synonym: VA
+  examples: |
+    - virginia
+
+- synonym: WA
+  examples: |
+    - washington
+
+- synonym: WV
+  examples: |
+    - west virginia
+
+- synonym: WI
+  examples: |
+    - wisconsin
+
+- synonym: WY
+  examples: |
+    - wyoming

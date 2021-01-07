@@ -34,6 +34,21 @@ US_STATES = ["AZ", "AL", "AK", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "
              "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
 
 
+class ActionRecentClaims(Action):
+    """Preps user to browse recent claims."""
+
+    def name(self) -> Text:
+        return "action_recent_claims"
+
+    def run(
+        self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
+    ) -> List[EventType]:
+
+        dispatcher.utter_message("Okay, here are a few of your recent claims.")
+
+        return [SlotSet("knows_claim_id", "false")]
+
+
 class AskConfirmAddress(Action):
     """Retrieves existing user address and asks for the user to verify the address."""
 
@@ -146,7 +161,8 @@ class ValidateChangeAddressForm(FormValidationAction):
             tracker: Tracker,
             domain: Dict[Text, Any]
     ) -> Dict[Text, Any]:
-        if value not in US_STATES:
+
+        if value.upper() not in US_STATES:
             dispatcher.utter_message(f"{value} is invalid. Please provide a valid state.")
             return {"address_state": None}
 

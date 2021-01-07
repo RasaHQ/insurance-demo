@@ -55,7 +55,6 @@ nlu:
     - abc
     - 16
     - 75
-    - i don't know
     - 1234567
     - health
     - life
@@ -72,6 +71,18 @@ nlu:
     - 100000
     - 1,00,000
     - 123457
+    - [New York](state)
+    - [Arizona](state)
+    - [New Jersey](state)
+    - [West Virginia](state)
+    - [Arkansas](state)
+    - [Washington](state)
+    - [new york](state)
+    - [Rhode Island](state)
+    - [Oregon](state)
+    - [oklahoma](state)
+    - [california](state)
+    - [Texas](state)
 - intent: get_a_quote
   examples: |
     - i need insurance
@@ -157,6 +168,13 @@ nlu:
     - nah
     - No
     - i doubt it
+- intent: uncertain
+  examples: |
+    - i don't know
+    - i'm not sure
+    - idk
+    - i do not know
+    - i dont know
 - intent: mood_great
   examples: |
     - perfect
@@ -185,6 +203,7 @@ nlu:
     - i need to change my address
     - update address
     - update my address
+    - change my address
 - intent: out_of_scope
   examples: |
     - what is the weather?

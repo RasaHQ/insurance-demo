@@ -18,6 +18,7 @@ intents:
 - file_a_claim
 - out_of_scope
 - nlu_fallback
+- uncertain
 entities:
 - claim_id
 - knows_claim_id
@@ -26,8 +27,13 @@ entities:
 - confirm_payment
 - amount-of-money
 - number
+- state
+- RASA_US_STATE_ABBREV
 slots:
   AA_CONTINUE_FORM:
+    type: any
+    influence_conversation: false
+  RASA_US_STATE_ABBREV:
     type: any
     influence_conversation: false
   address_city:
@@ -110,6 +116,9 @@ slots:
   show_more:
     type: bool
     influence_conversation: true
+  state:
+    type: text
+    influence_conversation: false
   verify_address:
     type: bool
     influence_conversation: true
@@ -197,7 +206,8 @@ responses:
       title: No
     text: 'Would you like to pay ${amount-of-money} for claim {claim_id}?'
   utter_ask_pay_claim_form_amount-of-money:
-  - text: How much would you like to pay for claim {claim_id}?
+  - text: 'Claim {claim_id} has an outstanding balance of ${claim_balance}. How much
+      would you like to pay?'
   utter_cancel_payment:
   - text: Payment for claim {claim_id} has been canceled.
   utter_claim_payment_success:
@@ -310,6 +320,7 @@ actions:
 - validate_pay_claim_form
 - action_file_new_claim_form
 - validate_file_new_claim_form
+- action_recent_claims
 forms:
   verify_address_form:
     verify_address:
@@ -333,7 +344,7 @@ forms:
       type: from_entity
     - type: from_text
     quote_state:
-    - entity: quote_state
+    - entity: state
       type: from_entity
     - type: from_text
   claim_status_form:
@@ -350,8 +361,9 @@ forms:
     - entity: address_city
       type: from_text
     address_state:
-    - entity: address_state
-      type: from_text
+    - entity: state
+      type: from_entity
+    - type: from_text
     address_street:
     - entity: address_street
       type: from_text
@@ -361,11 +373,14 @@ forms:
   pay_claim_form:
     claim_id:
     - entity: claim_id
+      not_intent:
+      - uncertain
+      - deny
       type: from_entity
-    - type: from_text
   scroll_claims_form:
     scroll_claims:
     - entity: scroll_claims
+      not_intent: uncertain
       type: from_entity
     - type: from_text
   file_new_claim_form:

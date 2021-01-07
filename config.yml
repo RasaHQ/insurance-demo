@@ -1,7 +1,10 @@
 language: en
 pipeline:
 - name: WhitespaceTokenizer
-- name: RegexFeaturizer
+- name: RegexEntityExtractor
+  case_sensitive: False
+  use_lookup_tables: True
+  use_regexes: True
 - name: LexicalSyntacticFeaturizer
 - name: CountVectorsFeaturizer
 - name: CountVectorsFeaturizer
@@ -19,7 +22,7 @@ pipeline:
   - amount-of-money
   - number
 - name: FallbackClassifier
-  threshold: 0.7
+  threshold: 0.3
   ambiguity_threshold: 0.1
 policies:
 - name: MemoizationPolicy

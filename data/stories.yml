@@ -89,42 +89,6 @@ stories:
   - action: action_claim_status
   - action: utter_claims_scroll_exit_suggest_action
   - action: utter_anything_else
-- story: member wants to pay a claim (confirm payment)
-  steps:
-  - intent: pay_claim
-  - action: pay_claim_form
-  - active_loop: pay_claim_form
-  - slot_was_set:
-    - requested_slot: payment_amount
-  - slot_was_set:
-    - confirm_payment: true
-  - active_loop: null
-  - action: action_pay_claim
-  - action: utter_anything_else
-- story: member wants to pay a claim (cancel payment)
-  steps:
-  - intent: pay_claim
-  - action: pay_claim_form
-  - active_loop: pay_claim_form
-  - slot_was_set:
-    - requested_slot: payment_amount
-  - slot_was_set:
-    - confirm_payment: false
-  - active_loop: null
-  - action: action_cancel_payment
-  - action: utter_anything_else
-- story: member wants to pay a claim w zero balance
-  steps:
-  - intent: pay_claim
-  - action: pay_claim_form
-  - active_loop: pay_claim_form
-  - slot_was_set:
-    - requested_slot: null
-  - slot_was_set:
-    - claim_balance: 0
-  - active_loop: null
-  - action: action_pay_claim
-  - action: utter_anything_else
 - story: happy path
   steps:
   - intent: greet
@@ -155,4 +119,50 @@ stories:
   - action: change_address_form
   - active_loop: change_address_form
   - active_loop: null
+  - action: utter_anything_else
+- story: pay claim, uncertain, decline
+  steps:
+  - intent: pay_claim
+  - action: pay_claim_form
+  - active_loop: pay_claim_form
+  - or:
+    - intent: uncertain
+    - intent: deny
+    - intent: claim_status
+  - action: action_deactivate_loop
+  - active_loop: null
+  - action: action_recent_claims
+  - action: scroll_claims_form
+  - active_loop: scroll_claims_form
+  - active_loop: null
+  - action: action_scroll_claims_form_exit
+  - action: pay_claim_form
+  - active_loop: pay_claim_form
+  - active_loop: null
+  - slot_was_set:
+    - confirm_payment: false
+  - action: utter_cancel_payment
+  - action: utter_anything_else
+- story: pay claim, uncertain, confirm
+  steps:
+  - intent: pay_claim
+  - action: pay_claim_form
+  - active_loop: pay_claim_form
+  - or:
+    - intent: uncertain
+    - intent: deny
+    - intent: claim_status
+  - action: action_deactivate_loop
+  - active_loop: null
+  - action: action_recent_claims
+  - action: scroll_claims_form
+  - active_loop: scroll_claims_form
+  - active_loop: null
+  - action: action_scroll_claims_form_exit
+  - action: pay_claim_form
+  - active_loop: pay_claim_form
+  - active_loop: null
+  - slot_was_set:
+    - confirm_payment: true
+  - action: action_pay_claim
   - action: utter_anything_else
