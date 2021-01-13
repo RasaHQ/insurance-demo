@@ -29,6 +29,11 @@ nlu:
     - check the status of a claim
     - I need to check my claim status
     - check claim status
+    - view my claims
+    - show my claims
+    - view my recent claims
+    - show me my claims
+    - what is my claim history
 - intent: file_a_claim
   examples: |
     - file a claim
@@ -38,17 +43,20 @@ nlu:
     - submit a new claim
     - make a new claim
     - i crashed my [car]{"entity": "quote_insurance_type", "value": "auto"}
-- intent: pay_claim
+- intent: make_payment
   examples: |
-    - pay a claim
+    - pay a [claim](payment_type)
     - make a payment
-    - pay off a claim
+    - pay off a [claim](payment_type)
     - pay what i owe
     - pay my bill
     - submit a payment
-    - pay claim
+    - pay [claim](payment_type)
     - pay bill
-    - i want to pay a claim
+    - i want to pay a [claim](payment_type)
+    - pay my [premium](payment_type)
+    - pay this month's [premium](payment_type)
+    - pay my [premium](payment_type) for this month
 - intent: inform
   examples: |
     - 34
@@ -223,3 +231,7 @@ nlu:
 - regex: claim_id
   examples: |
     - \d{5,7}
+- lookup: payment_type
+  examples: |
+    - claim
+    - premium

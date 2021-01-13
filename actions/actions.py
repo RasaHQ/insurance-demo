@@ -34,6 +34,138 @@ US_STATES = ["AZ", "AL", "AK", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "
              "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
 
 
+class ActionAskPayPremiumInFull(Action):
+    """Preps user to browse recent claims."""
+
+    def name(self) -> Text:
+        return "action_ask_pay_premium_in_full"
+
+    def run(
+        self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
+    ) -> List[EventType]:
+        premium_balance = MOCK_DATA["member_info"]["premium_amt"]
+
+        dispatcher.utter_message(template="utter_clarify_pay_premium_in_full", premium_balance=str(premium_balance))
+
+        return [SlotSet("premium_balance", premium_balance)]
+
+
+class ActionAskPremiumPaymentAmount(Action):
+    """Preps user to browse recent claims."""
+
+    def name(self) -> Text:
+        return "action_ask_premium_payment_amount"
+
+    def run(
+        self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
+    ) -> List[EventType]:
+        premium_balance = MOCK_DATA["member_info"]["premium_amt"]
+
+        dispatcher.utter_message(f"Your outstanding premium is ${str(premium_balance)}. How much would you like to pay "
+                                 f"towards your premium balance?")
+
+        return []
+
+
+class ActionProcessPremiumPayment(Action):
+
+    def name(self) -> Text:
+        return "action_process_premium_payment"
+
+    def run(
+        self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
+    ) -> List[EventType]:
+        slots_to_reset = [
+            "premium_balance",
+            "premium_payment_amount",
+            "pay_premium_in_full",
+            "z_confirm_premium_payment",
+            "payment_type",
+            "number"
+        ]
+
+        premium_balance = tracker.get_slot("premium_balance")
+        premium_payment = tracker.get_slot("premium_payment_amount")
+
+        outstanding_balance = premium_balance - premium_payment
+
+        if tracker.get_slot("z_confirm_premium_payment"):
+            if outstanding_balance == 0:
+                dispatcher.utter_message("Thank you for your payment. Your premium this month is fully paid.")
+            else:
+                dispatcher.utter_message(f"Thank you for your payment. There is a ${str(outstanding_balance)} remaining "
+                                         f"for this month's premium.")
+        else:
+            dispatcher.utter_message(template="utter_cancel_payment")
+
+        return [SlotSet(s, None) for s in slots_to_reset]
+
+
+class ValidatePremiumPaymentForm(FormValidationAction):
+
+    def name(self) -> Text:
+        return "validate_pay_premium_form"
+
+    async def required_slots(
+        self,
+        slots_mapped_in_domain: List[Text],
+        dispatcher: "CollectingDispatcher",
+        tracker: "Tracker",
+        domain: "DomainDict",
+    ) -> Optional[List[Text]]:
+        additional_slots = []
+        if (tracker.slots.get("pay_premium_in_full") == 'false') & (tracker.slots.get("premium_payment_amount") is None):
+            additional_slots.append("premium_payment_amount")
+
+        return additional_slots + slots_mapped_in_domain
+
+    async def extract_premium_payment_amount(
+        self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
+    ) -> Dict[Text, Any]:
+        payment_amount = next(tracker.get_latest_entity_values("number"), None)
+
+        if payment_amount is None:
+            payment_amount = next(tracker.get_latest_entity_values("amount-of-money"), None)
+
+        return {"premium_payment_amount": payment_amount}
+
+    async def validate_pay_premium_in_full(
+            self,
+            value: Text,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+        if tracker.get_slot("pay_premium_in_full") == "true":
+            return {"pay_premium_in_full": value, "premium_payment_amount": int(tracker.get_slot("premium_balance"))}
+
+        return {"pay_premium_in_full": value}
+
+    async def validate_premium_payment_amount(
+            self,
+            value: Text,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+        if tracker.get_slot("requested_slot") != "premium_payment_amount":
+            return {}
+        if tracker.get_slot("premium_payment_amount") is None:
+            return {"premium_payment_amount": None}
+        outstanding_balance = int(tracker.get_slot("premium_balance"))
+        premium_payment_amount = int(tracker.get_slot("premium_payment_amount"))
+
+        if premium_payment_amount > outstanding_balance:
+            dispatcher.utter_message(f"Invalid payment amount. Your outstanding amount my be less than or equal to "
+                                     f"${str(outstanding_balance)}")
+            return {"premium_payment_amount": None}
+        elif premium_payment_amount <= 0:
+            dispatcher.utter_message("Payment amount must be greater than $0.")
+            return {"premium_payment_amount": premium_payment_amount}
+
+        return {"premium_payment_amount": premium_payment_amount}
+
+
 class ActionRecentClaims(Action):
     """Preps user to browse recent claims."""
 
@@ -767,3 +899,4 @@ def claims_scroll(curr_page, scroll_status):
     return {"page": curr_page,
             "claims": formatted_claims,
             "is_last_page": idx_end >= len(MOCK_DATA["claims"])}
+

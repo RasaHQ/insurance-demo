@@ -122,7 +122,9 @@ stories:
   - action: utter_anything_else
 - story: pay claim, uncertain, decline
   steps:
-  - intent: pay_claim
+  - intent: make_payment
+  - slot_was_set:
+    - payment_type: claim
   - action: pay_claim_form
   - active_loop: pay_claim_form
   - or:
@@ -145,7 +147,9 @@ stories:
   - action: utter_anything_else
 - story: pay claim, uncertain, confirm
   steps:
-  - intent: pay_claim
+  - intent: make_payment
+  - slot_was_set:
+    - payment_type: claim
   - action: pay_claim_form
   - active_loop: pay_claim_form
   - or:
@@ -165,4 +169,50 @@ stories:
   - slot_was_set:
     - confirm_payment: true
   - action: action_pay_claim
+  - action: utter_anything_else
+- story: pay claim zero balance
+  steps:
+  - intent: make_payment
+  - slot_was_set:
+    - payment_type: claim
+  - action: pay_claim_form
+  - active_loop: pay_claim_form
+  - slot_was_set:
+    - claim_balance: 0
+  - active_loop: null
+  - action: action_pay_claim
+  - action: utter_anything_else
+- story: make a payment, pay claim
+  steps:
+  - intent: make_payment
+  - action: utter_clarify_payment_type
+  - intent: inform
+  - slot_was_set:
+    - payment_type: claim
+  - action: pay_claim_form
+  - active_loop: pay_claim_form
+  - active_loop: null
+  - action: action_pay_claim
+  - action: utter_anything_else
+- story: make a payment, pay premium
+  steps:
+  - intent: make_payment
+  - action: utter_clarify_payment_type
+  - intent: inform
+  - slot_was_set:
+    - payment_type: premium
+  - action: pay_premium_form
+  - active_loop: pay_premium_form
+  - active_loop: null
+  - action: action_process_premium_payment
+  - action: utter_anything_else
+- story: pay premium
+  steps:
+  - intent: make_payment
+  - slot_was_set:
+    - payment_type: premium
+  - action: pay_premium_form
+  - active_loop: pay_premium_form
+  - active_loop: null
+  - action: action_process_premium_payment
   - action: utter_anything_else

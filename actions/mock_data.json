@@ -37,7 +37,8 @@
       "address_city": "Lynn",
       "address_state": "MA",
       "address_zip": "01902"
-    }
+    },
+    "premium_amt": 100
   },
   "policy_quote": {
     "insurance_type": {

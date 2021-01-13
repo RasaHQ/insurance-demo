@@ -14,11 +14,11 @@ intents:
 - get_a_quote
 - inform
 - update_member_info
-- pay_claim
 - file_a_claim
 - out_of_scope
 - nlu_fallback
 - uncertain
+- make_payment
 entities:
 - claim_id
 - knows_claim_id
@@ -27,6 +27,7 @@ entities:
 - confirm_payment
 - amount-of-money
 - number
+- payment_type
 - state
 - RASA_US_STATE_ABBREV
 slots:
@@ -81,8 +82,20 @@ slots:
   page:
     type: any
     influence_conversation: false
+  pay_premium_in_full:
+    type: any
+    influence_conversation: false
   payment_amount:
     type: any
+    influence_conversation: false
+  payment_type:
+    type: text
+    influence_conversation: true
+  premium_balance:
+    type: text
+    influence_conversation: false
+  premium_payment_amount:
+    type: text
     influence_conversation: false
   quote_insurance_type:
     type: categorical
@@ -120,6 +133,9 @@ slots:
     type: text
     influence_conversation: false
   verify_address:
+    type: bool
+    influence_conversation: true
+  z_confirm_premium_payment:
     type: bool
     influence_conversation: true
   zz_confirm_form:
@@ -194,6 +210,14 @@ responses:
     text: Do you know the ID of the claim?
   utter_ask_claim_status_form_claim_id:
   - text: What is the claim ID you'd like to lookup?
+  utter_ask_z_confirm_premium_payment:
+  - buttons:
+    - payload: /affirm
+      title: Yes
+    - payload: /deny
+      title: No
+    text: 'Do you want to continue with your ${premium_payment_amount} payment towards
+      your premium?'
   utter_ask_get_claim_form_claim_id:
   - text: What is the ID of the claim you'd like to lookup?
   utter_ask_pay_claim_form_claim_id:
@@ -209,10 +233,25 @@ responses:
   - text: 'Claim {claim_id} has an outstanding balance of ${claim_balance}. How much
       would you like to pay?'
   utter_cancel_payment:
-  - text: Payment for claim {claim_id} has been canceled.
+  - text: Your payment has been cancelled.
   utter_claim_payment_success:
   - text: "Thank you for your claim payment of ${amount_to_pay} for claim {claim_id}.\n\
       \nThe remaining balance for the claim is ${claim_balance}"
+  utter_clarify_pay_premium_in_full:
+  - buttons:
+    - payload: /inform{{"pay_in_full":"true"}}
+      title: Pay Outstanding Balance
+    - payload: /inform{{"pay_in_full":"false"}}
+      title: Pay Other Amount
+    text: 'Your outstanding premium blance is ${premium_balance}. What would you like
+      to do?'
+  utter_clarify_payment_type:
+  - buttons:
+    - payload: /inform{{"payment_type":"claim"}}
+      title: Claim
+    - payload: /inform{{"payment_type":"premium"}}
+      title: Premium
+    text: Would you like to pay your premium or a claim?
   utter_confirm_address:
   - buttons:
     - payload: /affirm
@@ -321,6 +360,10 @@ actions:
 - action_file_new_claim_form
 - validate_file_new_claim_form
 - action_recent_claims
+- action_ask_premium_payment_amount
+- action_ask_pay_premium_in_full
+- action_process_premium_payment
+- validate_pay_premium_form
 forms:
   verify_address_form:
     verify_address:
@@ -377,6 +420,18 @@ forms:
       - uncertain
       - deny
       type: from_entity
+  pay_premium_form:
+    pay_premium_in_full:
+    - entity: pay_in_full
+      intent: inform
+      type: from_entity
+    z_confirm_premium_payment:
+    - intent: affirm
+      type: from_intent
+      value: true
+    - intent: deny
+      type: from_intent
+      value: false
   scroll_claims_form:
     scroll_claims:
     - entity: scroll_claims
