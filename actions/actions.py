@@ -161,7 +161,7 @@ class ValidatePremiumPaymentForm(FormValidationAction):
             return {"premium_payment_amount": None}
         elif premium_payment_amount <= 0:
             dispatcher.utter_message("Payment amount must be greater than $0.")
-            return {"premium_payment_amount": premium_payment_amount}
+            return {"premium_payment_amount": None}
 
         return {"premium_payment_amount": premium_payment_amount}
 

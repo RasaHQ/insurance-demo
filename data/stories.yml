@@ -145,7 +145,7 @@ stories:
   - action: utter_anything_else
 - story: make a payment, pay claim
   steps:
-  - intent: make_payment, claim
+  - intent: make_payment
   - action: utter_clarify_payment_type
   - intent: inform
   - slot_was_set:
