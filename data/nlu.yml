@@ -34,6 +34,7 @@ nlu:
     - view my recent claims
     - show me my claims
     - what is my claim history
+    - get [claim](payment_type) status
 - intent: file_a_claim
   examples: |
     - file a claim
@@ -91,6 +92,15 @@ nlu:
     - [oklahoma](state)
     - [california](state)
     - [Texas](state)
+    - [arizona]{"entity": "state", "value": "AZ"}[arizona]{"entity": "state", "value": "AZ"}
+    - 3
+    - [NY](state)
+    - 2
+    - [NM](state)
+    - 4
+    - Albany
+    - [12054](claim_id)
+    - 32 Alden Ct
 - intent: get_a_quote
   examples: |
     - i need insurance
@@ -104,6 +114,8 @@ nlu:
     - how much will coverage cost?
     - how much will insurance cost?
     - can i get an insurance quote?
+    - i need an insurance quote
+    - give me a [health](quote_insurance_type) insurance quote
 - intent: greet
   examples: |
     - hey
@@ -120,6 +132,7 @@ nlu:
     - goodevening
     - good afternoon
     - hi ther
+    - hi there
 - intent: goodbye
   examples: |
     - good afternoon
@@ -176,6 +189,8 @@ nlu:
     - nah
     - No
     - i doubt it
+    - ni
+    - not right now
 - intent: uncertain
   examples: |
     - i don't know
@@ -212,14 +227,17 @@ nlu:
     - update address
     - update my address
     - change my address
+    - help me update my member info
 - intent: out_of_scope
   examples: |
     - what is the weather?
     - how is the weather in New York
     - what's for dinner?
+    - tell me about insurance?
 - intent: nlu_fallback
   examples: |
     - tell me how to change a tire
+    - something totally random
 - synonym: auto
   examples: |
     - car
@@ -231,7 +249,3 @@ nlu:
 - regex: claim_id
   examples: |
     - \d{5,7}
-- lookup: payment_type
-  examples: |
-    - claim
-    - premium
