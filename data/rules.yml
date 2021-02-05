@@ -21,3 +21,11 @@ rules:
   steps:
   - intent: nlu_fallback
   - action: utter_please_rephrase
+- rule: Cancel Insurance quote
+  condition:
+  - active_loop: quote_form
+  steps:
+  - action: action_deactivate_loop
+  - active_loop: null
+  - action: utter_cancel_insurance_quote
+  - action: utter_anything_else

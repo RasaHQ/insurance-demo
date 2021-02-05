@@ -101,6 +101,7 @@ nlu:
     - Albany
     - [12054](claim_id)
     - 32 Alden Ct
+    - [arizona]{"entity": "state", "value": "AZ"}[arizona]{"entity": "state", "value": "AZ"}
 - intent: get_a_quote
   examples: |
     - i need insurance
@@ -238,10 +239,17 @@ nlu:
   examples: |
     - tell me how to change a tire
     - something totally random
+- intent: cancel_action
+  examples: |
+    - nevermind
+    - exit
 - synonym: auto
   examples: |
     - car
     - automobile
+- synonym: AZ
+  examples: |
+    - arizona
 - synonym: healh
   examples: |
     - healthcare

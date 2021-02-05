@@ -1,24 +1,46 @@
+version: '2.0'
+config:
+  store_entities_as_slots: true
 session_config:
   session_expiration_time: 60
   carry_over_slots_to_new_session: true
 intents:
-- greet
-- goodbye
-- affirm
-- deny
-- mood_great
-- mood_unhappy
-- bot_challenge
-- new_id_card
-- claim_status
-- get_a_quote
-- inform
-- update_member_info
-- file_a_claim
-- out_of_scope
-- nlu_fallback
-- uncertain
-- make_payment
+- greet:
+    use_entities: true
+- goodbye:
+    use_entities: true
+- affirm:
+    use_entities: true
+- deny:
+    use_entities: true
+- mood_great:
+    use_entities: true
+- mood_unhappy:
+    use_entities: true
+- bot_challenge:
+    use_entities: true
+- new_id_card:
+    use_entities: true
+- claim_status:
+    use_entities: true
+- get_a_quote:
+    use_entities: true
+- inform:
+    use_entities: true
+- update_member_info:
+    use_entities: true
+- file_a_claim:
+    use_entities: true
+- out_of_scope:
+    use_entities: true
+- nlu_fallback:
+    use_entities: true
+- uncertain:
+    use_entities: true
+- make_payment:
+    use_entities: true
+- cancel_action:
+    use_entities: true
 entities:
 - claim_id
 - knows_claim_id
@@ -32,73 +54,119 @@ entities:
 - RASA_US_STATE_ABBREV
 slots:
   AA_CONTINUE_FORM:
-    type: any
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   RASA_US_STATE_ABBREV:
-    type: any
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   address_city:
-    type: any
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   address_state:
-    type: any
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   address_street:
-    type: any
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   address_zip:
-    type: any
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   age:
-    type: any
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   amount-of-money:
-    type: any
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   claim_amount_submit:
-    type: any
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   claim_balance:
-    type: any
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   claim_id:
-    type: any
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   confirm_file_new_claim:
-    type: bool
+    type: rasa.shared.core.slots.BooleanSlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: true
   confirm_payment:
-    type: bool
+    type: rasa.shared.core.slots.BooleanSlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: true
   full_address:
-    type: any
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   knows_claim_id:
-    type: any
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   number:
-    type: any
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   page:
-    type: any
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   pay_premium_in_full:
-    type: any
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   payment_amount:
-    type: any
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   payment_type:
-    type: text
+    type: rasa.shared.core.slots.TextSlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: true
   premium_balance:
-    type: text
+    type: rasa.shared.core.slots.TextSlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   premium_payment_amount:
-    type: text
+    type: rasa.shared.core.slots.TextSlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   quote_insurance_type:
-    type: categorical
+    type: rasa.shared.core.slots.CategoricalSlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
     values:
     - life
@@ -106,40 +174,64 @@ slots:
     - auto
     - health
   quote_number_persons:
-    type: any
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   quote_state:
-    type: any
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   recent_claims:
-    type: any
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   repeated_validation_failures:
-    type: any
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   requested_slot:
-    type: any
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   scroll_claims:
-    type: any
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   scroll_status:
-    type: text
+    type: rasa.shared.core.slots.TextSlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: true
   show_more:
-    type: bool
+    type: rasa.shared.core.slots.BooleanSlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: true
   state:
-    type: text
+    type: rasa.shared.core.slots.TextSlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   verify_address:
-    type: bool
+    type: rasa.shared.core.slots.BooleanSlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: true
   z_confirm_premium_payment:
-    type: bool
+    type: rasa.shared.core.slots.BooleanSlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: true
   zz_confirm_form:
-    type: any
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
 responses:
   utter_ask_address_street:
@@ -216,8 +308,7 @@ responses:
       title: Yes
     - payload: /deny
       title: No
-    text: 'Do you want to continue with your ${premium_payment_amount} payment towards
-      your premium?'
+    text: 'Do you want to continue with your ${premium_payment_amount} payment towards your premium?'
   utter_ask_get_claim_form_claim_id:
   - text: What is the ID of the claim you'd like to lookup?
   utter_ask_pay_claim_form_claim_id:
@@ -230,21 +321,21 @@ responses:
       title: No
     text: 'Would you like to pay ${amount-of-money} for claim {claim_id}?'
   utter_ask_pay_claim_form_amount-of-money:
-  - text: 'Claim {claim_id} has an outstanding balance of ${claim_balance}. How much
-      would you like to pay?'
+  - text: 'Claim {claim_id} has an outstanding balance of ${claim_balance}. How much would you like to pay?'
   utter_cancel_payment:
   - text: Your payment has been cancelled.
   utter_claim_payment_success:
-  - text: "Thank you for your claim payment of ${amount_to_pay} for claim {claim_id}.\n\
-      \nThe remaining balance for the claim is ${claim_balance}"
+  - text: |-
+      Thank you for your claim payment of ${amount_to_pay} for claim {claim_id}.
+
+      The remaining balance for the claim is ${claim_balance}
   utter_clarify_pay_premium_in_full:
   - buttons:
     - payload: /inform{{"pay_in_full":"true"}}
       title: Pay Outstanding Balance
     - payload: /inform{{"pay_in_full":"false"}}
       title: Pay Other Amount
-    text: 'Your outstanding premium blance is ${premium_balance}. What would you like
-      to do?'
+    text: 'Your outstanding premium blance is ${premium_balance}. What would you like to do?'
   utter_clarify_payment_type:
   - buttons:
     - payload: /inform{{"payment_type":"claim"}}
@@ -258,14 +349,18 @@ responses:
       title: Yes
     - payload: /deny
       title: No
-    text: "Is this your current address?\n{full_address}"
+    text: |-
+      Is this your current address?
+      {full_address}
   utter_final_quote:
-  - text: "Your monthly payment given the information provided is: ${final_quote}\
-      \ per month\n\nInsurance Type: {insurance_type}\nPolicy State: {quote_state}\n\
-      Number of people on policy: {n_persons}"
+  - text: |-
+      Your monthly payment given the information provided is: ${final_quote} per month
+
+      Insurance Type: {insurance_type}
+      Policy State: {quote_state}
+      Number of people on policy: {n_persons}
   utter_get_a_quote:
-  - text: Quote here. Have a form to ask what type of insurance, age, gender, state
-      etc. to fulfill request.
+  - text: Quote here. Have a form to ask what type of insurance, age, gender, state etc. to fulfill request.
   utter_greet:
   - buttons:
     - payload: /claim_status
@@ -280,8 +375,7 @@ responses:
       title: File a Claim
     text: Howdy! What can I help you with today?
   utter_new_id_address_change:
-  - text: Okay. Let's update your address so your new ID cards are sent to the right
-      address.
+  - text: Okay. Let's update your address so your new ID cards are sent to the right address.
   utter_new_id_card:
   - text: Sure, I can help you get a new id card!
   utter_scroll_status_next:
@@ -310,8 +404,7 @@ responses:
   utter_claims_scroll_exit_suggest_action:
   - text: I can also help you make a payment towards one of your claims.
   utter_claim_detail:
-  - text: 'Claim ID: {claim_id}\nClaim Date: {claim_date}\nAmount Owed: {claim_balance}\nClaim
-      Status: {claim_status}'
+  - text: 'Claim ID: {claim_id}\nClaim Date: {claim_date}\nAmount Owed: {claim_balance}\nClaim Status: {claim_status}'
   utter_claim_id_provided:
   - text: Let me get the status for claim {claim_id}
   utter_claim_status:
@@ -337,6 +430,8 @@ responses:
   - text: This is a piece of chitchat.
   utter_default:
   - text: Sorry I didn't get that. Can you rephrase?
+  utter_cancel_insurance_quote:
+  - text: Ok. I can help you get an insurance quote another time!
 actions:
 - validate_quote_form
 - action_get_quote
@@ -453,3 +548,4 @@ forms:
       - inform
       - claim_status_form
       type: from_text
+e2e_actions: []
