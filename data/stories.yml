@@ -8,6 +8,16 @@ stories:
   - active_loop: null
   - action: action_get_quote
   - action: utter_anything_else
+- story: member wants a new insurance quote, cancels
+  steps:
+  - intent: get_a_quote
+  - action: quote_form
+  - active_loop: quote_form
+  - intent: stop
+  - action: action_deactivate_loop
+  - active_loop: null
+  - action: utter_cancel_insurance_quote
+  - action: utter_anything_else
 - story: member wants to file a new claim (happy path)
   steps:
   - intent: file_a_claim

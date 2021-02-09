@@ -22,7 +22,7 @@ intents:
 - new_id_card:
     use_entities: true
 - claim_status:
-    use_entities: true
+    use_entities: false
 - get_a_quote:
     use_entities: true
 - inform:
@@ -41,6 +41,8 @@ intents:
     use_entities: true
 - cancel_action:
     use_entities: true
+- stop:
+    use_entities: false
 entities:
 - claim_id
 - knows_claim_id

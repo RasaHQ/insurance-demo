@@ -239,9 +239,10 @@ nlu:
   examples: |
     - tell me how to change a tire
     - something totally random
-- intent: cancel_action
+- intent: stop
   examples: |
-    - nevermind
+    - stop
+    - cancel
     - exit
 - synonym: auto
   examples: |
