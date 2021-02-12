@@ -21,3 +21,21 @@ rules:
   steps:
   - intent: nlu_fallback
   - action: utter_please_rephrase
+- rule: Exit Quote Form
+  condition:
+  - active_loop: quote_form
+  steps:
+  - intent: stop
+  - action: action_deactivate_loop
+  - active_loop: null
+  - action: utter_cancel_insurance_quote
+  - action: utter_anything_else
+- rule: Exit New Claim Form
+  condition:
+  - active_loop: file_new_claim_form
+  steps:
+  - intent: stop
+  - action: action_deactivate_loop
+  - active_loop: null
+  - action: utter_cancel_new_claim_file
+  - action: utter_anything_else

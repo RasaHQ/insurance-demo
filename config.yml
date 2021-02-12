@@ -11,23 +11,24 @@ pipeline:
   analyzer: char_wb
   min_ngram: 1
   max_ngram: 4
+- name: DucklingEntityExtractor
+  url: http://localhost:8000
+  dimensions: null
 - name: DIETClassifier
   epochs: 100
 - name: EntitySynonymMapper
 - name: ResponseSelector
   epochs: 100
-- name: DucklingEntityExtractor
-  url: http://localhost:8000
-  dimensions: null
 - name: FallbackClassifier
   threshold: 0.3
   ambiguity_threshold: 0.1
 policies:
 - name: MemoizationPolicy
 - name: TEDPolicy
-  max_history: 5
+  max_history: 7
   epochs: 100
 - name: RulePolicy
   core_fallback_threshold: 0.4
   core_fallback_action_name: action_default_fallback
   enable_fallback_prediction: true
+- name: AugmentedMemoizationPolicy

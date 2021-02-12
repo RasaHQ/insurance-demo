@@ -239,6 +239,10 @@ nlu:
   examples: |
     - tell me how to change a tire
     - something totally random
+- intent: change_persona
+  examples: |
+    - change persona
+    - restart with persona
 - intent: stop
   examples: |
     - stop

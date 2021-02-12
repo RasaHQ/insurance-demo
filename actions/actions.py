@@ -33,6 +33,64 @@ US_STATES = ["AZ", "AL", "AK", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "
              "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH",
              "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
 
+'''
+class ActionSessionStart(Action):
+    def name(self) -> Text:
+        return "action_session_start"
+
+    @staticmethod
+    def fetch_slots(tracker: Tracker) -> List[EventType]:
+        """Collect slots that contain the user's name and phone number."""
+
+        slots = []
+        for key in ("name", "phone_number"):
+            value = tracker.get_slot(key)
+            if value is not None:
+                slots.append(SlotSet(key=key, value=value))
+        return slots
+
+    async def run(
+      self, dispatcher, tracker: Tracker, domain: Dict[Text, Any]
+    ) -> List[Dict[Text, Any]]:
+
+        # the session should begin with a `session_started` event
+        events = [SessionStarted()]
+
+        # Load the persona.
+        persona = json.load(open("actions/persona_data.json", "r"))["shopping_for_quote"]
+        slots = []
+        for k, v in persona.items():
+            if v is not None:
+                slots.append(SlotSet(k, v))
+        events.extend(slots)
+
+        # an `action_listen` should be added at the end as a user message follows
+        dispatcher.utter_message(template="utter_clarify_persona")
+        events.append(ActionExecuted("action_listen"))
+
+        return events
+'''
+
+
+class ActionCheckClaimBalance(Action):
+    """Preps user to browse recent claims."""
+
+    def name(self) -> Text:
+        return "action_check_claim_balance"
+
+    def run(
+        self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
+    ) -> List[EventType]:
+        active_claim = tracker.get_slot("claim_id")
+
+        clm = next((c for c in MOCK_DATA["claims"] if str(c["claim_id"]) == active_claim), None)
+
+        has_outstanding_balance = clm["claim_balance"] > 0
+
+        print("Outstanding balance", has_outstanding_balance)
+
+        return [SlotSet("has_outstanding_balance", has_outstanding_balance)]
+
 
 class ActionAskPayPremiumInFull(Action):
     """Preps user to browse recent claims."""
@@ -395,6 +453,9 @@ class ValidateQuoteForm(FormValidationAction):
             domain: Dict[Text, Any]
     ) -> Dict[Text, Any]:
         """Validates the number of persons entered is valid."""
+        if tracker.get_intent_of_latest_message() == "stop":
+            return {"quote_number_persons": None}
+
         try:
             int(value)
         except TypeError:
@@ -463,6 +524,17 @@ class ActionClaimStatus(Action):
                 "claim_status": clm["claim_status"]
             }
             dispatcher.utter_message(template="utter_claim_detail", **clm_params)
+
+            #if clm["claim_balance"] > 0:
+            #    dispatcher.utter_message("I see there is an outstanding balance for your claim. "
+            #                             "Would you like to make a payment towards this claim?")
+
+            #    reset_slots = ["knows_claim_id", "AA_CONTINUE_FORM", "zz_confirm_form"]
+            #    return [SlotSet(slot, None) for slot in reset_slots] + [SlotSet("has_outstanding_balance", True)]
+            #else:
+            reset_slots = ["knows_claim_id", "AA_CONTINUE_FORM", "zz_confirm_form"]
+            return [SlotSet(slot, None) for slot in reset_slots] + [SlotSet("has_outstanding_balance", True)]
+
         else:
             dispatcher.utter_message("I don't know that claim...")
 
@@ -487,7 +559,10 @@ class ValidateGetClaimForm(FormValidationAction):
         """Checks if the claim ID is valid for the member."""
         user_claims = MOCK_DATA["claims"]
         claim_id = tracker.get_slot("claim_id")
-        print("claim", claim_id)
+
+        # Sometimes slot is being double filled.
+        if isinstance(claim_id, list):
+            claim_id = next(tracker.get_latest_entity_values("claim_id"), None)
 
         if str(claim_id) not in [clm["claim_id"] for clm in user_claims]:
             dispatcher.utter_message("The Claim ID you entered is not valid. Please check and try again.")
@@ -532,6 +607,7 @@ class ValidateClaimStatusForm(FormValidationAction):
             self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
     ) -> Dict[Text, Any]:
         if tracker.slots["requested_slot"] == "claim_id":
+            print("entity", tracker.get_latest_entity_values("claim_id"))
             text_of_last_user_message = tracker.latest_message.get("text")
 
             return {"claim_id": text_of_last_user_message}
@@ -571,18 +647,20 @@ class ActionFileNewClaimForm(Action):
         domain: Dict[Text, Any],
     ) -> List[Dict]:
 
-        # Submit a new claim.
-        claim_id = "".join([str(random.randint(0, 9)) for i in range(6)])
-        claim_obj = {
-            "claim_id": claim_id,
-            "claim_balance": tracker.get_slot("claim_amount_submit"),
-            "claim_date": datetime.datetime.strftime(datetime.datetime.today(), "%Y%m%d"),
-            "claim_status": "Pending"
-        }
+        if tracker.get_slot("confirm_file_new_claim") == "yes":
+            # Submit a new claim.
+            claim_id = "".join([str(random.randint(0, 9)) for i in range(6)])
+            claim_obj = {
+                "claim_id": claim_id,
+                "claim_balance": tracker.get_slot("claim_amount_submit"),
+                "claim_date": datetime.datetime.strftime(datetime.datetime.today(), "%Y%m%d"),
+                "claim_status": "Pending"
+            }
 
-        MOCK_DATA["claims"].append(claim_obj)
-
-        dispatcher.utter_message(f"Your claim has been submitted.\n\nFor reference the claim id is: {claim_id}")
+            MOCK_DATA["claims"].append(claim_obj)
+            dispatcher.utter_message(f"Your claim has been submitted.\n\nFor reference the claim id is: {claim_id}")
+        else:
+            dispatcher.utter_message("Ok. Submitting your claim has been canceled.")
 
         reset_slots = ["claim_amount_submit", "confirm_file_new_claim"]
         return [SlotSet(slot, None) for slot in reset_slots]
@@ -630,7 +708,16 @@ class ActionScrollClaimsExit(Action):
         tracker: Tracker,
         domain: Dict[Text, Any],
     ) -> List[Dict]:
-        reset_slots = ["scroll_status", "scroll_claims", "page"]
+        reset_slots = ["scroll_status", "scroll_claims", "page", "scroll_active_claim"]
+
+        if tracker.get_slot("scroll_status") == "select":
+            reset_slots = ["scroll_status", "scroll_claims", "page", "scroll_active_claim"]
+
+            return [SlotSet(s, None) for s in reset_slots] + [SlotSet("claim_id", tracker.get_slot("scroll_active_claim"))]
+        elif tracker.get_slot("scroll_status") == "cancel":
+            reset_slots = ["scroll_status", "scroll_claims", "page", "scroll_active_claim"]
+            return [SlotSet(s, None) for s in reset_slots] + [
+                SlotSet("scroll_status", "cancel")]
 
         return [SlotSet(s, None) for s in reset_slots]
 
@@ -667,15 +754,18 @@ class ActionAskScrollClaims(Action):
             msg_template = "utter_scroll_status_next"
 
         # Formulate the response message to the user.
-        for c in scroll_response["claims"]:
-            dispatcher.utter_message(template="utter_claim_detail", **c)
-            time.sleep(1)
+        #for c in scroll_response["claims"]:
+        #    dispatcher.utter_message(template="utter_claim_detail", **c)
+        #    time.sleep(1)
 
-        print(scroll_status, msg_template)
-        time.sleep(1)
+        dispatcher.utter_message(template="utter_claim_detail", **scroll_response["claims"])
+
+        print(scroll_status, claim_page, msg_template)
+        #time.sleep(1)
         dispatcher.utter_message(template=msg_template)
 
-        return [SlotSet("page", scroll_response["page"])]
+        return [SlotSet("page", scroll_response["page"]),
+                SlotSet("scroll_active_claim", scroll_response["claims"]["claim_id"])]
 
 
 class ActionValidateScrollClaims(FormValidationAction):
@@ -695,7 +785,11 @@ class ActionValidateScrollClaims(FormValidationAction):
         scroll_status = tracker.get_slot("scroll_status")
 
         if scroll_status == "cancel":
+            print("validate scroll stop")
             return {"scroll_claims": "stop"}
+        elif scroll_status == "select":
+            print("validate scroll select")
+            return {"scroll_claims": "select"}
 
         return {"scroll_claims": None}
 
@@ -870,33 +964,41 @@ def claims_scroll(curr_page, scroll_status):
     if scroll_status == "next":
         if curr_page >= 0:
             curr_page += 1
-        idx_start = curr_page * 2
-        idx_end = idx_start + 2
+        #idx_start = curr_page
+        #idx_end = idx_start + 1
     elif scroll_status == "init":
-        idx_start = 0
-        idx_end = idx_start + 2
+        curr_page = 0
+        #idx_start = 0
+        #idx_end = idx_start + 1
     else:
         if curr_page > 0:
             curr_page -= 1
-        idx_start = curr_page * 2
-        idx_end = idx_start + 2
+        #idx_start = curr_page
+        #idx_end = idx_start + 1
 
     # Get claims on the page.
     n_claims = len(MOCK_DATA["claims"])
-    page_claims = MOCK_DATA["claims"][idx_start:idx_end]
-    formatted_claims = []
-    for clm in page_claims:
-        formatted_date = str(datetime.datetime.strptime(str(clm["claim_date"]), "%Y%m%d").date())
-        clm_params = {
-            "claim_date": formatted_date,
-            "claim_id": clm["claim_id"],
-            "claim_balance": f"${str(clm['claim_balance'])}",
-            "claim_status": clm["claim_status"]
-        }
+    #page_claims = MOCK_DATA["claims"][idx_start:idx_end]
+    page_claims = MOCK_DATA["claims"][curr_page]
+    clm_params = {
+        "claim_date": str(datetime.datetime.strptime(str(page_claims["claim_date"]), "%Y%m%d").date()),
+        "claim_id": page_claims["claim_id"],
+        "claim_balance": f"${str(page_claims['claim_balance'])}",
+        "claim_status": page_claims["claim_status"]
+    }
+    #formatted_claims = []
+    #for clm in page_claims:
+    #    formatted_date = str(datetime.datetime.strptime(str(clm["claim_date"]), "%Y%m%d").date())
+    #    clm_params = {
+    #        "claim_date": formatted_date,
+    #        "claim_id": clm["claim_id"],
+    #        "claim_balance": f"${str(clm['claim_balance'])}",
+    #        "claim_status": clm["claim_status"]
+    #    }
 
-        formatted_claims.append(clm_params)
+    #    formatted_claims.append(clm_params)
 
     return {"page": curr_page,
-            "claims": formatted_claims,
-            "is_last_page": idx_end >= len(MOCK_DATA["claims"])}
+            "claims": clm_params,
+            "is_last_page": curr_page + 1 >= len(MOCK_DATA["claims"])}
 
