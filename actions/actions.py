@@ -389,21 +389,12 @@ class ActionClaimStatus(Action):
             }
             dispatcher.utter_message(template="utter_claim_detail", **clm_params)
 
-            #if clm["claim_balance"] > 0:
-            #    dispatcher.utter_message("I see there is an outstanding balance for your claim. "
-            #                             "Would you like to make a payment towards this claim?")
-
-            #    reset_slots = ["knows_claim_id", "AA_CONTINUE_FORM", "zz_confirm_form"]
-            #    return [SlotSet(slot, None) for slot in reset_slots] + [SlotSet("has_outstanding_balance", True)]
-            #else:
-            reset_slots = ["knows_claim_id", "AA_CONTINUE_FORM", "zz_confirm_form"]
-            return [SlotSet(slot, None) for slot in reset_slots] + [SlotSet("has_outstanding_balance", True)]
+            return [SlotSet("has_outstanding_balance", True)]
 
         else:
             dispatcher.utter_message("I don't know that claim...")
 
-        reset_slots = ["knows_claim_id", "AA_CONTINUE_FORM", "zz_confirm_form"]
-        return [SlotSet(slot, None) for slot in reset_slots]
+        return []
 
 
 class ValidateGetClaimForm(FormValidationAction):

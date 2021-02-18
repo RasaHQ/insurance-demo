@@ -45,28 +45,15 @@ intents:
     use_entities: true
 entities:
 - claim_id
-- knows_claim_id
 - quote_insurance_type
 - scroll_status
-- confirm_payment
 - amount-of-money
 - number
 - payment_type
 - state
-- RASA_US_STATE_ABBREV
 - ordinal
 - phone-number
 slots:
-  AA_CONTINUE_FORM:
-    type: rasa.shared.core.slots.AnySlot
-    initial_value: null
-    auto_fill: true
-    influence_conversation: false
-  RASA_US_STATE_ABBREV:
-    type: rasa.shared.core.slots.AnySlot
-    initial_value: null
-    auto_fill: true
-    influence_conversation: false
   address_city:
     type: rasa.shared.core.slots.AnySlot
     initial_value: null
@@ -87,11 +74,6 @@ slots:
     initial_value: null
     auto_fill: true
     influence_conversation: false
-  age:
-    type: rasa.shared.core.slots.AnySlot
-    initial_value: null
-    auto_fill: true
-    influence_conversation: false
   amount-of-money:
     type: rasa.shared.core.slots.AnySlot
     initial_value: null
@@ -107,11 +89,6 @@ slots:
     initial_value: null
     auto_fill: true
     influence_conversation: false
-  claim_has_outstanding_balance:
-    type: rasa.shared.core.slots.BooleanSlot
-    initial_value: null
-    auto_fill: true
-    influence_conversation: true
   claim_id:
     type: rasa.shared.core.slots.TextSlot
     initial_value: null
@@ -147,16 +124,6 @@ slots:
     initial_value: null
     auto_fill: true
     influence_conversation: true
-  is_member:
-    type: rasa.shared.core.slots.BooleanSlot
-    initial_value: null
-    auto_fill: true
-    influence_conversation: true
-  knows_claim_id:
-    type: rasa.shared.core.slots.AnySlot
-    initial_value: null
-    auto_fill: true
-    influence_conversation: false
   number:
     type: rasa.shared.core.slots.AnySlot
     initial_value: null
@@ -164,26 +131,6 @@ slots:
     influence_conversation: false
   page:
     type: rasa.shared.core.slots.AnySlot
-    initial_value: null
-    auto_fill: true
-    influence_conversation: false
-  pay_premium_in_full:
-    type: rasa.shared.core.slots.AnySlot
-    initial_value: null
-    auto_fill: true
-    influence_conversation: false
-  payment_amount:
-    type: rasa.shared.core.slots.AnySlot
-    initial_value: null
-    auto_fill: true
-    influence_conversation: false
-  premium_balance:
-    type: rasa.shared.core.slots.TextSlot
-    initial_value: null
-    auto_fill: true
-    influence_conversation: false
-  premium_payment_amount:
-    type: rasa.shared.core.slots.TextSlot
     initial_value: null
     auto_fill: true
     influence_conversation: false
@@ -212,11 +159,6 @@ slots:
     initial_value: null
     auto_fill: true
     influence_conversation: false
-  repeated_validation_failures:
-    type: rasa.shared.core.slots.AnySlot
-    initial_value: null
-    auto_fill: true
-    influence_conversation: false
   requested_slot:
     type: rasa.shared.core.slots.AnySlot
     initial_value: null
@@ -237,11 +179,6 @@ slots:
     initial_value: null
     auto_fill: true
     influence_conversation: true
-  show_more:
-    type: rasa.shared.core.slots.BooleanSlot
-    initial_value: null
-    auto_fill: true
-    influence_conversation: true
   state:
     type: rasa.shared.core.slots.TextSlot
     initial_value: null
@@ -252,16 +189,6 @@ slots:
     initial_value: null
     auto_fill: true
     influence_conversation: true
-  z_confirm_premium_payment:
-    type: rasa.shared.core.slots.BooleanSlot
-    initial_value: null
-    auto_fill: true
-    influence_conversation: true
-  zz_confirm_form:
-    type: rasa.shared.core.slots.AnySlot
-    initial_value: null
-    auto_fill: true
-    influence_conversation: false
 responses:
   utter_ask_address_street:
   - text: What is your mailing street number and name?
@@ -287,6 +214,7 @@ responses:
     - payload: /deny
       title: No
     text: Do you know the claim ID you want to check?
+
   utter_ask_AA_quote_insurance_type:
   - buttons:
     - payload: /inform{{"quote_insurance_type":"health"}}
@@ -302,44 +230,12 @@ responses:
   - text: How many people do you want to include on the policy for your quote?
   utter_ask_quote_form_quote_state:
   - text: What state would you like your quote for?
-  utter_age_invalid:
-  - text: Age is invalid. Please enter a positive number for your age.
   utter_anything_else:
   - text: Is there anything else I can help you with?
-  utter_ask_quote_form_age:
-  - text: What is your age?
   utter_ask_claim_pay_amount:
   - text: 'Claim {claim_id} has an outstanding balance of ${claim_balance}. How much would you like to pay?'
-  utter_ask_claim_status_form_AA_CONTINUE_FORM:
-  - buttons:
-    - payload: /affirm
-      title: Yes
-    - payload: /deny
-      title: No
-    text: Would you like to continue checking your claim status?
-  utter_ask_claim_status_form_zz_confirm_form:
-  - buttons:
-    - payload: /affirm
-      title: Yes
-    - payload: /deny
-      title: No
-    text: Would you like to check the claim status for claim {claim_id}?
-  utter_ask_claim_status_form_knows_claim_id:
-  - buttons:
-    - payload: /affirm
-      title: Yes
-    - payload: /deny
-      title: No
-    text: Do you know the ID of the claim?
   utter_ask_claim_status_form_claim_id:
   - text: What is the claim ID you'd like to lookup?
-  utter_ask_z_confirm_premium_payment:
-  - buttons:
-    - payload: /affirm
-      title: Yes
-    - payload: /deny
-      title: No
-    text: 'Do you want to continue with your ${premium_payment_amount} payment towards your premium?'
   utter_ask_confirm_address:
   - buttons:
     - payload: /affirm
@@ -374,13 +270,6 @@ responses:
       Thank you for your claim payment of ${amount_to_pay} for claim {claim_id}.
 
       The remaining balance for the claim is ${claim_balance}
-  utter_clarify_pay_premium_in_full:
-  - buttons:
-    - payload: /inform{{"pay_in_full":"true"}}
-      title: Pay Outstanding Balance
-    - payload: /inform{{"pay_in_full":"false"}}
-      title: Pay Other Amount
-    text: 'Your outstanding premium balance is ${premium_balance}. What would you like to do?'
   utter_confirm_address:
   - buttons:
     - payload: /affirm
@@ -397,8 +286,6 @@ responses:
       Insurance Type: {insurance_type}
       Policy State: {quote_state}
       Number of people on policy: {n_persons}
-  utter_get_a_quote:
-  - text: Quote here. Have a form to ask what type of insurance, age, gender, state etc. to fulfill request.
   utter_greet:
   - buttons:
     - payload: /claim_status
@@ -514,10 +401,6 @@ actions:
 - action_file_new_claim_form
 - validate_file_new_claim_form
 - action_recent_claims
-- action_ask_premium_payment_amount
-- action_ask_pay_premium_in_full
-- action_process_premium_payment
-- validate_pay_premium_form
 - action_check_claim_balance
 forms:
   quote_form:
@@ -535,10 +418,6 @@ forms:
     - entity: state
       type: from_entity
     - not_intent: stop
-      type: from_text
-  claim_status_form:
-    knows_claim_id:
-    - entity: knows_claim_id
       type: from_text
   get_claim_form:
     claim_id:
