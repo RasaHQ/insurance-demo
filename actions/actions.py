@@ -151,6 +151,7 @@ class ActionStopQuote(Action):
         # Reset the slot values.
         return [SlotSet(slot, None) for slot in slots]
 
+
 class ActionCheckClaimBalance(Action):
     """Preps user to browse recent claims."""
 
@@ -547,7 +548,11 @@ class ActionFileNewClaimForm(Action):
         else:
             dispatcher.utter_message("Ok. Submitting your claim has been canceled.")
 
-        reset_slots = ["claim_amount_submit", "confirm_file_new_claim", "number", "amount-of-money", "quote_insurance_type"]
+        reset_slots = ["claim_amount_submit",
+                       "confirm_file_new_claim",
+                       "number",
+                       "amount-of-money",
+                       "quote_insurance_type"]
         return [SlotSet(slot, None) for slot in reset_slots]
 
 
@@ -556,7 +561,23 @@ class ValidateFileNewClaimForm(FormValidationAction):
     def name(self) -> Text:
         return "validate_file_new_claim_form"
 
-    async def validate_claim_amount_submit(
+    def validate_AA_quote_insurance_type(
+        self,
+        slot_value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: DomainDict,
+    ) -> Dict[Text, Any]:
+        """Validate cuisine value."""
+
+        if slot_value.lower() not in ["health", "auto", "life", "home"]:
+            dispatcher.utter_message("I can only provide quotes for home, health, life, or home insurance. "
+                                     "Please choose one of those options.")
+            return {"AA_quote_insurance_type": None}
+
+        return {"AA_quote_insurance_type": None}
+
+    def validate_claim_amount_submit(
             self,
             value: Text,
             dispatcher: CollectingDispatcher,
