@@ -624,9 +624,4 @@ forms:
       - inform
       - claim_status_form
       type: from_text
-    quote_insurance_type:
-    - entity: quote_insurance_type
-      type: from_entity
-    - not_intent: stop
-      type: from_text
 e2e_actions: []
