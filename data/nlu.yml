@@ -13,6 +13,7 @@ nlu:
     - can you send me a new id card?
     - order a new id card
     - I need a new ID card
+    - order new id card
 - intent: claim_status
   examples: |
     - what is the status of my claim?
@@ -98,7 +99,20 @@ nlu:
     - Albany
     - [AA12054](claim_id)
     - 32 Alden Ct
+    - wyoming
+    - Lynn
+    - 12345
+    - 123 Fifth Ave
+    - Austin
+    - [AB234567](claim_id)
+    - [12054](claim_id)
     - [arizona]{"entity": "state", "value": "AZ"}[arizona]{"entity": "state", "value": "AZ"}
+    - Jackson
+    - [Wyoming](state)
+    - 6
+    - 123 Chestnut St
+    - 7 Maple Ave
+    - [MA](state)
 - intent: get_a_quote
   examples: |
     - i need insurance
@@ -115,6 +129,7 @@ nlu:
     - can i get an insurance quote?
     - i need an insurance quote
     - give me a [health](quote_insurance_type) insurance quote
+    - get a quote
 - intent: greet
   examples: |
     - hey
@@ -190,6 +205,7 @@ nlu:
     - i doubt it
     - ni
     - not right now
+    - nevermind
 - intent: uncertain
   examples: |
     - i don't know
@@ -237,6 +253,7 @@ nlu:
   examples: |
     - tell me how to change a tire
     - something totally random
+    - i don't want insurance
 - intent: stop
   examples: |
     - stop
@@ -246,6 +263,9 @@ nlu:
   examples: |
     - car
     - automobile
+- synonym: AZ
+  examples: |
+    - arizona
 - synonym: healh
   examples: |
     - healthcare
