@@ -22,10 +22,11 @@ intents:
 - new_id_card:
     use_entities: true
 - claim_status:
-    use_entities: false
+    use_entities: true
 - get_a_quote:
     use_entities: true
-- inform
+- inform:
+    use_entities: true
 - update_member_info:
     use_entities: true
 - file_a_claim:
@@ -37,12 +38,11 @@ intents:
 - uncertain:
     use_entities: true
 - make_payment:
-    use_entities:
-      - payment_type
+    use_entities: true
 - cancel_action:
     use_entities: true
 - stop:
-    use_entities: false
+    use_entities: true
 entities:
 - claim_id
 - knows_claim_id
@@ -54,6 +54,8 @@ entities:
 - payment_type
 - state
 - RASA_US_STATE_ABBREV
+- ordinal
+- phone-number
 slots:
   AA_CONTINUE_FORM:
     type: rasa.shared.core.slots.AnySlot
@@ -122,6 +124,8 @@ slots:
     influence_conversation: false
   claims:
     type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: false
   confirm_file_new_claim:
     type: rasa.shared.core.slots.BooleanSlot
@@ -145,6 +149,8 @@ slots:
     influence_conversation: true
   is_member:
     type: rasa.shared.core.slots.BooleanSlot
+    initial_value: null
+    auto_fill: true
     influence_conversation: true
   knows_claim_id:
     type: rasa.shared.core.slots.AnySlot
@@ -219,6 +225,7 @@ slots:
   scroll_active_claim:
     type: rasa.shared.core.slots.TextSlot
     initial_value: null
+    auto_fill: true
     influence_conversation: true
   scroll_claims:
     type: rasa.shared.core.slots.AnySlot
@@ -272,7 +279,7 @@ responses:
       title: Yes
     - payload: /deny
       title: No
-    text: "Would you to submit a {quote_insurance_type} claim for ${claim_amount_submit}?"
+    text: 'Would you to submit a {quote_insurance_type} claim for ${claim_amount_submit}?'
   utter_ask_knows_claim_id:
   - buttons:
     - payload: /affirm
@@ -313,7 +320,7 @@ responses:
   utter_ask_quote_form_age:
   - text: What is your age?
   utter_ask_claim_pay_amount:
-  - text: "Claim {claim_id} has an outstanding balance of ${claim_balance}. How much would you like to pay?"
+  - text: 'Claim {claim_id} has an outstanding balance of ${claim_balance}. How much would you like to pay?'
   utter_ask_claim_status_form_AA_CONTINUE_FORM:
   - buttons:
     - payload: /affirm
@@ -368,7 +375,7 @@ responses:
   utter_ask_pay_claim_form_amount-of-money:
   - text: 'Claim {claim_id} has an outstanding balance of ${claim_balance}. How much would you like to pay?'
   utter_cancel_address_change:
-  - text: "No problem. Your address change request has been canceled."
+  - text: No problem. Your address change request has been canceled.
   utter_cancel_new_claim_file:
   - text: Filing a new claim has been canceled.
   utter_cancel_payment:
@@ -488,6 +495,8 @@ responses:
   - text: Sorry I didn't get that. Can you rephrase?
   utter_cancel_insurance_quote:
   - text: Ok. I can help you get an insurance quote another time!
+  utter_new_card_address:
+  - text: Sure thing. I can send you a new ID card. First, let's make sure I send it to the correct address.
 actions:
 - validate_quote_form
 - action_get_quote
@@ -519,24 +528,23 @@ actions:
 - action_process_premium_payment
 - validate_pay_premium_form
 - action_check_claim_balance
-
 forms:
   quote_form:
     quote_insurance_type:
     - entity: quote_insurance_type
       type: from_entity
-    - type: from_text
-      not_intent: stop
+    - not_intent: stop
+      type: from_text
     quote_number_persons:
     - entity: quote_number_persons
       type: from_entity
-    - type: from_text
-      not_intent: stop
+    - not_intent: stop
+      type: from_text
     quote_state:
     - entity: state
       type: from_entity
-    - type: from_text
-      not_intent: stop
+    - not_intent: stop
+      type: from_text
   claim_status_form:
     knows_claim_id:
     - entity: knows_claim_id
@@ -549,20 +557,20 @@ forms:
   change_address_form:
     address_city:
     - entity: address_city
-      type: from_text
       not_intent: stop
+      type: from_text
     address_state:
     - entity: state
       type: from_entity
-    - type: from_text
-      not_intent: stop
+    - not_intent: stop
+      type: from_text
     address_street:
     - entity: address_street
       type: from_text
     address_zip:
     - entity: address_zip
-      type: from_text
       not_intent: stop
+<<<<<<< HEAD
     confirm_address:
     - type: from_intent
       intent: affirm
@@ -570,29 +578,32 @@ forms:
     - type: from_intent
       intent: deny
       value: false
+=======
+      type: from_text
+>>>>>>> 3d5f31769877f81793731af13edf2b78b091b0d4
   pay_claim_form:
     claim_id:
-    - type: from_entity
-      entity: claim_id
-    - type: from_text
-      not_intent:
+    - entity: claim_id
+      type: from_entity
+    - not_intent:
       - uncertain
       - deny
+      type: from_text
     claim_pay_amount:
-    - type: from_entity
-      entity: amount-of-money
-    - type: from_entity
-      entity: number
-    - type: from_text
-      not_intent:
+    - entity: amount-of-money
+      type: from_entity
+    - entity: number
+      type: from_entity
+    - not_intent:
       - uncertain
       - deny
+      type: from_text
     confirm_payment:
-    - type: from_intent
-      intent: affirm
+    - intent: affirm
+      type: from_intent
       value: true
-    - type: from_intent
-      intent: deny
+    - intent: deny
+      type: from_intent
       value: false
   scroll_claims_form:
     scroll_claims:
@@ -601,20 +612,23 @@ forms:
       type: from_entity
     - type: from_text
   file_new_claim_form:
+<<<<<<< HEAD
     AA_quote_insurance_type:
     - entity: quote_insurance_type
       type: from_entity
     - type: from_text
       not_intent: stop
+=======
+>>>>>>> 3d5f31769877f81793731af13edf2b78b091b0d4
     claim_amount_submit:
     - entity: number
+      not_intent: stop
       type: from_entity
+    - entity: amount-of-money
       not_intent: stop
-    - type: from_entity
-      entity: amount-of-money
-      not_intent: stop
-    - type: from_text
-      not_intent: stop
+      type: from_entity
+    - not_intent: stop
+      type: from_text
     confirm_file_new_claim:
     - intent: affirm
       type: from_intent
@@ -625,5 +639,10 @@ forms:
     - intent:
       - inform
       - claim_status_form
+      type: from_text
+    quote_insurance_type:
+    - entity: quote_insurance_type
+      type: from_entity
+    - not_intent: stop
       type: from_text
 e2e_actions: []
