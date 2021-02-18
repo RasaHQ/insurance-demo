@@ -8,7 +8,6 @@ stories:
   - active_loop: null
   - action: action_get_quote
   - action: utter_anything_else
-
 - story: member wants to file a new claim (happy path)
   steps:
   - intent: file_a_claim
@@ -17,18 +16,18 @@ stories:
   - active_loop: null
   - action: action_file_new_claim_form
   - action: utter_anything_else
-
 - story: member needs a new ID card (happy path)
   steps:
   - intent: new_id_card
+  - action: utter_new_card_address
   - action: action_ask_verify_address
   - intent: affirm
   - action: action_new_id_card
   - action: utter_anything_else
-
 - story: member needs a new ID card (requires address change)
   steps:
   - intent: new_id_card
+  - action: utter_new_card_address
   - action: action_ask_verify_address
   - intent: deny
   - action: action_reset_address
@@ -37,16 +36,16 @@ stories:
   - active_loop: change_address_form
   - active_loop: null
   - action: action_update_address
+  - action: action_ask_verify_address
+  - intent: affirm
   - action: action_new_id_card
   - action: utter_anything_else
-
 - story: member wants to know the status of a claim; prompt for claim id.
   steps:
   - intent: claim_status
   - slot_was_set:
     - claim_id: null
   - action: utter_ask_knows_claim_id
-
 - story: if member knows claim to retrieve get that claim.
   steps:
   - action: utter_ask_knows_claim_id
@@ -56,7 +55,6 @@ stories:
   - active_loop: null
   - action: action_claim_status
   - action: action_check_claim_balance
-
 - story: if member doesn't know claim then scroll through recent claims.
   steps:
   - action: utter_ask_knows_claim_id
@@ -66,7 +64,6 @@ stories:
   - active_loop: scroll_claims_form
   - active_loop: null
   - action: action_scroll_claims_form_exit
-
 - story: check if member selects a claim.
   steps:
   - action: action_scroll_claims_form_exit
@@ -74,21 +71,18 @@ stories:
     - claim_id: 123456
   - action: utter_notify_active_claim
   - action: action_check_claim_balance
-
 - story: user exits form scrolling
   steps:
   - action: action_scroll_claims_form_exit
   - slot_was_set:
     - scroll_status: cancel
   - action: utter_anything_else
-
 - story: active claim has an outstanding balance.
   steps:
   - action: action_check_claim_balance
   - slot_was_set:
     - has_outstanding_balance: true
   - action: utter_pay_outstanding_balance
-
 - story: active claim pay outstanding balance.
   steps:
   - action: utter_pay_outstanding_balance
@@ -98,13 +92,11 @@ stories:
   - active_loop: null
   - action: action_pay_claim
   - action: utter_anything_else
-
 - story: active claim deny pay outstanding balance.
   steps:
   - action: utter_pay_outstanding_balance
   - intent: deny
   - action: utter_anything_else
-
 - story: active claim has no balance.
   steps:
   - action: action_check_claim_balance
@@ -112,14 +104,12 @@ stories:
     - has_outstanding_balance: false
   - action: utter_has_no_balance
   - action: utter_anything_else
-
 - story: check if member cancels claim scrolling.
   steps:
   - action: action_scroll_claims_form_exit
   - slot_was_set:
     - claim_id: null
   - action: utter_happy
-
 - story: member wants to check status of a specific claim
   steps:
   - intent: claim_status
@@ -130,14 +120,12 @@ stories:
   - active_loop: null
   - action: utter_notify_active_claim
   - action: action_check_claim_balance
-
 - story: happy path
   steps:
   - intent: greet
   - action: utter_greet
   - intent: mood_great
   - action: utter_happy
-
 - story: sad path 1
   steps:
   - intent: greet
@@ -147,7 +135,6 @@ stories:
   - action: utter_did_that_help
   - intent: affirm
   - action: utter_happy
-
 - story: sad path 2
   steps:
   - intent: greet
@@ -157,7 +144,6 @@ stories:
   - action: utter_did_that_help
   - intent: deny
   - action: utter_goodbye
-
 - story: member updates their info
   steps:
   - intent: update_member_info
@@ -165,7 +151,6 @@ stories:
   - active_loop: change_address_form
   - active_loop: null
   - action: utter_anything_else
-
 - story: make a payment, claim
   steps:
   - intent: make_payment
@@ -174,7 +159,6 @@ stories:
   - active_loop: null
   - action: action_pay_claim
   - action: utter_anything_else
-
 - story: make payment, claim, uncertain
   steps:
   - intent: make_payment
@@ -196,13 +180,11 @@ stories:
   - active_loop: null
   - action: action_pay_claim
   - action: utter_anything_else
-
 - story: anything else affirm
   steps:
   - action: utter_anything_else
   - intent: affirm
   - action: utter_greet
-
 - story: anything else deny
   steps:
   - action: utter_anything_else
