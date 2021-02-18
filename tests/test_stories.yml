@@ -2,90 +2,33 @@
 #### If you want to learn more, please see the docs: https://rasa.com/docs/rasa/testing-your-assistant
 
 stories:
-- story: happy path 1
-  steps:
-  - user: |
-      hello there!
-    intent: greet
-  - action: utter_greet
-  - user: |
-      amazing
-    intent: mood_great
-  - action: utter_happy
-
-- story: happy path 2
-  steps:
-  - user: |
-      hello there!
-    intent: greet
-  - action: utter_greet
-  - user: |
-      amazing
-    intent: mood_great
-  - action: utter_happy
-  - user: |
-      bye-bye!
-    intent: goodbye
-  - action: utter_goodbye
-
-- story: sad path 1
-  steps:
-  - user: |
-      hello
-    intent: greet
-  - action: utter_greet
-  - user: |
-      not good
-    intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - user: |
-      yes
-    intent: affirm
-  - action: utter_happy
-
-- story: sad path 2
-  steps:
-  - user: |
-      hello
-    intent: greet
-  - action: utter_greet
-  - user: |
-      not good
-    intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - user: |
-      not really
-    intent: deny
-  - action: utter_goodbye
-
-- story: sad path 3
-  steps:
-  - user: |
-      hi
-    intent: greet
-  - action: utter_greet
-  - user: |
-      very terrible
-    intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - user: |
-      no
-    intent: deny
-  - action: utter_goodbye
-
-- story: say goodbye
-  steps:
-  - user: |
-      bye-bye!
-    intent: goodbye
-  - action: utter_goodbye
-
-- story: bot challenge
-  steps:
-  - user: |
-      are you a bot?
-    intent: bot_challenge
-  - action: utter_iamabot
+  - story: member wants a new insurance quote
+    steps:
+    - user: |
+        i need insurance
+      intent: get_a_quote
+    - action: quote_form
+    - active_loop: quote_form
+    - active_loop: null
+    - action: action_get_quote
+    - action: utter_anything_else
+  - story: member wants a new health insurance quote
+    steps:
+    - user: |
+        i need [health](quote_insurance_type) insurance
+      intent: get_a_quote
+    - action: quote_form
+    - active_loop: quote_form
+    - active_loop: null
+    - action: action_get_quote
+    - action: utter_anything_else
+  - story: pay a claim
+    steps:
+    - user: |
+        make a payment
+      intent: make_payment
+    - action: pay_claim_form
+    - active_loop: pay_claim_form
+    - active_loop: null
+    - action: action_pay_claim
+    - action: utter_anything_else

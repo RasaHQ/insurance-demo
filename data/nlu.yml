@@ -23,12 +23,18 @@ nlu:
     - was my claim paid?
     - what do i owe on my claim?
     - i want to check the status of my claim
-    - what is the status of claim [123456](claim_id)
-    - has claim [4567890](claim_id) been paid?
-    - check the status of claim [643421](claim_id)
+    - what is the status of claim [X123456](claim_id)
+    - has claim [YY4567890](claim_id) been paid?
+    - check the status of claim [ZZ643421](claim_id)
     - check the status of a claim
     - I need to check my claim status
     - check claim status
+    - view my claims
+    - show my claims
+    - view my recent claims
+    - show me my claims
+    - what is my claim history
+    - get claim status
 - intent: file_a_claim
   examples: |
     - file a claim
@@ -38,17 +44,17 @@ nlu:
     - submit a new claim
     - make a new claim
     - i crashed my [car]{"entity": "quote_insurance_type", "value": "auto"}
-- intent: pay_claim
+- intent: make_payment
   examples: |
-    - pay a claim
+    - pay a [claim](payment_type)
     - make a payment
-    - pay off a claim
+    - pay off a [claim](payment_type)
     - pay what i owe
     - pay my bill
     - submit a payment
-    - pay claim
+    - pay [claim](payment_type)
     - pay bill
-    - i want to pay a claim
+    - i want to pay a [claim](payment_type)
 - intent: inform
   examples: |
     - 34
@@ -64,9 +70,9 @@ nlu:
     - 100
     - 234567
     - 123
-    - [221322](claim_id)
-    - [221233](claim_id)
-    - [211233](claim_id)
+    - [CC221322](claim_id)
+    - [CL221233](claim_id)
+    - [A211233](claim_id)
     - 1500
     - 100000
     - 1,00,000
@@ -83,9 +89,20 @@ nlu:
     - [oklahoma](state)
     - [california](state)
     - [Texas](state)
+    - [arizona]{"entity": "state", "value": "AZ"}[arizona]{"entity": "state", "value": "AZ"}
+    - 3
+    - [NY](state)
+    - 2
+    - [NM](state)
+    - 4
+    - Albany
+    - [AA12054](claim_id)
+    - 32 Alden Ct
+    - [arizona]{"entity": "state", "value": "AZ"}[arizona]{"entity": "state", "value": "AZ"}
 - intent: get_a_quote
   examples: |
     - i need insurance
+    - i need [health](quote_insurance_type) insurance
     - i need a quote
     - i need a quote for [car](quote_insurance_type) insurance
     - how much will [healthcare](quote_insurance_type) insurance cost?
@@ -96,6 +113,8 @@ nlu:
     - how much will coverage cost?
     - how much will insurance cost?
     - can i get an insurance quote?
+    - i need an insurance quote
+    - give me a [health](quote_insurance_type) insurance quote
 - intent: greet
   examples: |
     - hey
@@ -112,6 +131,7 @@ nlu:
     - goodevening
     - good afternoon
     - hi ther
+    - hi there
 - intent: goodbye
   examples: |
     - good afternoon
@@ -168,6 +188,8 @@ nlu:
     - nah
     - No
     - i doubt it
+    - ni
+    - not right now
 - intent: uncertain
   examples: |
     - i don't know
@@ -204,14 +226,22 @@ nlu:
     - update address
     - update my address
     - change my address
+    - help me update my member info
 - intent: out_of_scope
   examples: |
     - what is the weather?
     - how is the weather in New York
     - what's for dinner?
+    - tell me about insurance?
 - intent: nlu_fallback
   examples: |
     - tell me how to change a tire
+    - something totally random
+- intent: stop
+  examples: |
+    - stop
+    - cancel
+    - exit
 - synonym: auto
   examples: |
     - car
@@ -222,4 +252,4 @@ nlu:
     - health care
 - regex: claim_id
   examples: |
-    - \d{5,7}
+    - [a-z]{1,2}\d{5,7}

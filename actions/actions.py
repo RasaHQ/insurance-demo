@@ -34,154 +34,7 @@ US_STATES = ["AZ", "AL", "AK", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "
              "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
 
 
-class ActionRecentClaims(Action):
-    """Preps user to browse recent claims."""
-
-    def name(self) -> Text:
-        return "action_recent_claims"
-
-    def run(
-        self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
-    ) -> List[EventType]:
-
-        dispatcher.utter_message("Okay, here are a few of your recent claims.")
-
-        return [SlotSet("knows_claim_id", "false")]
-
-
-class AskConfirmAddress(Action):
-    """Retrieves existing user address and asks for the user to verify the address."""
-
-    def name(self) -> Text:
-        return "action_ask_verify_address"
-
-    def run(
-        self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
-    ) -> List[EventType]:
-        # Load the member address from the JSON document.
-        address_slots = {
-            "address_street": MOCK_DATA["member_info"]["home_address"]["address_street"],
-            "address_city": MOCK_DATA["member_info"]["home_address"]["address_city"],
-            "address_state": MOCK_DATA["member_info"]["home_address"]["address_state"],
-            "address_zip": MOCK_DATA["member_info"]["home_address"]["address_zip"]
-        }
-
-        # Build the full address.
-        address_line_two = f"{address_slots['address_city']}, {address_slots['address_state']} " \
-                           f"{address_slots['address_zip']}"
-        full_address = "\n".join([address_slots['address_street'], address_line_two])
-        address_slots["full_address"] = full_address
-
-        dispatcher.utter_message(template="utter_confirm_address", **address_slots)
-
-        return [SlotSet(k, v) for k, v in address_slots.items()]
-
-
-class ActionVerifyAddress(Action):
-    """Checks if the user confirms their address or not."""
-
-    def name(self) -> Text:
-        return "action_verify_address_form"
-
-    def run(
-        self, dispather: CollectingDispatcher, tracker: Tracker, domain: Dict
-    ) -> List[EventType]:
-        address_slots = ["address_street",
-                         "address_city",
-                         "address_state",
-                         "address_zip"]
-
-        verify_address = tracker.get_slot("verify_address")
-
-        # Reset the address slots if user doesn't verify address so the change address form can collect new address.
-        if not verify_address:
-            return [SlotSet(a, None) for a in address_slots]
-
-        return [SlotSet("verify_address", verify_address)]
-
-
-class ValidateVerifyAddressForm(FormValidationAction):
-
-    def name(self) -> Text:
-        return "validate_verify_address_form"
-
-    async def validate_verify_address(
-            self,
-            value: Text,
-            dispatcher: CollectingDispatcher,
-            tracker: Tracker,
-            domain: Dict[Text, Any],
-    ) -> Dict[Text, Any]:
-        verify_address = tracker.get_slot("verify_address")
-
-        return {"verify_address": verify_address}
-
-
-class ActionUpdateAddress(Action):
-
-    def name(self) -> Text:
-        return "action_update_address"
-
-    def run(
-        self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
-    ) -> List[EventType]:
-
-        address_street = tracker.get_slot("address_street")
-        address_city = tracker.get_slot("address_city")
-        address_state = tracker.get_slot("address_state")
-        address_zip = tracker.get_slot("address_zip")
-
-        address_line_two = f"{address_city}, {address_state} {address_zip}"
-        full_address = "\n".join([address_street, address_line_two])
-
-        dispatcher.utter_message("Thank you! Your address has been changed to:")
-        dispatcher.utter_message(full_address)
-
-        # Update the address in the data.
-        MOCK_DATA["member_info"]["home_address"] = {
-            "address_street": address_street,
-            "address_city": address_city,
-            "address_state": address_state,
-            "address_zip": address_zip
-        }
-
-        return [SlotSet("verify_address", None)]
-
-
-class ValidateChangeAddressForm(FormValidationAction):
-    """Validates the user has filled out the change of address form correctly."""
-
-    def name(self) -> Text:
-        return "validate_change_address_form"
-
-    async def validate_address_state(
-            self,
-            value: Text,
-            dispatcher: CollectingDispatcher,
-            tracker: Tracker,
-            domain: Dict[Text, Any]
-    ) -> Dict[Text, Any]:
-
-        if value.upper() not in US_STATES:
-            dispatcher.utter_message(f"{value} is invalid. Please provide a valid state.")
-            return {"address_state": None}
-
-        return {"address_state": value}
-
-
-class ActionNewIdCard(Action):
-
-    def name(self) -> Text:
-        return "action_new_id_card"
-
-    def run(
-        self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
-    ) -> List[EventType]:
-
-        dispatcher.utter_message("Thank you! We'll send you a new ID card.")
-
-        return []
-
+# Get New Quote Actions
 
 class ActionGetQuote(Action):
     """Gets an insurance quote"""
@@ -263,6 +116,9 @@ class ValidateQuoteForm(FormValidationAction):
             domain: Dict[Text, Any]
     ) -> Dict[Text, Any]:
         """Validates the number of persons entered is valid."""
+        if tracker.get_intent_of_latest_message() == "stop":
+            return {"quote_number_persons": None}
+
         try:
             int(value)
         except TypeError:
@@ -274,6 +130,204 @@ class ValidateQuoteForm(FormValidationAction):
             return {"quote_number_persons": None}
 
         return {"quote_number_persons": value}
+
+
+class ActionStopQuote(Action):
+    """Stops quote form and clears collected data."""
+
+    def name(self) -> Text:
+        """Unique identifier for the action."""
+        return "action_stop_quote"
+
+    async def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict]:
+        """Executes the action"""
+        slots = ["quote_insurance_type", "quote_state", "quote_number_persons"]
+
+        # Reset the slot values.
+        return [SlotSet(slot, None) for slot in slots]
+
+class ActionCheckClaimBalance(Action):
+    """Preps user to browse recent claims."""
+
+    def name(self) -> Text:
+        return "action_check_claim_balance"
+
+    def run(
+        self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
+    ) -> List[EventType]:
+        active_claim = tracker.get_slot("claim_id")
+
+        clm = next((c for c in MOCK_DATA["claims"] if str(c["claim_id"]) == active_claim), None)
+
+        has_outstanding_balance = clm["claim_balance"] > 0
+
+        print("Outstanding balance", has_outstanding_balance)
+
+        return [SlotSet("has_outstanding_balance", has_outstanding_balance)]
+
+
+# Change Address Actions
+
+class AskConfirmAddress(Action):
+    """Retrieves existing user address and asks for the user to verify the address."""
+
+    def name(self) -> Text:
+        return "action_ask_verify_address"
+
+    def run(
+        self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
+    ) -> List[EventType]:
+        # Load the member address from the JSON document.
+        address_slots = {
+            "address_street": MOCK_DATA["member_info"]["home_address"]["address_street"],
+            "address_city": MOCK_DATA["member_info"]["home_address"]["address_city"],
+            "address_state": MOCK_DATA["member_info"]["home_address"]["address_state"],
+            "address_zip": MOCK_DATA["member_info"]["home_address"]["address_zip"]
+        }
+
+        # Build the full address.
+        address_line_two = f"{address_slots['address_city']}, {address_slots['address_state']} " \
+                           f"{address_slots['address_zip']}"
+        full_address = "\n".join([address_slots['address_street'], address_line_two])
+        address_slots["full_address"] = full_address
+
+        dispatcher.utter_message(template="utter_confirm_address", **address_slots)
+
+        return [SlotSet(k, v) for k, v in address_slots.items()]
+
+
+class ActionVerifyAddress(Action):
+    """Checks if the user confirms their address or not."""
+
+    def name(self) -> Text:
+        return "action_verify_address_form"
+
+    def run(
+        self, dispather: CollectingDispatcher, tracker: Tracker, domain: Dict
+    ) -> List[EventType]:
+        address_slots = ["address_street",
+                         "address_city",
+                         "address_state",
+                         "address_zip"]
+
+        verify_address = tracker.get_slot("verify_address")
+
+        # Reset the address slots if user doesn't verify address so the change address form can collect new address.
+        if not verify_address:
+            return [SlotSet(a, None) for a in address_slots]
+
+        return [SlotSet("verify_address", verify_address)]
+
+
+class ActionResetAddress(Action):
+    """Checks if the user confirms their address or not."""
+
+    def name(self) -> Text:
+        return "action_reset_address"
+
+    def run(
+        self, dispather: CollectingDispatcher, tracker: Tracker, domain: Dict
+    ) -> List[EventType]:
+        address_slots = ["address_street",
+                         "address_city",
+                         "address_state",
+                         "address_zip",
+                         "full_address"]
+
+        return [SlotSet(a, None) for a in address_slots]
+
+
+class ValidateVerifyAddressForm(FormValidationAction):
+
+    def name(self) -> Text:
+        return "validate_verify_address_form"
+
+    async def validate_verify_address(
+            self,
+            value: Text,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+        verify_address = tracker.get_slot("verify_address")
+
+        return {"verify_address": verify_address}
+
+
+class ActionUpdateAddress(Action):
+
+    def name(self) -> Text:
+        return "action_update_address"
+
+    def run(
+        self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
+    ) -> List[EventType]:
+
+        address_street = tracker.get_slot("address_street")
+        address_city = tracker.get_slot("address_city")
+        address_state = tracker.get_slot("address_state")
+        address_zip = tracker.get_slot("address_zip")
+
+        address_line_two = f"{address_city}, {address_state} {address_zip}"
+        full_address = "\n".join([address_street, address_line_two])
+
+        dispatcher.utter_message("Thank you! Your address has been changed to:")
+        dispatcher.utter_message(full_address)
+
+        # Update the address in the data.
+        MOCK_DATA["member_info"]["home_address"] = {
+            "address_street": address_street,
+            "address_city": address_city,
+            "address_state": address_state,
+            "address_zip": address_zip
+        }
+
+        return [SlotSet("verify_address", None)]
+
+
+class ValidateChangeAddressForm(FormValidationAction):
+    """Validates the user has filled out the change of address form correctly."""
+
+    def name(self) -> Text:
+        return "validate_change_address_form"
+
+    async def validate_address_state(
+            self,
+            slot_value: Text,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]
+    ) -> Dict[Text, Any]:
+
+        if isinstance(slot_value, list):
+            slot_value = slot_value[-1]
+
+        if slot_value.upper() not in US_STATES:
+            dispatcher.utter_message(f"{slot_value} is invalid. Please provide a valid state.")
+            return {"address_state": None}
+
+        return {"address_state": slot_value}
+
+
+# New ID Card Actions
+
+class ActionNewIdCard(Action):
+
+    def name(self) -> Text:
+        return "action_new_id_card"
+
+    def run(
+        self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
+    ) -> List[EventType]:
+
+        dispatcher.utter_message("Thank you! We'll send you a new ID card.")
+
+        return []
 
 
 class ActionRecentClaims(Action):
@@ -303,6 +357,8 @@ class ActionRecentClaims(Action):
         return [SlotSet("page", scroll_response["page"])]
 
 
+# Get Status of Claim
+
 class ActionClaimStatus(Action):
     """Gets the status of the user's last claim."""
 
@@ -331,6 +387,17 @@ class ActionClaimStatus(Action):
                 "claim_status": clm["claim_status"]
             }
             dispatcher.utter_message(template="utter_claim_detail", **clm_params)
+
+            #if clm["claim_balance"] > 0:
+            #    dispatcher.utter_message("I see there is an outstanding balance for your claim. "
+            #                             "Would you like to make a payment towards this claim?")
+
+            #    reset_slots = ["knows_claim_id", "AA_CONTINUE_FORM", "zz_confirm_form"]
+            #    return [SlotSet(slot, None) for slot in reset_slots] + [SlotSet("has_outstanding_balance", True)]
+            #else:
+            reset_slots = ["knows_claim_id", "AA_CONTINUE_FORM", "zz_confirm_form"]
+            return [SlotSet(slot, None) for slot in reset_slots] + [SlotSet("has_outstanding_balance", True)]
+
         else:
             dispatcher.utter_message("I don't know that claim...")
 
@@ -355,7 +422,10 @@ class ValidateGetClaimForm(FormValidationAction):
         """Checks if the claim ID is valid for the member."""
         user_claims = MOCK_DATA["claims"]
         claim_id = tracker.get_slot("claim_id")
-        print("claim", claim_id)
+
+        # Sometimes slot is being double filled.
+        if isinstance(claim_id, list):
+            claim_id = next(tracker.get_latest_entity_values("claim_id"), None)
 
         if str(claim_id) not in [clm["claim_id"] for clm in user_claims]:
             dispatcher.utter_message("The Claim ID you entered is not valid. Please check and try again.")
@@ -400,6 +470,7 @@ class ValidateClaimStatusForm(FormValidationAction):
             self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
     ) -> Dict[Text, Any]:
         if tracker.slots["requested_slot"] == "claim_id":
+            print("entity", tracker.get_latest_entity_values("claim_id"))
             text_of_last_user_message = tracker.latest_message.get("text")
 
             return {"claim_id": text_of_last_user_message}
@@ -427,6 +498,28 @@ class ValidateClaimStatusForm(FormValidationAction):
         return {"claim_id": claim_id}
 
 
+# File New Claim Actions
+
+class ActionStopNewClaim(Action):
+    """Stops quote form and clears collected data."""
+
+    def name(self) -> Text:
+        """Unique identifier for the action."""
+        return "action_stop_new_claim_form"
+
+    async def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict]:
+        """Executes the action"""
+        reset_slots = ["claim_amount_submit", "confirm_file_new_claim", "number", "amount-of-money"]
+
+        # Reset the slot values.
+        return [SlotSet(slot, None) for slot in reset_slots]
+
+
 class ActionFileNewClaimForm(Action):
 
     def name(self) -> Text:
@@ -439,20 +532,22 @@ class ActionFileNewClaimForm(Action):
         domain: Dict[Text, Any],
     ) -> List[Dict]:
 
-        # Submit a new claim.
-        claim_id = "".join([str(random.randint(0, 9)) for i in range(6)])
-        claim_obj = {
-            "claim_id": claim_id,
-            "claim_balance": tracker.get_slot("claim_amount_submit"),
-            "claim_date": datetime.datetime.strftime(datetime.datetime.today(), "%Y%m%d"),
-            "claim_status": "Pending"
-        }
+        if tracker.get_slot("confirm_file_new_claim") == "yes":
+            # Submit a new claim.
+            claim_id = "".join([str(random.randint(0, 9)) for i in range(6)])
+            claim_obj = {
+                "claim_id": claim_id,
+                "claim_balance": tracker.get_slot("claim_amount_submit"),
+                "claim_date": datetime.datetime.strftime(datetime.datetime.today(), "%Y%m%d"),
+                "claim_status": "Pending"
+            }
 
-        MOCK_DATA["claims"].append(claim_obj)
+            MOCK_DATA["claims"].append(claim_obj)
+            dispatcher.utter_message(f"Your claim has been submitted.\n\nFor reference the claim id is: {claim_id}")
+        else:
+            dispatcher.utter_message("Ok. Submitting your claim has been canceled.")
 
-        dispatcher.utter_message(f"Your claim has been submitted.\n\nFor reference the claim id is: {claim_id}")
-
-        reset_slots = ["claim_amount_submit", "confirm_file_new_claim"]
+        reset_slots = ["claim_amount_submit", "confirm_file_new_claim", "number", "amount-of-money", "quote_insurance_type"]
         return [SlotSet(slot, None) for slot in reset_slots]
 
 
@@ -486,6 +581,8 @@ class ValidateFileNewClaimForm(FormValidationAction):
         return {"claim_amount_submit": submitted_amount}
 
 
+# Scroll Claims Action
+
 class ActionScrollClaimsExit(Action):
     """Cleans up claim scrolling upon form exit."""
 
@@ -498,7 +595,16 @@ class ActionScrollClaimsExit(Action):
         tracker: Tracker,
         domain: Dict[Text, Any],
     ) -> List[Dict]:
-        reset_slots = ["scroll_status", "scroll_claims", "page"]
+        reset_slots = ["scroll_status", "scroll_claims", "page", "scroll_active_claim"]
+
+        if tracker.get_slot("scroll_status") == "select":
+            reset_slots = ["scroll_status", "scroll_claims", "page", "scroll_active_claim"]
+
+            return [SlotSet(s, None) for s in reset_slots] + [SlotSet("claim_id", tracker.get_slot("scroll_active_claim"))]
+        elif tracker.get_slot("scroll_status") == "cancel":
+            reset_slots = ["scroll_status", "scroll_claims", "page", "scroll_active_claim"]
+            return [SlotSet(s, None) for s in reset_slots] + [
+                SlotSet("scroll_status", "cancel")]
 
         return [SlotSet(s, None) for s in reset_slots]
 
@@ -534,16 +640,11 @@ class ActionAskScrollClaims(Action):
         elif scroll_response["page"] == 0:
             msg_template = "utter_scroll_status_next"
 
-        # Formulate the response message to the user.
-        for c in scroll_response["claims"]:
-            dispatcher.utter_message(template="utter_claim_detail", **c)
-            time.sleep(1)
-
-        print(scroll_status, msg_template)
-        time.sleep(1)
+        dispatcher.utter_message(template="utter_claim_detail", **scroll_response["claims"])
         dispatcher.utter_message(template=msg_template)
 
-        return [SlotSet("page", scroll_response["page"])]
+        return [SlotSet("page", scroll_response["page"]),
+                SlotSet("scroll_active_claim", scroll_response["claims"]["claim_id"])]
 
 
 class ActionValidateScrollClaims(FormValidationAction):
@@ -563,10 +664,16 @@ class ActionValidateScrollClaims(FormValidationAction):
         scroll_status = tracker.get_slot("scroll_status")
 
         if scroll_status == "cancel":
+            print("validate scroll stop")
             return {"scroll_claims": "stop"}
+        elif scroll_status == "select":
+            print("validate scroll select")
+            return {"scroll_claims": "select"}
 
         return {"scroll_claims": None}
 
+
+# Pay Claim Actions
 
 class ActionPayClaim(Action):
     """Gets the status of the user's last claim."""
@@ -581,11 +688,11 @@ class ActionPayClaim(Action):
         tracker: Tracker,
         domain: Dict[Text, Any],
     ) -> List[Dict]:
-        reset_slots = ["claim_balance", "amount-of-money", "confirm_payment", "number", "claim_id"]
+        reset_slots = ["claim_balance", "amount-of-money", "confirm_payment", "number", "claim_id", "claim_pay_amount"]
 
         # Get the claim provided by the user.
         user_clm_id = tracker.get_slot("claim_id")
-        amount_to_pay = tracker.get_slot("amount-of-money")
+        amount_to_pay = tracker.get_slot("claim_pay_amount")
         claim_balance = tracker.get_slot("claim_balance")
 
         if claim_balance == 0:
@@ -621,7 +728,7 @@ class ActionCancelPayment(Action):
     ) -> List[Dict]:
         dispatcher.utter_message(template="utter_cancel_payment")
 
-        reset_slots = ["claim_balance", "payment_amount", "claim_id", "confirm_payment", "amount-of-money", "number"]
+        reset_slots = ["claim_balance", "claim_pay_amount", "claim_id", "confirm_payment", "amount-of-money", "number"]
         return [SlotSet(slot, None) for slot in reset_slots]
 
 
@@ -631,20 +738,17 @@ class ValidatePayClaimForm(FormValidationAction):
         return "validate_pay_claim_form"
 
     async def required_slots(
-        self,
-        slots_mapped_in_domain: List[Text],
-        dispatcher: CollectingDispatcher,
-        tracker: "Tracker",
-        domain: "DomainDict",
+            self,
+            slots_mapped_in_domain: List[Text],
+            dispatcher: "CollectingDispatcher",
+            tracker: "Tracker",
+            domain: "DomainDict",
     ) -> Optional[List[Text]]:
-        additional_slots = []
-        if tracker.slots.get("claim_balance"):
-            claim_id = tracker.slots.get("claim_id")
-            if tracker.slots.get("claim_balance") > 0:
-                additional_slots.append("amount-of-money")
-                additional_slots.append("confirm_payment")
 
-        return additional_slots + slots_mapped_in_domain
+        if tracker.get_slot("claim_balance") == 0:
+            return []
+
+        return slots_mapped_in_domain
 
     async def extract_amount_of_money(
             self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
@@ -671,63 +775,63 @@ class ValidatePayClaimForm(FormValidationAction):
 
             return {"amount-of-money": amount_to_pay}
 
-    async def extract_confirm_payment(
-            self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
-    ) -> Dict[Text, Any]:
-        if tracker.slots["requested_slot"] == "confirm_payment":
-            text_of_last_user_message = tracker.latest_message.get("text")
-
-            return {"confirm_payment": text_of_last_user_message}
-
-    async def validate_claim_id(
+    def validate_claim_id(
             self,
-            value: Text,
+            slot_value: Any,
             dispatcher: CollectingDispatcher,
             tracker: Tracker,
-            domain: Dict[Text, Any],
+            domain: DomainDict,
     ) -> Dict[Text, Any]:
         """Checks if the claim ID is valid for the member."""
         user_claims = MOCK_DATA["claims"]
         claim_id = tracker.get_slot("claim_id")
 
+        if isinstance(claim_id, list):
+            claim_id = claim_id[-1]
+
         if str(claim_id) not in [clm["claim_id"] for clm in user_claims]:
             dispatcher.utter_message("The Claim ID you entered is not valid. Please check and try again.")
             return {"claim_id": None}
-        else:
-            clm = next((c for c in MOCK_DATA["claims"] if str(c["claim_id"]) == claim_id), None)
-            return {"claim_id": claim_id, "claim_balance": clm["claim_balance"]}
 
-    async def validate_payment_amount(
+        clm = next((c for c in MOCK_DATA["claims"] if str(c["claim_id"]) == claim_id), None)
+        if clm["claim_balance"] == 0:
+            dispatcher.utter_message(f"Claim {claim_id} is fully paid.")
+
+        return {"claim_id": claim_id, "claim_balance": clm["claim_balance"], "number": None}
+
+    def validate_claim_pay_amount(
             self,
-            value: Text,
+            slot_value: Any,
             dispatcher: CollectingDispatcher,
             tracker: Tracker,
-            domain: Dict[Text, Any],
+            domain: DomainDict,
     ) -> Dict[Text, Any]:
-        user_claims = MOCK_DATA["claims"]
-        claim_id = tracker.get_slot("claim_id")
-        payment_amount = tracker.get_slot("payment_amount")
-        clm = next((c for c in MOCK_DATA["claims"] if str(c["claim_id"]) == claim_id), None)
+        if tracker.slots.get("requested_slot") == "claim_pay_amount":
+            claim_id = tracker.get_slot("claim_id")
+            payment_amount = tracker.get_slot("claim_pay_amount")
+            clm = next((c for c in MOCK_DATA["claims"] if str(c["claim_id"]) == claim_id), None)
 
-        # Check that a valid number is provided.
-        try:
-            payment_amount = float(payment_amount)
-        except TypeError:
-            dispatcher.utter_message("Please enter a valid number as your payment amount.")
-            return {"payment_amount": None}
+            # Check that a valid number is provided.
+            try:
+                payment_amount = float(payment_amount)
+            except TypeError:
+                dispatcher.utter_message("Please enter a valid number as your payment amount.")
+                return {"claim_pay_amount": None}
 
-        # Check that the payment is greater than zero.
-        if payment_amount <= 0:
-            dispatcher.utter_message("Your payment must be greater than $0.")
-            return {"payment_amount": None}
+            # Check that the payment is greater than zero.
+            if payment_amount <= 0:
+                dispatcher.utter_message("Your payment must be greater than $0.")
+                return {"claim_pay_amount": None}
 
-        # Check that the payment amount doesn't exceed the amount owed on the claim.
-        if payment_amount > clm["claim_balance"]:
-            dispatcher.utter_message(f"The amount you want to pay, ${str(payment_amount)}, is greater than the amount "
-                                     f"owed, ${str(clm['claim_balance'])}")
-            return {"payment_amount": clm["claim_balance"], "claim_balance": clm["claim_balance"]}
+            # Check that the payment amount doesn't exceed the amount owed on the claim.
+            if payment_amount > clm["claim_balance"]:
+                dispatcher.utter_message(f"The amount you want to pay, ${str(payment_amount)}, is greater than the amount "
+                                         f"owed, ${str(clm['claim_balance'])}")
+                return {"claim_pay_amount": clm["claim_balance"], "claim_balance": clm["claim_balance"]}
 
-        return {"payment_amount": payment_amount, "claim_balance": clm["claim_balance"]}
+            return {"claim_pay_amount": payment_amount, "claim_balance": clm["claim_balance"]}
+
+        return {"claim_pay_amount": None}
 
 
 def claims_scroll(curr_page, scroll_status):
@@ -738,32 +842,22 @@ def claims_scroll(curr_page, scroll_status):
     if scroll_status == "next":
         if curr_page >= 0:
             curr_page += 1
-        idx_start = curr_page * 2
-        idx_end = idx_start + 2
     elif scroll_status == "init":
-        idx_start = 0
-        idx_end = idx_start + 2
+        curr_page = 0
     else:
         if curr_page > 0:
             curr_page -= 1
-        idx_start = curr_page * 2
-        idx_end = idx_start + 2
 
     # Get claims on the page.
-    n_claims = len(MOCK_DATA["claims"])
-    page_claims = MOCK_DATA["claims"][idx_start:idx_end]
-    formatted_claims = []
-    for clm in page_claims:
-        formatted_date = str(datetime.datetime.strptime(str(clm["claim_date"]), "%Y%m%d").date())
-        clm_params = {
-            "claim_date": formatted_date,
-            "claim_id": clm["claim_id"],
-            "claim_balance": f"${str(clm['claim_balance'])}",
-            "claim_status": clm["claim_status"]
-        }
-
-        formatted_claims.append(clm_params)
+    page_claims = MOCK_DATA["claims"][curr_page]
+    clm_params = {
+        "claim_date": str(datetime.datetime.strptime(str(page_claims["claim_date"]), "%Y%m%d").date()),
+        "claim_id": page_claims["claim_id"],
+        "claim_balance": f"${str(page_claims['claim_balance'])}",
+        "claim_status": page_claims["claim_status"]
+    }
 
     return {"page": curr_page,
-            "claims": formatted_claims,
-            "is_last_page": idx_end >= len(MOCK_DATA["claims"])}
+            "claims": clm_params,
+            "is_last_page": curr_page + 1 >= len(MOCK_DATA["claims"])}
+
