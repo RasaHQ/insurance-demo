@@ -26,7 +26,8 @@ intents:
 - get_a_quote:
     use_entities: true
 - inform:
-    use_entities: true
+    use_entities:
+      - payment_type
 - update_member_info:
     use_entities: true
 - file_a_claim:
@@ -38,7 +39,8 @@ intents:
 - uncertain:
     use_entities: true
 - make_payment:
-    use_entities: true
+    use_entities:
+      - payment_type
 - cancel_action:
     use_entities: true
 - stop:
@@ -115,6 +117,11 @@ slots:
     initial_value: null
     auto_fill: true
     influence_conversation: true
+  claim_pay_amount:
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: false
+    influence_conversation: false
   claims:
     type: rasa.shared.core.slots.AnySlot
     influence_conversation: false
@@ -166,11 +173,6 @@ slots:
     initial_value: null
     auto_fill: true
     influence_conversation: false
-  payment_type:
-    type: rasa.shared.core.slots.TextSlot
-    initial_value: null
-    auto_fill: true
-    influence_conversation: true
   premium_balance:
     type: rasa.shared.core.slots.TextSlot
     initial_value: null
@@ -272,7 +274,7 @@ responses:
       title: Yes
     - payload: /deny
       title: No
-    text: Would you like to move forward submitting your claim?
+    text: "Would you to submit a {quote_insurance_type} claim for ${claim_amount_submit}?"
   utter_ask_knows_claim_id:
   - buttons:
     - payload: /affirm
@@ -312,6 +314,8 @@ responses:
   - text: Is there anything else I can help you with?
   utter_ask_quote_form_age:
   - text: What is your age?
+  utter_ask_claim_pay_amount:
+  - text: "Claim {claim_id} has an outstanding balance of ${claim_balance}. How much would you like to pay?"
   utter_ask_claim_status_form_AA_CONTINUE_FORM:
   - buttons:
     - payload: /affirm
@@ -352,9 +356,11 @@ responses:
       title: Yes
     - payload: /deny{{"confirm_payment":"false"}}
       title: No
-    text: 'Would you like to pay ${amount-of-money} for claim {claim_id}?'
+    text: 'Would you like to pay ${claim_pay_amount} for claim {claim_id}?'
   utter_ask_pay_claim_form_amount-of-money:
   - text: 'Claim {claim_id} has an outstanding balance of ${claim_balance}. How much would you like to pay?'
+  utter_cancel_address_change:
+  - text: "No problem. Your address change request has been canceled."
   utter_cancel_new_claim_file:
   - text: Filing a new claim has been canceled.
   utter_cancel_payment:
@@ -370,14 +376,7 @@ responses:
       title: Pay Outstanding Balance
     - payload: /inform{{"pay_in_full":"false"}}
       title: Pay Other Amount
-    text: 'Your outstanding premium blance is ${premium_balance}. What would you like to do?'
-  utter_clarify_payment_type:
-  - buttons:
-    - payload: /inform{{"payment_type":"claim"}}
-      title: Claim
-    - payload: /inform{{"payment_type":"premium"}}
-      title: Premium
-    text: Would you like to pay your premium or a claim?
+    text: 'Your outstanding premium balance is ${premium_balance}. What would you like to do?'
   utter_confirm_address:
   - buttons:
     - payload: /affirm
@@ -402,7 +401,7 @@ responses:
       title: Check Claim Status
     - payload: /new_id_card
       title: Order New ID Card
-    - payload: /pay_claim
+    - payload: /make_a_payment
       title: Pay a Claim
     - payload: /get_a_quote
       title: Get a Quote
@@ -484,6 +483,7 @@ responses:
 actions:
 - validate_quote_form
 - action_get_quote
+- action_stop_quote
 - action_claim_status
 - validate_claim_status_form
 - action_ask_recent_claim
@@ -492,6 +492,7 @@ actions:
 - action_ask_recent_claims
 - validate_verify_address_form
 - action_verify_address_form
+- action_reset_address
 - action_new_id_card
 - action_update_address
 - validate_change_address_form
@@ -500,6 +501,7 @@ actions:
 - action_scroll_claims_form_exit
 - action_pay_claim
 - action_cancel_payment
+- action_stop_new_claim_form
 - validate_pay_claim_form
 - action_file_new_claim_form
 - validate_file_new_claim_form
@@ -511,18 +513,6 @@ actions:
 - action_check_claim_balance
 
 forms:
-  verify_address_form:
-    verify_address:
-    - intent: affirm
-      type: from_intent
-      value: true
-    - intent: deny
-      type: from_intent
-      value: false
-    - intent:
-      - inform
-      - new_id_card_form
-      type: from_text
   quote_form:
     quote_insurance_type:
     - entity: quote_insurance_type
@@ -552,34 +542,42 @@ forms:
     address_city:
     - entity: address_city
       type: from_text
+      not_intent: stop
     address_state:
     - entity: state
       type: from_entity
     - type: from_text
+      not_intent: stop
     address_street:
     - entity: address_street
       type: from_text
     address_zip:
     - entity: address_zip
       type: from_text
+      not_intent: stop
   pay_claim_form:
     claim_id:
-    - entity: claim_id
+    - type: from_entity
+      entity: claim_id
+    - type: from_text
       not_intent:
       - uncertain
       - deny
-      type: from_entity
-  pay_premium_form:
-    pay_premium_in_full:
-    - entity: pay_in_full
-      intent: inform
-      type: from_entity
-    z_confirm_premium_payment:
-    - intent: affirm
-      type: from_intent
+    claim_pay_amount:
+    - type: from_entity
+      entity: amount-of-money
+    - type: from_entity
+      entity: number
+    - type: from_text
+      not_intent:
+      - uncertain
+      - deny
+    confirm_payment:
+    - type: from_intent
+      intent: affirm
       value: true
-    - intent: deny
-      type: from_intent
+    - type: from_intent
+      intent: deny
       value: false
   scroll_claims_form:
     scroll_claims:
@@ -594,8 +592,11 @@ forms:
     - type: from_text
       not_intent: stop
     claim_amount_submit:
-    - entity: claim_amount
-      type: from_text
+    - entity: number
+      type: from_entity
+      not_intent: stop
+    - type: from_entity
+      entity: amount-of-money
       not_intent: stop
     - type: from_text
       not_intent: stop

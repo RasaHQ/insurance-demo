@@ -28,6 +28,7 @@ rules:
   - intent: stop
   - action: action_deactivate_loop
   - active_loop: null
+  - action: action_stop_quote
   - action: utter_cancel_insurance_quote
   - action: utter_anything_else
 - rule: Exit New Claim Form
@@ -37,5 +38,16 @@ rules:
   - intent: stop
   - action: action_deactivate_loop
   - active_loop: null
+  - action: action_stop_new_claim_form
   - action: utter_cancel_new_claim_file
+  - action: utter_anything_else
+- rule: Exit Change Address Form
+  condition:
+  - active_loop: change_address_form
+  steps:
+  - intent: stop
+  - action: action_deactivate_loop
+  - active_loop: null
+  - action: action_reset_address
+  - action: utter_cancel_address_change
   - action: utter_anything_else

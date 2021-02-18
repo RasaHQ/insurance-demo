@@ -21,32 +21,22 @@ stories:
 - story: member needs a new ID card (happy path)
   steps:
   - intent: new_id_card
-  - action: verify_address_form
-  - active_loop: verify_address_form
-  - slot_was_set:
-    - verify_address: true
-  - active_loop: null
-  - action: action_verify_address_form
+  - action: action_ask_verify_address
+  - intent: affirm
   - action: action_new_id_card
   - action: utter_anything_else
 
 - story: member needs a new ID card (requires address change)
   steps:
   - intent: new_id_card
-  - action: verify_address_form
-  - active_loop: verify_address_form
-  - slot_was_set:
-    - verify_address: false
-  - active_loop: null
-  - action: action_verify_address_form
+  - action: action_ask_verify_address
+  - intent: deny
+  - action: action_reset_address
   - action: utter_new_id_address_change
   - action: change_address_form
   - active_loop: change_address_form
   - active_loop: null
   - action: action_update_address
-  - action: verify_address_form
-  - active_loop: verify_address_form
-  - active_loop: null
   - action: action_new_id_card
   - action: utter_anything_else
 
@@ -176,11 +166,18 @@ stories:
   - active_loop: null
   - action: utter_anything_else
 
+- story: make a payment, claim
+  steps:
+  - intent: make_payment
+  - action: pay_claim_form
+  - active_loop: pay_claim_form
+  - active_loop: null
+  - action: action_pay_claim
+  - action: utter_anything_else
+
 - story: make payment, claim, uncertain
   steps:
   - intent: make_payment
-  - slot_was_set:
-    - payment_type: claim
   - action: pay_claim_form
   - active_loop: pay_claim_form
   - or:
@@ -198,43 +195,6 @@ stories:
   - active_loop: pay_claim_form
   - active_loop: null
   - action: action_pay_claim
-  - action: utter_anything_else
-
-- story: make a payment, pay claim
-  steps:
-  - intent: make_payment
-  - action: utter_clarify_payment_type
-  - intent: inform
-  - slot_was_set:
-    - payment_type: claim
-  - action: pay_claim_form
-  - active_loop: pay_claim_form
-  - active_loop: null
-  - action: action_pay_claim
-  - action: utter_anything_else
-
-- story: make a payment, pay premium
-  steps:
-  - intent: make_payment
-  - action: utter_clarify_payment_type
-  - intent: inform
-  - slot_was_set:
-    - payment_type: premium
-  - action: pay_premium_form
-  - active_loop: pay_premium_form
-  - active_loop: null
-  - action: action_process_premium_payment
-  - action: utter_anything_else
-
-- story: pay premium
-  steps:
-  - intent: make_payment
-  - slot_was_set:
-    - payment_type: premium
-  - action: pay_premium_form
-  - active_loop: pay_premium_form
-  - active_loop: null
-  - action: action_process_premium_payment
   - action: utter_anything_else
 
 - story: anything else affirm

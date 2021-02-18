@@ -1,10 +1,7 @@
 language: en
 pipeline:
 - name: WhitespaceTokenizer
-- name: RegexEntityExtractor
-  case_sensitive: False
-  use_lookup_tables: True
-  use_regexes: True
+- name: RegexFeaturizer
 - name: LexicalSyntacticFeaturizer
 - name: CountVectorsFeaturizer
 - name: CountVectorsFeaturizer
@@ -23,12 +20,9 @@ pipeline:
   threshold: 0.3
   ambiguity_threshold: 0.1
 policies:
-- name: MemoizationPolicy
-- name: TEDPolicy
-  max_history: 7
-  epochs: 100
-- name: RulePolicy
-  core_fallback_threshold: 0.4
-  core_fallback_action_name: action_default_fallback
-  enable_fallback_prediction: true
 - name: AugmentedMemoizationPolicy
+  max_history: 3
+- name: TEDPolicy
+  max_history: 3
+  epochs: 200
+- name: RulePolicy
