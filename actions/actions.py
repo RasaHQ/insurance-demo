@@ -555,12 +555,14 @@ class ValidateFileNewClaimForm(FormValidationAction):
         tracker: Tracker,
         domain: DomainDict,
     ) -> Dict[Text, Any]:
-        """Validate cuisine value."""
+        """Validate insurance type value."""
 
         if slot_value.lower() not in ["health", "auto", "life", "home"]:
             dispatcher.utter_message("I can only provide quotes for home, health, life, or home insurance. "
                                      "Please choose one of those options.")
             return {"AA_quote_insurance_type": None}
+        elif slot_value.lower() in ["health", "auto", "life", "home"]:
+            return {"AA_quote_insurance_type": slot_value}
 
         return {"AA_quote_insurance_type": None}
 
