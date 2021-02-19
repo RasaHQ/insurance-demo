@@ -426,19 +426,16 @@ forms:
     - type: from_text
   change_address_form:
     address_city:
-    - entity: address_city
+    - type: from_text
       not_intent: stop
-      type: from_text
     address_state:
     - entity: state
       type: from_entity
-    - not_intent: stop
-      type: from_text
     address_street:
-    - entity: address_street
-      type: from_text
+    - type: from_text
+      not_intent: stop
     address_zip:
-    - entity: address_zip
+    - type: from_text
       not_intent: stop
     confirm_address:
     - type: from_intent

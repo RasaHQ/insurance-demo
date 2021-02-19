@@ -1,11 +1,9 @@
 """Custom actions"""
 import json
-import time
 import random
 import datetime
 from typing import Dict, Text, Any, List, Optional
 import logging
-from dateutil import parser
 from rasa_sdk.interfaces import Action
 from rasa_sdk.events import (
     SlotSet,
@@ -21,8 +19,6 @@ from rasa_sdk import Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.forms import FormValidationAction
 from rasa_sdk.types import DomainDict
-
-from actions.custom_forms import CustomFormValidationAction
 
 
 logger = logging.getLogger(__name__)
