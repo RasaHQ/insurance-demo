@@ -87,10 +87,11 @@ nlu:
     - [new york](state)
     - [Rhode Island](state)
     - [Oregon](state)
+    - [Hawaii](state)
     - [oklahoma](state)
     - [california](state)
     - [Texas](state)
-    - [arizona]{"entity": "state", "value": "AZ"}[arizona]{"entity": "state", "value": "AZ"}
+    - [arizona](state)
     - 3
     - [NY](state)
     - 2

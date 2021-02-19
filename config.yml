@@ -11,6 +11,11 @@ pipeline:
 - name: DucklingEntityExtractor
   url: http://localhost:8000
   dimensions: null
+- name: RegexEntityExtractor
+  case_sensitive: False
+  use_lookup_tables: True
+  use_regexes: True
+  "use_word_boundaries": True
 - name: DIETClassifier
   epochs: 100
 - name: EntitySynonymMapper
