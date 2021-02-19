@@ -5,6 +5,8 @@ session_config:
   session_expiration_time: 60
   carry_over_slots_to_new_session: true
 intents:
+- ask_for_help:
+    use_entities: true
 - greet:
     use_entities: true
 - goodbye:
@@ -374,6 +376,8 @@ responses:
   - text: Sure thing. I can send you a new ID card. First, let's make sure I send it to the correct address.
   utter_start_new_id_order:
   - text: I can help you get a new ID card. First, let's confirm some information.
+  utter_my_capability:
+  - text: I can help manage your insurance account by reviewing claims, making claim payments, ordering a new ID card, and getting a quote for insurance.
 actions:
 - validate_quote_form
 - action_get_quote

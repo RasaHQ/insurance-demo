@@ -19,7 +19,6 @@ stories:
 - story: member needs a new ID card (happy path)
   steps:
   - intent: new_id_card
-  - action: utter_start_new_id_order
   - action: utter_new_card_address
   - action: action_ask_verify_address
   - intent: affirm
@@ -28,7 +27,6 @@ stories:
 - story: member needs a new ID card (requires address change)
   steps:
   - intent: new_id_card
-  - action: utter_start_new_id_order
   - action: utter_new_card_address
   - action: action_ask_verify_address
   - intent: deny
@@ -192,3 +190,7 @@ stories:
   - action: utter_anything_else
   - intent: deny
   - action: utter_goodbye
+- story: member needs help
+  steps:
+  - intent: ask_for_help
+  - action: utter_my_capability

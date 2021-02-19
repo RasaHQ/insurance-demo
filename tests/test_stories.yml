@@ -114,3 +114,71 @@ stories:
   - slot_was_set:
     - quote_number_persons: null
   - action: utter_anything_else
+- story: Story from Conversation ID 581241e5a8af43559b69807bf53b2eda
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: get_a_quote
+  - action: quote_form
+  - active_loop: quote_form
+  - slot_was_set:
+    - requested_slot: AA_quote_insurance_type
+  - intent: inform
+  - action: quote_form
+  - slot_was_set:
+    - AA_quote_insurance_type: health
+  - slot_was_set:
+    - requested_slot: quote_number_persons
+  - intent: inform
+  - slot_was_set:
+    - number: 3
+  - action: quote_form
+  - slot_was_set:
+    - quote_number_persons: '3'
+  - slot_was_set:
+    - requested_slot: quote_state
+  - intent: nlu_fallback
+  - slot_was_set:
+    - state: MI
+  - action: quote_form
+  - slot_was_set:
+    - quote_state: MI
+  - slot_was_set:
+    - requested_slot: null
+  - active_loop: null
+  - action: action_get_quote
+  - slot_was_set:
+    - AA_quote_insurance_type: null
+  - slot_was_set:
+    - quote_state: null
+  - slot_was_set:
+    - quote_number_persons: null
+  - slot_was_set:
+    - number: null
+  - slot_was_set:
+    - state: null
+  - action: utter_anything_else
+  - intent: deny
+  - action: utter_goodbye
+- story: Story from Conversation ID c4f811174e3c4c4692161eac501eacd9
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: new_id_card
+  - action: utter_new_card_address
+  - action: action_ask_verify_address
+  - slot_was_set:
+    - address_street: 7 Maple Ave.
+  - slot_was_set:
+    - address_city: Lynn
+  - slot_was_set:
+    - address_state: MA
+  - slot_was_set:
+    - address_zip: '01902'
+  - slot_was_set:
+    - full_address: "7 Maple Ave.\nLynn, MA 01902"
+  - intent: affirm
+  - action: action_new_id_card
+  - action: utter_anything_else
+  - intent: deny
+  - action: utter_goodbye

@@ -17,6 +17,7 @@ rules:
   steps:
   - intent: out_of_scope
   - action: utter_out_of_scope
+  - action: utter_my_capability
 - rule: Ask user to rephrase their question
   steps:
   - intent: nlu_fallback
