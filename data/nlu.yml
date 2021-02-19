@@ -36,6 +36,7 @@ nlu:
     - show me my claims
     - what is my claim history
     - get claim status
+    - show some claims
 - intent: file_a_claim
   examples: |
     - file a claim
@@ -45,6 +46,9 @@ nlu:
     - submit a new claim
     - make a new claim
     - i crashed my [car]{"entity": "quote_insurance_type", "value": "auto"}
+    - file new claim
+    - file a [health](quote_insurance_type) insurance claim
+    - file [health](quote_insurance_type) insurance claim
 - intent: make_payment
   examples: |
     - pay a [claim](payment_type)
@@ -56,6 +60,7 @@ nlu:
     - pay [claim](payment_type)
     - pay bill
     - i want to pay a [claim](payment_type)
+    - make a claim payment
 - intent: inform
   examples: |
     - 34
@@ -114,6 +119,11 @@ nlu:
     - 123 Chestnut St
     - 7 Maple Ave
     - [MA](state)
+    - $100
+    - [Wisconsin]{"entity": "state", "value": "WI"}
+    - 1
+    - [Montana]{"entity": "state", "value": "MT"}
+    - [Michigan]{"entity": "state", "value": "MI"}
 - intent: get_a_quote
   examples: |
     - i need insurance
@@ -206,7 +216,12 @@ nlu:
     - i doubt it
     - ni
     - not right now
+- intent: stop
+  examples: |
     - nevermind
+    - stop
+    - cancel
+    - exit
 - intent: uncertain
   examples: |
     - i don't know
@@ -250,16 +265,19 @@ nlu:
     - how is the weather in New York
     - what's for dinner?
     - tell me about insurance?
+    - what's my coverage?
+    - what am i covered for?
 - intent: nlu_fallback
   examples: |
     - tell me how to change a tire
     - something totally random
     - i don't want insurance
-- intent: stop
+- intent: ask_for_help
   examples: |
-    - stop
-    - cancel
-    - exit
+    - tell me about yourself
+    - help
+    - i need help
+    - help me
 - synonym: auto
   examples: |
     - car
