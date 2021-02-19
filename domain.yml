@@ -206,7 +206,7 @@ responses:
       title: Yes
     - payload: /deny
       title: No
-    text: 'Would you to submit a {quote_insurance_type} claim for ${claim_amount_submit}?'
+    text: 'Would you to submit a {AA_quote_insurance_type} claim for ${claim_amount_submit}?'
   utter_ask_knows_claim_id:
   - buttons:
     - payload: /affirm
@@ -214,7 +214,7 @@ responses:
     - payload: /deny
       title: No
     text: Do you know the claim ID you want to check?
-  utter_ask_quote_insurance_type:
+  utter_ask_AA_quote_insurance_type:
   - buttons:
     - payload: /inform{{"quote_insurance_type":"health"}}
       title: Health
@@ -403,7 +403,7 @@ actions:
 - action_check_claim_balance
 forms:
   quote_form:
-    quote_insurance_type:
+    AA_quote_insurance_type:
     - entity: quote_insurance_type
       type: from_entity
     - not_intent: stop

@@ -46,10 +46,10 @@ class ActionGetQuote(Action):
         domain: Dict[Text, Any],
     ) -> List[Dict]:
         """Executes the action"""
-        slots = ["quote_insurance_type", "quote_state", "quote_number_persons"]
+        slots = ["AA_quote_insurance_type", "quote_state", "quote_number_persons", "number", "state"]
 
         # Build the quote from the provided data.
-        insurance_type = tracker.get_slot("quote_insurance_type")
+        insurance_type = tracker.get_slot("AA_quote_insurance_type")
         n_persons = int(tracker.get_slot("quote_number_persons"))
 
         baseline_rate = MOCK_DATA["policy_quote"]["insurance_type"][insurance_type]
@@ -74,7 +74,7 @@ class ValidateQuoteForm(FormValidationAction):
         """Unique identifier for the action."""
         return "validate_quote_form"
 
-    async def validate_quote_insurance_type(
+    async def validate_AA_quote_insurance_type(
             self,
             value: Text,
             dispatcher: CollectingDispatcher,
@@ -82,13 +82,13 @@ class ValidateQuoteForm(FormValidationAction):
             domain: Dict[Text, Any],
     ) -> Dict[Text, Any]:
         """Validates value of 'amount-of-money' slot"""
-        insurance_type = tracker.get_slot("quote_insurance_type")
+        insurance_type = tracker.get_slot("AA_quote_insurance_type")
 
         if insurance_type.lower() not in ["auto", "health", "life", "home"]:
             dispatcher.utter_message("Must select a valid type of insurance")
-            return {"quote_insurance_type": None}
+            return {"AA_quote_insurance_type": None}
 
-        return {"quote_insurance_type": insurance_type}
+        return {"AA_quote_insurance_type": insurance_type}
 
     async def validate_quote_state(
             self,
@@ -142,7 +142,7 @@ class ActionStopQuote(Action):
         domain: Dict[Text, Any],
     ) -> List[Dict]:
         """Executes the action"""
-        slots = ["quote_insurance_type", "quote_state", "quote_number_persons"]
+        slots = ["AA_quote_insurance_type", "quote_state", "quote_number_persons"]
 
         # Reset the slot values.
         return [SlotSet(slot, None) for slot in slots]
@@ -539,7 +539,7 @@ class ActionFileNewClaimForm(Action):
                        "confirm_file_new_claim",
                        "number",
                        "amount-of-money",
-                       "quote_insurance_type"]
+                       "AA_quote_insurance_type"]
         return [SlotSet(slot, None) for slot in reset_slots]
 
 
