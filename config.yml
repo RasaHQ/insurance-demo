@@ -12,12 +12,13 @@ pipeline:
   url: http://localhost:8000
   dimensions: null
 - name: RegexEntityExtractor
-  case_sensitive: False
-  use_lookup_tables: True
-  use_regexes: True
-  "use_word_boundaries": True
+  case_sensitive: false
+  use_lookup_tables: true
+  use_regexes: true
+  use_word_boundaries: true
 - name: DIETClassifier
   epochs: 100
+  entity_recognition: false
 - name: EntitySynonymMapper
 - name: ResponseSelector
   epochs: 100
