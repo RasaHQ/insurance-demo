@@ -1,34 +1,116 @@
-#### This file contains tests to evaluate that your bot behaves as expected.
-#### If you want to learn more, please see the docs: https://rasa.com/docs/rasa/testing-your-assistant
-
+version: "2.0"
 stories:
-  - story: member wants a new insurance quote
-    steps:
-    - user: |
-        i need insurance
-      intent: get_a_quote
-    - action: quote_form
-    - active_loop: quote_form
-    - active_loop: null
-    - action: action_get_quote
-    - action: utter_anything_else
-  - story: member wants a new health insurance quote
-    steps:
-    - user: |
-        i need [health](quote_insurance_type) insurance
-      intent: get_a_quote
-    - action: quote_form
-    - active_loop: quote_form
-    - active_loop: null
-    - action: action_get_quote
-    - action: utter_anything_else
-  - story: pay a claim
-    steps:
-    - user: |
-        make a payment
-      intent: make_payment
-    - action: pay_claim_form
-    - active_loop: pay_claim_form
-    - active_loop: null
-    - action: action_pay_claim
-    - action: utter_anything_else
+- story: member wants a new insurance quote
+  steps:
+  - intent: get_a_quote
+    user: |-
+      i need insurance
+  - action: quote_form
+  - active_loop: quote_form
+  - active_loop: null
+  - action: action_get_quote
+  - action: utter_anything_else
+- story: member wants a new health insurance quote
+  steps:
+  - intent: get_a_quote
+    user: |-
+      i need [health](quote_insurance_type) insurance
+  - action: quote_form
+  - active_loop: quote_form
+  - active_loop: null
+  - action: action_get_quote
+  - action: utter_anything_else
+- story: pay a claim
+  steps:
+  - intent: make_payment
+    user: |-
+      make a payment
+  - action: pay_claim_form
+  - active_loop: pay_claim_form
+  - active_loop: null
+  - action: action_pay_claim
+  - action: utter_anything_else
+- story: Story from Conversation ID 99ebf53ca15f433bba551b4387bb66f9
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: get_a_quote
+  - action: quote_form
+  - active_loop: quote_form
+  - slot_was_set:
+    - requested_slot: quote_insurance_type
+  - intent: inform
+  - slot_was_set:
+    - quote_insurance_type: home
+  - action: quote_form
+  - slot_was_set:
+    - quote_insurance_type: home
+  - slot_was_set:
+    - requested_slot: quote_number_persons
+  - intent: inform
+  - slot_was_set:
+    - number: 1
+  - action: quote_form
+  - slot_was_set:
+    - quote_number_persons: '1'
+  - slot_was_set:
+    - requested_slot: quote_state
+  - intent: inform
+  - slot_was_set:
+    - state: MT
+  - action: quote_form
+  - slot_was_set:
+    - quote_state: MT
+  - slot_was_set:
+    - requested_slot: null
+  - active_loop: null
+  - action: action_get_quote
+  - slot_was_set:
+    - quote_insurance_type: null
+  - slot_was_set:
+    - quote_state: null
+  - slot_was_set:
+    - quote_number_persons: null
+  - action: utter_anything_else
+  - intent: deny
+  - action: utter_goodbye
+  - intent: greet
+  - action: utter_greet
+  - intent: get_a_quote
+  - action: quote_form
+  - active_loop: quote_form
+  - slot_was_set:
+    - requested_slot: quote_insurance_type
+  - intent: inform
+  - slot_was_set:
+    - quote_insurance_type: auto
+  - action: quote_form
+  - slot_was_set:
+    - quote_insurance_type: auto
+  - slot_was_set:
+    - requested_slot: quote_number_persons
+  - intent: inform
+  - slot_was_set:
+    - number: 1
+  - action: quote_form
+  - slot_was_set:
+    - quote_number_persons: '1'
+  - slot_was_set:
+    - requested_slot: quote_state
+  - intent: inform
+  - slot_was_set:
+    - state: WI
+  - action: quote_form
+  - slot_was_set:
+    - quote_state: WI
+  - slot_was_set:
+    - requested_slot: null
+  - active_loop: null
+  - action: action_get_quote
+  - slot_was_set:
+    - quote_insurance_type: null
+  - slot_was_set:
+    - quote_state: null
+  - slot_was_set:
+    - quote_number_persons: null
+  - action: utter_anything_else
