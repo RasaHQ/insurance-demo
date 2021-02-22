@@ -253,7 +253,8 @@ responses:
     text: |-
       Is this address correct?
 
-      {full_address}
+      {address_street}
+      {address_city}, {address_state} {address_zip}
   utter_ask_get_claim_form_claim_id:
   - text: What is the ID of the claim you'd like to lookup?
   utter_ask_pay_claim_form_claim_id:
@@ -456,13 +457,6 @@ forms:
     address_zip:
     - not_intent: stop
       type: from_text
-    confirm_address:
-    - intent: affirm
-      type: from_intent
-      value: true
-    - intent: deny
-      type: from_intent
-      value: false
   pay_claim_form:
     claim_id:
     - entity: claim_id

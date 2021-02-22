@@ -14,6 +14,7 @@ nlu:
     - order a new id card
     - I need a new ID card
     - order new id card
+    - get a new id card
 - intent: claim_status
   examples: |
     - what is the status of my claim?
@@ -38,6 +39,10 @@ nlu:
     - get claim status
     - show some claims
     - check claim id 748536
+    - check the status of claim [NC239062](claim_id)
+    - has my claim been submitted?
+    - what is the status of claim [XX123456](claim_id)[XX123456](claim_id)
+    - check up on a claim
 - intent: file_a_claim
   examples: |
     - file a claim
@@ -142,6 +147,14 @@ nlu:
     - [Maryland]{"entity": "state", "value": "MD"}[Maryland]{"entity": "state", "value": "MD"}
     - myself
     - just me
+    - [Maryland]{"entity": "state", "value": "MD"}[Maryland]{"entity": "state", "value": "MD"}
+    - 30
+    - 125 Main Ave
+    - [Ohio]{"entity": "state", "value": "OH"}
+    - Cincy
+    - 123 Main Ave
+    - 123 Main Ave.
+    - Cincinnati
 - intent: get_a_quote
   examples: |
     - i need insurance
@@ -196,6 +209,7 @@ nlu:
     - thank you too
     - oh that's nice thank you
     - byeee
+    - adios
 - intent: affirm
   examples: |
     - yes
@@ -302,6 +316,9 @@ nlu:
 - synonym: MI
   examples: |
     - Michigan
+- synonym: MD
+  examples: |
+    - Maryland
 - synonym: AZ
   examples: |
     - arizona
