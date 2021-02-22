@@ -98,8 +98,10 @@ class ValidateQuoteForm(FormValidationAction):
             domain: Dict[Text, Any],
     ) -> Dict[Text, Any]:
         """Validates the state provided by user to get an insurance quote."""
-        if value not in US_STATES:
-            dispatcher.utter_message(f"{value} is invalid. Please provide a valid state.")
+        state_entity = next(tracker.get_latest_entity_values("state"), None)
+
+        if state_entity not in US_STATES:
+            dispatcher.utter_message(f"{state_entity} is invalid. Please provide a valid state.")
             return {"quote_state": None}
 
         return {"quote_state": value}
