@@ -357,7 +357,7 @@ responses:
   utter_happy:
   - text: Great, carry on!
   utter_goodbye:
-  - text: Bye
+  - text: Okay. I'll be here to help you with all of your future insurance needs. Have a stupendous day!
   utter_iamabot:
   - text: I am a bot, powered by Rasa.
   utter_zero_balance:
