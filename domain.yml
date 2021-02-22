@@ -216,7 +216,7 @@ responses:
     - payload: /deny
       title: No
     text: Do you know the claim ID you want to check?
-  utter_ask_AA_quote_insurance_type:
+  utter_ask_quote_form_AA_quote_insurance_type:
   - buttons:
     - payload: /inform{{"quote_insurance_type":"health"}}
       title: Health
@@ -226,7 +226,18 @@ responses:
       title: Auto
     - payload: /inform{{"quote_insurance_type":"home"}}
       title: Home
-    text: What kind of claim do you want to file?
+    text: What kind of insurance are you interested in?
+  utter_ask_file_new_claim_form_AA_quote_insurance_type:
+  - buttons:
+    - payload: /inform{{"quote_insurance_type":"health"}}
+      title: Health
+    - payload: /inform{{"quote_insurance_type":"life"}}
+      title: Life
+    - payload: /inform{{"quote_insurance_type":"auto"}}
+      title: Auto
+    - payload: /inform{{"quote_insurance_type":"home"}}
+      title: Home
+    text: What type of claim would you like to file?
   utter_ask_quote_form_quote_number_persons:
   - text: How many people do you want to include on the policy for your quote?
   utter_ask_quote_form_quote_state:

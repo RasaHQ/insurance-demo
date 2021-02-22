@@ -120,6 +120,9 @@ class ValidateQuoteForm(FormValidationAction):
         except TypeError:
             dispatcher.utter_message(f"Number of persons must be an integer.")
             return {"quote_number_persons": None}
+        except ValueError:
+            dispatcher.utter_message("You must answer with a number.")
+            return {"quote_number_persons": None}
 
         if int(value) <= 0:
             dispatcher.utter_message("Number of people on policy must be >= 1.")
