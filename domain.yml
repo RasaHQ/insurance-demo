@@ -502,7 +502,7 @@ forms:
     - entity: amount-of-money
       not_intent: stop
       type: from_entity
-    - not_intent: stop
+    - intent: inform
       type: from_text
     confirm_file_new_claim:
     - intent: affirm

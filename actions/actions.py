@@ -104,7 +104,7 @@ class ValidateQuoteForm(FormValidationAction):
             dispatcher.utter_message(f"{state_entity} is invalid. Please provide a valid state.")
             return {"quote_state": None}
 
-        return {"quote_state": value}
+        return {"quote_state": state_entity}
 
     def validate_quote_number_persons(
             self,
