@@ -112,7 +112,6 @@ nlu:
     - Austin
     - [AB234567](claim_id)
     - [12054](claim_id)
-    - [arizona]{"entity": "state", "value": "AZ"}[arizona]{"entity": "state", "value": "AZ"}
     - Jackson
     - [Wyoming](state)
     - 6
@@ -214,6 +213,7 @@ nlu:
     - nah
     - No
     - i doubt it
+    - No thanks!
     - ni
     - not right now
 - intent: stop
@@ -229,6 +229,7 @@ nlu:
     - idk
     - i do not know
     - i dont know
+    - i don't know the ID
 - intent: mood_great
   examples: |
     - perfect
@@ -251,6 +252,7 @@ nlu:
     - are you a human?
     - am I talking to a bot?
     - am I talking to a human?
+    - what else can you do?
 - intent: update_member_info
   examples: |
     - address change
