@@ -83,6 +83,19 @@ nlu:
     - [oklahoma](state)
     - [california](state)
     - [Texas](state)
+    - $1000
+    - 90210
+    - 7 Maple Ave.
+    - [MA](state)
+    - Boston
+    - [AZ](state)
+    - [Arizona](state) is valid
+    - [arizona](state)
+    - 1
+    - just me
+    - 12345
+    - [NY](state)
+    - 2
 - intent: get_a_quote
   examples: |
     - i need insurance
@@ -168,6 +181,7 @@ nlu:
     - nah
     - No
     - i doubt it
+    - No thanks!
 - intent: uncertain
   examples: |
     - i don't know
@@ -175,6 +189,7 @@ nlu:
     - idk
     - i do not know
     - i dont know
+    - i don't know the ID
 - intent: mood_great
   examples: |
     - perfect
@@ -197,6 +212,7 @@ nlu:
     - are you a human?
     - am I talking to a bot?
     - am I talking to a human?
+    - what else can you do?
 - intent: update_member_info
   examples: |
     - address change
