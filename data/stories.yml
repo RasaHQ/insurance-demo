@@ -12,7 +12,7 @@ stories:
   steps:
   - intent: get_a_quote
     entities:
-      - quote_insurance_type: health
+    - quote_insurance_type: health
   - action: quote_form
   - active_loop: quote_form
   - active_loop: null
@@ -157,6 +157,7 @@ stories:
 - story: member updates their info
   steps:
   - intent: update_member_info
+  - action: utter_acknowledge_update_info
   - action: change_address_form
   - active_loop: change_address_form
   - active_loop: null
