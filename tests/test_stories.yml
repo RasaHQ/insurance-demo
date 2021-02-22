@@ -1,91 +1,184 @@
-#### This file contains tests to evaluate that your bot behaves as expected.
-#### If you want to learn more, please see the docs: https://rasa.com/docs/rasa/testing-your-assistant
-
+version: "2.0"
 stories:
-- story: happy path 1
+- story: member wants a new insurance quote
   steps:
-  - user: |
-      hello there!
-    intent: greet
-  - action: utter_greet
-  - user: |
-      amazing
-    intent: mood_great
-  - action: utter_happy
-
-- story: happy path 2
+  - intent: get_a_quote
+    user: |-
+      i need insurance
+  - action: quote_form
+  - active_loop: quote_form
+  - active_loop: null
+  - action: action_get_quote
+  - action: utter_anything_else
+- story: member wants a new health insurance quote
   steps:
-  - user: |
-      hello there!
-    intent: greet
+  - intent: get_a_quote
+    user: |-
+      i need [health](quote_insurance_type) insurance
+  - action: quote_form
+  - active_loop: quote_form
+  - active_loop: null
+  - action: action_get_quote
+  - action: utter_anything_else
+- story: pay a claim
+  steps:
+  - intent: make_payment
+    user: |-
+      make a payment
+  - action: pay_claim_form
+  - active_loop: pay_claim_form
+  - active_loop: null
+  - action: action_pay_claim
+  - action: utter_anything_else
+- story: Story from Conversation ID 99ebf53ca15f433bba551b4387bb66f9
+  steps:
+  - intent: greet
   - action: utter_greet
-  - user: |
-      amazing
-    intent: mood_great
-  - action: utter_happy
-  - user: |
-      bye-bye!
-    intent: goodbye
+  - intent: get_a_quote
+  - action: quote_form
+  - active_loop: quote_form
+  - slot_was_set:
+    - requested_slot: quote_insurance_type
+  - intent: inform
+  - slot_was_set:
+    - quote_insurance_type: home
+  - action: quote_form
+  - slot_was_set:
+    - quote_insurance_type: home
+  - slot_was_set:
+    - requested_slot: quote_number_persons
+  - intent: inform
+  - slot_was_set:
+    - number: 1
+  - action: quote_form
+  - slot_was_set:
+    - quote_number_persons: '1'
+  - slot_was_set:
+    - requested_slot: quote_state
+  - intent: inform
+  - slot_was_set:
+    - state: MT
+  - action: quote_form
+  - slot_was_set:
+    - quote_state: MT
+  - slot_was_set:
+    - requested_slot: null
+  - active_loop: null
+  - action: action_get_quote
+  - slot_was_set:
+    - quote_insurance_type: null
+  - slot_was_set:
+    - quote_state: null
+  - slot_was_set:
+    - quote_number_persons: null
+  - action: utter_anything_else
+  - intent: deny
   - action: utter_goodbye
-
-- story: sad path 1
-  steps:
-  - user: |
-      hello
-    intent: greet
+  - intent: greet
   - action: utter_greet
-  - user: |
-      not good
-    intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - user: |
-      yes
-    intent: affirm
-  - action: utter_happy
-
-- story: sad path 2
+  - intent: get_a_quote
+  - action: quote_form
+  - active_loop: quote_form
+  - slot_was_set:
+    - requested_slot: quote_insurance_type
+  - intent: inform
+  - slot_was_set:
+    - quote_insurance_type: auto
+  - action: quote_form
+  - slot_was_set:
+    - quote_insurance_type: auto
+  - slot_was_set:
+    - requested_slot: quote_number_persons
+  - intent: inform
+  - slot_was_set:
+    - number: 1
+  - action: quote_form
+  - slot_was_set:
+    - quote_number_persons: '1'
+  - slot_was_set:
+    - requested_slot: quote_state
+  - intent: inform
+  - slot_was_set:
+    - state: WI
+  - action: quote_form
+  - slot_was_set:
+    - quote_state: WI
+  - slot_was_set:
+    - requested_slot: null
+  - active_loop: null
+  - action: action_get_quote
+  - slot_was_set:
+    - quote_insurance_type: null
+  - slot_was_set:
+    - quote_state: null
+  - slot_was_set:
+    - quote_number_persons: null
+  - action: utter_anything_else
+- story: Story from Conversation ID 581241e5a8af43559b69807bf53b2eda
   steps:
-  - user: |
-      hello
-    intent: greet
+  - intent: greet
   - action: utter_greet
-  - user: |
-      not good
-    intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - user: |
-      not really
-    intent: deny
+  - intent: get_a_quote
+  - action: quote_form
+  - active_loop: quote_form
+  - slot_was_set:
+    - requested_slot: AA_quote_insurance_type
+  - intent: inform
+  - action: quote_form
+  - slot_was_set:
+    - AA_quote_insurance_type: health
+  - slot_was_set:
+    - requested_slot: quote_number_persons
+  - intent: inform
+  - slot_was_set:
+    - number: 3
+  - action: quote_form
+  - slot_was_set:
+    - quote_number_persons: '3'
+  - slot_was_set:
+    - requested_slot: quote_state
+  - intent: nlu_fallback
+  - slot_was_set:
+    - state: MI
+  - action: quote_form
+  - slot_was_set:
+    - quote_state: MI
+  - slot_was_set:
+    - requested_slot: null
+  - active_loop: null
+  - action: action_get_quote
+  - slot_was_set:
+    - AA_quote_insurance_type: null
+  - slot_was_set:
+    - quote_state: null
+  - slot_was_set:
+    - quote_number_persons: null
+  - slot_was_set:
+    - number: null
+  - slot_was_set:
+    - state: null
+  - action: utter_anything_else
+  - intent: deny
   - action: utter_goodbye
-
-- story: sad path 3
+- story: Story from Conversation ID c4f811174e3c4c4692161eac501eacd9
   steps:
-  - user: |
-      hi
-    intent: greet
+  - intent: greet
   - action: utter_greet
-  - user: |
-      very terrible
-    intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - user: |
-      no
-    intent: deny
+  - intent: new_id_card
+  - action: utter_new_card_address
+  - action: action_ask_verify_address
+  - slot_was_set:
+    - address_street: 7 Maple Ave.
+  - slot_was_set:
+    - address_city: Lynn
+  - slot_was_set:
+    - address_state: MA
+  - slot_was_set:
+    - address_zip: '01902'
+  - slot_was_set:
+    - full_address: "7 Maple Ave.\nLynn, MA 01902"
+  - intent: affirm
+  - action: action_new_id_card
+  - action: utter_anything_else
+  - intent: deny
   - action: utter_goodbye
-
-- story: say goodbye
-  steps:
-  - user: |
-      bye-bye!
-    intent: goodbye
-  - action: utter_goodbye
-
-- story: bot challenge
-  steps:
-  - user: |
-      are you a bot?
-    intent: bot_challenge
-  - action: utter_iamabot
