@@ -80,6 +80,7 @@ stories:
   - slot_was_set:
     - claim_id: 123456
   - action: utter_notify_active_claim
+  - action: action_claim_status
   - action: action_check_claim_balance
 - story: user exits form scrolling
   steps:
@@ -129,6 +130,7 @@ stories:
   - active_loop: get_claim_form
   - active_loop: null
   - action: utter_notify_active_claim
+  - action: action_claim_status
   - action: action_check_claim_balance
 - story: member updates their info, deny update
   steps:
