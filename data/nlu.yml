@@ -37,6 +37,7 @@ nlu:
     - what is my claim history
     - get claim status
     - show some claims
+    - check claim id 748536
 - intent: file_a_claim
   examples: |
     - file a claim
@@ -49,6 +50,9 @@ nlu:
     - file new claim
     - file a [health](quote_insurance_type) insurance claim
     - file [health](quote_insurance_type) insurance claim
+    - a tree fell on my [house](quote_insurance_type)
+    - file a [life](quote_insurance_type) insurance claim
+    - i had a procedure and need to file a claim
 - intent: make_payment
   examples: |
     - pay a [claim](payment_type)
@@ -60,7 +64,7 @@ nlu:
     - pay [claim](payment_type)
     - pay bill
     - i want to pay a [claim](payment_type)
-    - make a claim payment
+    - make a [claim](payment_type) payment
 - intent: inform
   examples: |
     - 34
@@ -123,6 +127,17 @@ nlu:
     - 1
     - [Montana]{"entity": "state", "value": "MT"}
     - [Michigan]{"entity": "state", "value": "MI"}
+    - 1000
+    - $1000
+    - 90210
+    - 7 Maple Ave.
+    - Boston
+    - [AZ](state)
+    - [Arizona](state) is valid
+    - 221322
+    - 221233
+    - 211233
+    - my whole family
 - intent: get_a_quote
   examples: |
     - i need insurance
@@ -140,6 +155,7 @@ nlu:
     - i need an insurance quote
     - give me a [health](quote_insurance_type) insurance quote
     - get a quote
+    - i'm looking to purchase insurance
 - intent: greet
   examples: |
     - hey
@@ -173,6 +189,7 @@ nlu:
     - ciao
     - thank you too
     - oh that's nice thank you
+    - byeee
 - intent: mood_unhappy
   examples: |
     - adios
@@ -199,6 +216,14 @@ nlu:
     - that sounds good
     - correct
     - yes obviously
+    - yup
+    - yes please
+    - yeah
+    - yes plz
+    - sure
+    - Ok
+    - cool
+    - y
 - intent: deny
   examples: |
     - no
@@ -216,12 +241,19 @@ nlu:
     - No thanks!
     - ni
     - not right now
+    - no thanks
 - intent: stop
   examples: |
     - nevermind
     - stop
     - cancel
     - exit
+    - quit
+    - i'm done
+    - go back
+    - stop this
+    - cancel form
+    - actually nevermind
 - intent: uncertain
   examples: |
     - i don't know
@@ -280,10 +312,22 @@ nlu:
     - help
     - i need help
     - help me
+    - i'm lost
+    - i'm confused
+    - can you help me?
 - synonym: auto
   examples: |
     - car
     - automobile
+- synonym: WI
+  examples: |
+    - Wisconsin
+- synonym: MT
+  examples: |
+    - Montana
+- synonym: MI
+  examples: |
+    - Michigan
 - synonym: AZ
   examples: |
     - arizona
