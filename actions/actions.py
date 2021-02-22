@@ -261,6 +261,32 @@ class ValidateVerifyAddressForm(FormValidationAction):
         return {"verify_address": verify_address}
 
 
+class ActionGetAddress(Action):
+
+    def name(self) -> Text:
+        return "action_get_address"
+
+    def run(
+        self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
+    ) -> List[EventType]:
+        address_slots = {
+            "address_street": MOCK_DATA["member_info"]["home_address"]["address_street"],
+            "address_city": MOCK_DATA["member_info"]["home_address"]["address_city"],
+            "address_state": MOCK_DATA["member_info"]["home_address"]["address_state"],
+            "address_zip": MOCK_DATA["member_info"]["home_address"]["address_zip"]
+        }
+
+        # Build the full address.
+        address_line_two = f"{address_slots['address_city']}, {address_slots['address_state']} " \
+                           f"{address_slots['address_zip']}"
+        full_address = "\n".join([address_slots['address_street'], address_line_two])
+        address_slots["full_address"] = full_address
+
+        dispatcher.utter_message(text=f"The address we have on file is:\n{full_address}")
+
+        return []
+
+
 class ActionUpdateAddress(Action):
 
     def name(self) -> Text:

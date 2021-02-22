@@ -130,37 +130,26 @@ stories:
   - active_loop: null
   - action: utter_notify_active_claim
   - action: action_check_claim_balance
-- story: happy path
+- story: member updates their info, deny update
   steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: mood_great
-  - action: utter_happy
-- story: sad path 1
-  steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - intent: affirm
-  - action: utter_happy
-- story: sad path 2
-  steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
+  - intent: update_member_info
+  - action: utter_acknowledge_update_info
+  - action: action_get_address
+  - action: utter_ask_update_address
   - intent: deny
-  - action: utter_goodbye
+  - action: utter_cancel_info_update
+  - action: utter_anything_else
 - story: member updates their info
   steps:
   - intent: update_member_info
   - action: utter_acknowledge_update_info
+  - action: action_get_address
+  - action: utter_ask_update_address
+  - intent: affirm
   - action: change_address_form
   - active_loop: change_address_form
   - active_loop: null
+  - action: action_update_address
   - action: utter_anything_else
 - story: make a payment, claim
   steps:

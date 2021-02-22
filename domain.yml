@@ -15,10 +15,6 @@ intents:
     use_entities: true
 - deny:
     use_entities: true
-- mood_great:
-    use_entities: true
-- mood_unhappy:
-    use_entities: true
 - bot_challenge:
     use_entities: true
 - new_id_card:
@@ -271,8 +267,17 @@ responses:
     text: 'Would you like to pay ${claim_pay_amount} for claim {claim_id}?'
   utter_ask_pay_claim_form_amount-of-money:
   - text: 'Claim {claim_id} has an outstanding balance of ${claim_balance}. How much would you like to pay?'
+  utter_ask_update_address:
+  - buttons:
+    - paylaod: /affirm
+      title: Yes
+    - payload: /deny
+      title: No
+    text: Would you like to update your address?
   utter_cancel_address_change:
   - text: No problem. Your address change request has been canceled.
+  utter_cancel_info_update:
+  - text: Ok. You can always check back to update your info later!
   utter_cancel_new_claim_file:
   - text: Filing a new claim has been canceled.
   utter_cancel_payment:
@@ -360,9 +365,6 @@ responses:
   - text: Let me get the status for claim {claim_id}
   utter_claim_status:
   - text: Get the claim status. Ask for claim ID. Maybe suggest latest claim?
-  utter_cheer_up:
-  - image: https://i.imgur.com/nGF1K8f.jpg
-    text: 'Here is something to cheer you up:'
   utter_did_that_help:
   - text: Did that help you?
   utter_happy:
@@ -404,6 +406,7 @@ actions:
 - validate_verify_address_form
 - action_verify_address_form
 - action_reset_address
+- action_get_address
 - action_new_id_card
 - action_update_address
 - validate_change_address_form
