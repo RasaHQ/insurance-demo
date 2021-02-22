@@ -53,6 +53,7 @@ nlu:
     - a tree fell on my [house](quote_insurance_type)
     - file a [life](quote_insurance_type) insurance claim
     - i had a procedure and need to file a claim
+    - actually file a claim
 - intent: make_payment
   examples: |
     - pay a [claim](payment_type)
@@ -138,6 +139,9 @@ nlu:
     - 221233
     - 211233
     - my whole family
+    - [Maryland]{"entity": "state", "value": "MD"}[Maryland]{"entity": "state", "value": "MD"}
+    - myself
+    - just me
 - intent: get_a_quote
   examples: |
     - i need insurance
@@ -156,6 +160,7 @@ nlu:
     - give me a [health](quote_insurance_type) insurance quote
     - get a quote
     - i'm looking to purchase insurance
+    - i'm in the market to get [life](quote_insurance_type) insurance
 - intent: greet
   examples: |
     - hey
@@ -173,6 +178,7 @@ nlu:
     - good afternoon
     - hi ther
     - hi there
+    - heyo
 - intent: goodbye
   examples: |
     - good afternoon
@@ -223,7 +229,6 @@ nlu:
     - sure
     - Ok
     - cool
-    - y
 - intent: deny
   examples: |
     - no
@@ -293,6 +298,8 @@ nlu:
     - update my address
     - change my address
     - help me update my member info
+    - update my info
+    - update my information
 - intent: out_of_scope
   examples: |
     - what is the weather?
