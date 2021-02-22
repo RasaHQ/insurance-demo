@@ -74,7 +74,7 @@ class ValidateQuoteForm(FormValidationAction):
         """Unique identifier for the action."""
         return "validate_quote_form"
 
-    async def validate_AA_quote_insurance_type(
+    def validate_AA_quote_insurance_type(
             self,
             value: Text,
             dispatcher: CollectingDispatcher,
@@ -90,7 +90,7 @@ class ValidateQuoteForm(FormValidationAction):
 
         return {"AA_quote_insurance_type": insurance_type}
 
-    async def validate_quote_state(
+    def validate_quote_state(
             self,
             value: Text,
             dispatcher: CollectingDispatcher,
@@ -104,7 +104,7 @@ class ValidateQuoteForm(FormValidationAction):
 
         return {"quote_state": value}
 
-    async def validate_quote_number_persons(
+    def validate_quote_number_persons(
             self,
             value: Text,
             dispatcher: CollectingDispatcher,
@@ -522,7 +522,7 @@ class ActionFileNewClaimForm(Action):
 
         if tracker.get_slot("confirm_file_new_claim") == "yes":
             # Submit a new claim.
-            claim_id = "".join([str(random.randint(0, 9)) for i in range(6)])
+            claim_id = "NC" + "".join([str(random.randint(0, 9)) for i in range(6)])
             claim_obj = {
                 "claim_id": claim_id,
                 "claim_balance": tracker.get_slot("claim_amount_submit"),

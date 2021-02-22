@@ -52,3 +52,11 @@ rules:
   - action: action_reset_address
   - action: utter_cancel_address_change
   - action: utter_anything_else
+- rule: Ask knows claim if no loop
+  condition:
+  - active_loop: null
+  steps:
+  - intent: claim_status
+  - slot_was_set:
+    - claim_id: null
+  - action: utter_ask_knows_claim_id

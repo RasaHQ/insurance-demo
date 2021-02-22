@@ -454,6 +454,7 @@ forms:
     - not_intent:
       - uncertain
       - deny
+      - claim_status
       type: from_text
     claim_pay_amount:
     - entity: amount-of-money

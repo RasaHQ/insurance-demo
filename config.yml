@@ -18,7 +18,6 @@ pipeline:
   use_word_boundaries: true
 - name: DIETClassifier
   epochs: 100
-  entity_recognition: false
 - name: EntitySynonymMapper
 - name: ResponseSelector
   epochs: 100
