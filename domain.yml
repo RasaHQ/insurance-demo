@@ -394,6 +394,8 @@ responses:
   - text: I can help manage your insurance account by reviewing claims, making claim payments, ordering a new ID card, and getting a quote for insurance.
   utter_acknowledge_update_info:
   - text: Certainly. I can help you update your address. Let's look at the address on file.
+  utter_start_new_quote:
+  - text: I can help you get a new insurance quote. Let's learn a little more about you.
 actions:
 - validate_quote_form
 - action_get_quote

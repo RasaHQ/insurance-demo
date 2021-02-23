@@ -1,7 +1,6 @@
 version: "2.0"
 rules:
 - rule: Show greeting and options whenever user says hello or asks for help.
-  conversation_start: true
   steps:
   - intent: greet
   - action: utter_greet
