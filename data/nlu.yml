@@ -81,6 +81,11 @@ nlu:
     - pay bill
     - i want to pay a [claim](payment_type)
     - make a [claim](payment_type) payment
+    - payment
+    - bill
+    - what's my bill
+    - do i owe a payment
+    - pay my deductible
 - intent: inform
   examples: |
     - 34
@@ -235,6 +240,10 @@ nlu:
     - oh that's nice thank you
     - byeee
     - adios
+    - cya
+    - see ya later
+    - good bye
+    - have a good one
 - intent: affirm
   examples: |
     - yes
@@ -290,6 +299,11 @@ nlu:
     - i do not know
     - i dont know
     - i don't know the ID
+    - uncertain
+    - don't know
+    - who knows
+    - i'm uncertain
+    - i don't know for sure
 - intent: bot_challenge
   examples: |
     - are you a bot?
@@ -307,6 +321,10 @@ nlu:
     - help me update my member info
     - update my info
     - update my information
+    - i moved to a new address
+    - i just moved
+    - change my info
+    - change address
 - intent: out_of_scope
   examples: |
     - what is the weather?
@@ -329,6 +347,7 @@ nlu:
     - i'm lost
     - i'm confused
     - can you help me?
+    - i need assistance
 - synonym: auto
   examples: |
     - car
@@ -348,6 +367,9 @@ nlu:
 - synonym: OH
   examples: |
     - Ohio
+- synonym: VT
+  examples: |
+    - Vermont
 - synonym: AZ
   examples: |
     - arizona
