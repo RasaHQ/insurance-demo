@@ -2,42 +2,74 @@
 
 ## Background
 
-This starter pack is to help get started on insurance related tasks. The starter pack will focus on core insurance functions
-as much as possible avoiding functions that are specific to certain types of insurance industries.
+This starter pack is to help get started on insurance related tasks. The starter pack demonstrates a few different areas
+where a Rasa assistant can help with insurance-related functions, getting information for an insurance quote, handling
+common tasks like ordering a new ID card, and helping customers manage their claims.
 
-## Core Functions
+## Run the Bot
 
-### Update Member Info
+To run the bot locally you must first train your bot by opening a terminal window in the project directory. In the terminal
+window enter:
 
-- [ ] Update member address. Form is created for this. Need to test on the sample data once it is created.
+```bash
+rasa train
+```
 
-- [ ] Order a new ID card. Before mailing anything like insurance cards to a member I want to verify their 
-address. If the user does not verify their address they should be sent to complete the address change form and then 
-directed to resubmit the ID card request verifying their new ID. Still working on the stories for this to do the handoff
-between forms, but I think the individual pieces are here.
+This will train a model for your bot that you'll be able to interact with in the next steps. You can find out more about
+[rasa train](https://rasa.com/docs/rasa/command-line-interface/#rasa-train) in the Rasa docs!
 
-### Claims
+When you're training successfully completes you will have a model artifact. Before you can start interacting with your
+bot the [Action Server](https://rasa.com/docs/action-server/) also needs to be running. The action server handles custom 
+processing of messages. Starting the action server requires opening a new terminal window in your project directory. In
+the window enter:
 
-- [ ] Check status of a claim. Users should be able to search their claims and find the status of each. This can be done two ways:
+```bash
+rasa run actions
+```
 
-1. User provides the claim id up front in the intent (i.e. what is the status of claim xyz). This is the simplest access
-method. On the backend verify if the claim is valid for the user. If it is then provide the details. If not prompt to correct
-the ID they provided. One thing I'm noticing in this workflow is the claim ID entity is validated multiple times if it 
-is invalid. Need to look into some more.
+You will see a listing of the different actions that are a part of the server. You will need to keep this terminal window
+open.
 
-2. User does not provide the claim ID upfront. This is likely the most common use case. User's will be prompted if they 
-know the claim id or not. If they don't an assumption is made for this demo pack that they're asking about a recent-ish
-claim and recent claims will be displayed.
+Finally, the last piece is to start a Duckling server. The [Duckling server](https://rasa.com/docs/rasa/components/#ducklinghttpextractor) will
+help the bot robustly extract numbers from the user messages. Open one more terminal window in your project root and enter:
 
-- [ ] Pay Claim. Users will have the ability to pay a claim. Ideally leverage an existing filled `claim_id` slot. Great
-use case to extend the check claim status.
+```bash
+docker run -p 8000:8000 rasa/duckling
+```
 
-- [ ] Submit a claim. The details here are probably going to need to be specific to an industry, but for this bot could
-do something simple like ask how much they're submitting the claim for and a description of why.
+Similar to the Action Server keep this running while you interact with your bot.
 
-### Administrative
+Now you can talk with the bot! In a terminal window enter:
 
-- [ ] Get a Quote. Capture basic information from a user to generate a quote for insurance.
+```bash
+rasa shell
+```
 
-- [ ] Find a form. This is a universally terrible UX. Allow users to explain what they are trying to do and serve the correct
-form to them. There's a potential that every form in a library could be it's own form in a bot.
+This command will allow you to talk with the bot. If you want more more detail about what's happening with your bot you
+can add `--debug` to the command to display all of the debugging information.
+
+## What the Bot Does
+
+Right now the bot accomplishes these core insurance functions:
+
+1. Get a Quote
+2. Order a New ID Card
+3. Check Claim Status
+4. Pay Outstanding Claim Balance
+5. File a New Claim
+
+The demo currently has mock data for a customer with a handful of claims to scroll through to demonstrate 
+
+## Rasa X Deployment
+
+The bot is ready to be deployed to a Rasa X instance. The easiest way for you to deploy your bot to Rasa X is to utilize
+the [one line deployment script](https://rasa.com/docs/rasa-x/installation-and-setup/install/quick-install-script/).
+
+Once Rasa X is running you can use the [git integration](https://rasa.com/docs/rasa-x/installation-and-setup/deploy/#integrated-version-control) to
+load your bot into the Rasa X instance.
+
+### Create the Action Server
+
+You will need to have docker installed in order to build the action server image. If you haven't made any changes to the action code, you can also use the [public image on Dockerhub](https://hub.docker.com/repository/docker/mvielkind/insurance_pack) instead of building it yourself.
+
+It is recommended to use an [automated CI/CD process](https://rasa.com/docs/rasa/user-guide/setting-up-ci-cd) to keep your action server up to date in a production environment.
