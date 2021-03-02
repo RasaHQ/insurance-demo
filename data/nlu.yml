@@ -15,6 +15,8 @@ nlu:
     - I need a new ID card
     - order new id card
     - get a new id card
+    - i can't find my ID card
+    - i lost id card
 - intent: claim_status
   examples: |
     - what is the status of my claim?
@@ -43,6 +45,12 @@ nlu:
     - has my claim been submitted?
     - what is the status of claim [XX123456](claim_id)[XX123456](claim_id)
     - check up on a claim
+    - what is the status of claim [XX123456](claim_id)
+    - what is the status of claim [NC709186](claim_id)[NC709186](claim_id)?
+    - what is the status of my recent claim?
+    - check the status of claim [NC339723](claim_id)[NC339723](claim_id)
+    - check status of my claim
+    - check on my claim status
 - intent: file_a_claim
   examples: |
     - file a claim
@@ -59,6 +67,8 @@ nlu:
     - file a [life](quote_insurance_type) insurance claim
     - i had a procedure and need to file a claim
     - actually file a claim
+    - i was in a [car]{"entity": "quote_insurance_type", "value": "auto"} crash
+    - file a new claim
 - intent: make_payment
   examples: |
     - pay a [claim](payment_type)
@@ -147,7 +157,6 @@ nlu:
     - [Maryland]{"entity": "state", "value": "MD"}[Maryland]{"entity": "state", "value": "MD"}
     - myself
     - just me
-    - [Maryland]{"entity": "state", "value": "MD"}[Maryland]{"entity": "state", "value": "MD"}
     - 30
     - 125 Main Ave
     - [Ohio]{"entity": "state", "value": "OH"}
@@ -155,6 +164,18 @@ nlu:
     - 123 Main Ave
     - 123 Main Ave.
     - Cincinnati
+    - [Maryland]{"entity": "state", "value": "MD"}
+    - 5000
+    - 7 Chestnut St
+    - [Vermont]{"entity": "state", "value": "VT"}
+    - $400
+    - 8 Mirror Lake Dr
+    - Lake Placid
+    - 10
+    - 123 Main St
+    - Little Falls
+    - 7 Maple Ln
+    - Queensbury
 - intent: get_a_quote
   examples: |
     - i need insurance
@@ -174,6 +195,9 @@ nlu:
     - get a quote
     - i'm looking to purchase insurance
     - i'm in the market to get [life](quote_insurance_type) insurance
+    - get new insurance
+    - i need [car]{"entity": "quote_insurance_type", "value": "auto"} insurance
+    - i need to insure my [car]{"entity": "quote_insurance_type", "value": "auto"}
 - intent: greet
   examples: |
     - hey
@@ -192,6 +216,7 @@ nlu:
     - hi ther
     - hi there
     - heyo
+    - howdy
 - intent: goodbye
   examples: |
     - good afternoon
@@ -226,6 +251,7 @@ nlu:
     - sure
     - Ok
     - cool
+    - Yes
 - intent: deny
   examples: |
     - no
@@ -319,6 +345,9 @@ nlu:
 - synonym: MD
   examples: |
     - Maryland
+- synonym: OH
+  examples: |
+    - Ohio
 - synonym: AZ
   examples: |
     - arizona
