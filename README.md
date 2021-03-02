@@ -8,6 +8,12 @@ common tasks like ordering a new ID card, and helping customers manage their cla
 
 ## Run the Bot
 
+Before training your bot make sure you have installed all of the requirements from the `requirements.txt` file:
+
+```bash
+pip3 install -r requirements.txt
+```
+
 To run the bot locally you must first train your bot by opening a terminal window in the project directory. In the terminal
 window enter:
 
