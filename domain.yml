@@ -426,94 +426,100 @@ actions:
 - action_check_claim_balance
 forms:
   quote_form:
-    AA_quote_insurance_type:
-    - entity: quote_insurance_type
-      type: from_entity
-    - not_intent: stop
-      type: from_text
-    quote_number_persons:
-    - entity: quote_number_persons
-      type: from_entity
-    - not_intent: stop
-      type: from_text
-    quote_state:
-    - entity: state
-      type: from_entity
-    - not_intent: stop
-      type: from_text
+    required_slots:
+      AA_quote_insurance_type:
+      - entity: quote_insurance_type
+        type: from_entity
+      - not_intent: stop
+        type: from_text
+      quote_number_persons:
+      - entity: quote_number_persons
+        type: from_entity
+      - not_intent: stop
+        type: from_text
+      quote_state:
+      - entity: state
+        type: from_entity
+      - not_intent: stop
+        type: from_text
   get_claim_form:
-    claim_id:
-    - entity: claim_id
-      type: from_entity
-    - type: from_text
+    required_slots:
+      claim_id:
+      - entity: claim_id
+        type: from_entity
+      - type: from_text
   change_address_form:
-    address_city:
-    - not_intent: stop
-      type: from_text
-    address_state:
-    - entity: state
-      type: from_entity
-    address_street:
-    - not_intent: stop
-      type: from_text
-    address_zip:
-    - not_intent: stop
-      type: from_text
+    required_slots:
+      address_city:
+      - not_intent: stop
+        type: from_text
+      address_state:
+      - entity: state
+        type: from_entity
+      address_street:
+      - not_intent: stop
+        type: from_text
+      address_zip:
+      - not_intent: stop
+        type: from_text
   pay_claim_form:
-    claim_id:
-    - entity: claim_id
-      type: from_entity
-    - not_intent:
-      - uncertain
-      - deny
-      - claim_status
-      type: from_text
-    claim_pay_amount:
-    - entity: amount-of-money
-      type: from_entity
-    - entity: number
-      type: from_entity
-    - not_intent:
-      - uncertain
-      - deny
-      type: from_text
-    confirm_payment:
-    - intent: affirm
-      type: from_intent
-      value: true
-    - intent: deny
-      type: from_intent
-      value: false
+    required_slots:
+      claim_id:
+      - entity: claim_id
+        type: from_entity
+      - not_intent:
+        - uncertain
+        - deny
+        - claim_status
+        type: from_text
+      claim_pay_amount:
+      - entity: amount-of-money
+        type: from_entity
+      - entity: number
+        type: from_entity
+      - not_intent:
+        - uncertain
+        - deny
+        type: from_text
+      confirm_payment:
+      - intent: affirm
+        type: from_intent
+        value: true
+      - intent: deny
+        type: from_intent
+        value: false
   scroll_claims_form:
-    scroll_claims:
-    - entity: scroll_claims
-      not_intent: uncertain
-      type: from_entity
-    - type: from_text
+    required_slots:
+      scroll_claims:
+      - entity: scroll_claims
+        not_intent: uncertain
+        type: from_entity
+      - type: from_text
   file_new_claim_form:
-    AA_quote_insurance_type:
-    - entity: quote_insurance_type
-      type: from_entity
-    - not_intent: stop
-      type: from_text
-    claim_amount_submit:
-    - entity: number
-      not_intent: stop
-      type: from_entity
-    - entity: amount-of-money
-      not_intent: stop
-      type: from_entity
-    - intent: inform
-      type: from_text
-    confirm_file_new_claim:
-    - intent: affirm
-      type: from_intent
-      value: yes
-    - intent: deny
-      type: from_intent
-      value: no
-    - intent:
-      - inform
-      - claim_status_form
-      type: from_text
+    required_slots:
+      AA_quote_insurance_type:
+      - entity: quote_insurance_type
+        type: from_entity
+      - not_intent: stop
+        type: from_text
+      claim_amount_submit:
+      - entity: number
+        not_intent: stop
+        type: from_entity
+      - entity: amount-of-money
+        not_intent: stop
+        type: from_entity
+      - intent: inform
+        type: from_text
+      confirm_file_new_claim:
+      - intent: affirm
+        type: from_intent
+        value: yes
+      - intent: deny
+        type: from_intent
+        value: no
+      - intent:
+        - inform
+        - claim_status_form
+        type: from_text
 e2e_actions: []
