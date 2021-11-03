@@ -55,138 +55,304 @@ slots:
   address_city:
     type: rasa.shared.core.slots.AnySlot
     initial_value: null
-    auto_fill: true
     influence_conversation: false
+    mappings:
+    - not_intent: stop
+      type: from_text
+      conditions:
+      - active_loop: change_address_form
+        requested_slot: address_city
   address_state:
     type: rasa.shared.core.slots.AnySlot
     initial_value: null
-    auto_fill: true
     influence_conversation: false
+    mappings:
+    - entity: state
+      type: from_entity
+      conditions:
+      - active_loop: change_address_form
   address_street:
     type: rasa.shared.core.slots.AnySlot
     initial_value: null
-    auto_fill: true
     influence_conversation: false
+    mappings:
+    - not_intent: stop
+      type: from_text
+      conditions:
+      - active_loop: change_address_form
+        requested_slot: address_street
   address_zip:
     type: rasa.shared.core.slots.AnySlot
     initial_value: null
-    auto_fill: true
     influence_conversation: false
+    mappings:
+    - not_intent: stop
+      type: from_text
+      conditions:
+      - active_loop: change_address_form
+        requested_slot: address_zip
   amount-of-money:
     type: rasa.shared.core.slots.AnySlot
     initial_value: null
-    auto_fill: true
     influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: amount-of-money
   claim_amount_submit:
     type: rasa.shared.core.slots.AnySlot
     initial_value: null
-    auto_fill: true
     influence_conversation: false
+    mappings:
+    - entity: number
+      not_intent: stop
+      type: from_entity
+      conditions:
+      - active_loop: file_new_claim_form
+        requested_slot: claim_amount_submit
+    - entity: amount-of-money
+      not_intent: stop
+      type: from_entity
+      conditions:
+      - active_loop: file_new_claim_form
+        requested_slot: claim_amount_submit
+    - intent: inform
+      type: from_text
+      conditions:
+      - active_loop: file_new_claim_form
+        requested_slot: claim_amount_submit
   claim_balance:
     type: rasa.shared.core.slots.AnySlot
     initial_value: null
-    auto_fill: true
     influence_conversation: false
+    mappings:
+    - type: custom
   claim_id:
     type: rasa.shared.core.slots.TextSlot
     initial_value: null
-    auto_fill: true
     influence_conversation: true
+    mappings:
+    - entity: claim_id
+      type: from_entity
+      conditions:
+      - active_loop: get_claim_form
+        requested_slot: claim_id
+      - active_loop: pay_claim_form
+        requested_slot: claim_id
+    - type: from_text
+      conditions:
+      - active_loop: get_claim_form
+        requested_slot: claim_id
+    - not_intent:
+      - uncertain
+      - deny
+      - claim_status
+      type: from_text
+      conditions:
+      - active_loop: pay_claim_form
+        requested_slot: claim_id
+    - type: from_entity
+      entity: claim_id
   claim_pay_amount:
     type: rasa.shared.core.slots.AnySlot
     initial_value: null
-    auto_fill: false
     influence_conversation: false
+    mappings:
+    - entity: amount-of-money
+      type: from_entity
+      conditions:
+      - active_loop: pay_claim_form
+        requested_slot: claim_pay_amount
+    - entity: number
+      type: from_entity
+      conditions:
+      - active_loop: pay_claim_form
+        requested_slot: claim_pay_amount
+    - not_intent:
+      - uncertain
+      - deny
+      type: from_text
+      conditions:
+      - active_loop: pay_claim_form
+        requested_slot: claim_pay_amount
   claims:
     type: rasa.shared.core.slots.AnySlot
     initial_value: null
-    auto_fill: true
     influence_conversation: false
+    mappings:
+    - type: custom
   confirm_file_new_claim:
     type: rasa.shared.core.slots.BooleanSlot
     initial_value: null
-    auto_fill: true
     influence_conversation: true
+    mappings:
+    - intent: affirm
+      type: from_intent
+      value: yes
+      conditions:
+      - active_loop: file_new_claim_form
+        requested_slot: confirm_file_new_claim
+    - intent: deny
+      type: from_intent
+      value: no
+      conditions:
+      - active_loop: file_new_claim_form
+        requested_slot: confirm_file_new_claim
+    - intent:
+      - inform
+      - claim_status_form
+      type: from_text
+      conditions:
+      - active_loop: file_new_claim_form
+        requested_slot: confirm_file_new_claim
   confirm_payment:
     type: rasa.shared.core.slots.BooleanSlot
     initial_value: null
-    auto_fill: true
     influence_conversation: true
+    mappings:
+    - intent: affirm
+      type: from_intent
+      value: true
+      conditions:
+      - active_loop: pay_claim_form
+        requested_slot: confirm_payment
+    - intent: deny
+      type: from_intent
+      value: false
+      conditions:
+      - active_loop: pay_claim_form
+        requested_slot: confirm_payment
   full_address:
     type: rasa.shared.core.slots.AnySlot
     initial_value: null
-    auto_fill: true
     influence_conversation: false
+    mappings:
+    - type: custom
   has_outstanding_balance:
     type: rasa.shared.core.slots.BooleanSlot
     initial_value: null
-    auto_fill: true
     influence_conversation: true
+    mappings:
+    - type: custom
   number:
     type: rasa.shared.core.slots.AnySlot
     initial_value: null
-    auto_fill: true
     influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: number
   page:
     type: rasa.shared.core.slots.AnySlot
     initial_value: null
-    auto_fill: true
     influence_conversation: false
+    mappings:
+    - type: custom
   AA_quote_insurance_type:
     type: rasa.shared.core.slots.CategoricalSlot
     initial_value: null
-    auto_fill: true
     influence_conversation: false
     values:
     - life
     - home
     - auto
     - health
+    mappings:
+    - entity: quote_insurance_type
+      type: from_entity
+      conditions:
+      - active_loop: quote_form
+        requested_slot: AA_quote_insurance_type
+      - active_loop: file_new_claim_form
+        requested_slot: AA_quote_insurance_type
+    - not_intent: stop
+      type: from_text
+      conditions:
+      - active_loop: quote_form
+        requested_slot: AA_quote_insurance_type
+      - active_loop: file_new_claim_form
+        requested_slot: AA_quote_insurance_type
   quote_number_persons:
     type: rasa.shared.core.slots.AnySlot
     initial_value: null
-    auto_fill: true
     influence_conversation: false
+    mappings:
+    - entity: quote_number_persons
+      type: from_entity
+      conditions:
+      - active_loop: quote_form
+        requested_slot: quote_number_persons
+    - not_intent: stop
+      type: from_text
+      conditions:
+      - active_loop: quote_form
+        requested_slot: quote_number_persons
   quote_state:
     type: rasa.shared.core.slots.AnySlot
     initial_value: null
-    auto_fill: true
     influence_conversation: false
+    mappings:
+    - entity: state
+      type: from_entity
+      conditions:
+      - active_loop: quote_form
+        requested_slot: quote_state
+    - not_intent: stop
+      type: from_text
+      conditions:
+      - active_loop: quote_form
+        requested_slot: quote_state
   recent_claims:
     type: rasa.shared.core.slots.AnySlot
     initial_value: null
-    auto_fill: true
     influence_conversation: false
+    mappings:
+    - type: custom
   requested_slot:
     type: rasa.shared.core.slots.AnySlot
     initial_value: null
-    auto_fill: true
     influence_conversation: false
+    mappings:
+    - type: custom
   scroll_active_claim:
     type: rasa.shared.core.slots.TextSlot
     initial_value: null
-    auto_fill: true
     influence_conversation: true
+    mappings:
+    - type: custom
   scroll_claims:
     type: rasa.shared.core.slots.AnySlot
     initial_value: null
-    auto_fill: true
     influence_conversation: false
+    mappings:
+    - entity: scroll_claims
+      not_intent: uncertain
+      type: from_entity
+      conditions:
+      - active_loop: scroll_claims_form
+        requested_slot: scroll_claims
+    - type: from_text
+      conditions:
+      - active_loop: scroll_claims_form
+        requested_slot: scroll_claims
   scroll_status:
     type: rasa.shared.core.slots.TextSlot
     initial_value: null
-    auto_fill: true
     influence_conversation: true
+    mappings:
+    - type: from_entity
+      entity: scroll_status
   state:
     type: rasa.shared.core.slots.TextSlot
     initial_value: null
-    auto_fill: true
     influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: state
   verify_address:
     type: rasa.shared.core.slots.BooleanSlot
     initial_value: null
-    auto_fill: true
     influence_conversation: true
+    mappings:
+    - type: custom
 responses:
   utter_ask_address_street:
   - text: What is your mailing street number and name?
@@ -250,11 +416,7 @@ responses:
       title: Yes
     - payload: /deny
       title: No
-    text: |-
-      Is this address correct?
-
-      {address_street}
-      {address_city}, {address_state} {address_zip}
+    text: "Is this address correct?\n\n{address_street}\n{address_city}, {address_state} {address_zip}"
   utter_ask_get_claim_form_claim_id:
   - text: What is the ID of the claim you'd like to lookup?
   utter_ask_pay_claim_form_claim_id:
@@ -284,26 +446,16 @@ responses:
   utter_cancel_payment:
   - text: Your payment has been cancelled.
   utter_claim_payment_success:
-  - text: |-
-      Thank you for your claim payment of ${amount_to_pay} for claim {claim_id}.
-
-      The remaining balance for the claim is ${claim_balance}
+  - text: "Thank you for your claim payment of ${amount_to_pay} for claim {claim_id}.\n\nThe remaining balance for the claim is ${claim_balance}"
   utter_confirm_address:
   - buttons:
     - payload: /affirm
       title: Yes
     - payload: /deny
       title: No
-    text: |-
-      Is this your current address?
-      {full_address}
+    text: "Is this your current address?\n{full_address}"
   utter_final_quote:
-  - text: |-
-      Your monthly payment given the information provided is: ${final_quote} per month
-
-      Insurance Type: {insurance_type}
-      Policy State: {quote_state}
-      Number of people on policy: {n_persons}
+  - text: "Your monthly payment given the information provided is: ${final_quote} per month\n\nInsurance Type: {insurance_type}\nPolicy State: {quote_state}\nNumber of people on policy: {n_persons}"
   utter_greet:
   - buttons:
     - payload: /claim_status
@@ -426,100 +578,36 @@ actions:
 - action_check_claim_balance
 forms:
   quote_form:
+    ignored_intents: []
     required_slots:
-      AA_quote_insurance_type:
-      - entity: quote_insurance_type
-        type: from_entity
-      - not_intent: stop
-        type: from_text
-      quote_number_persons:
-      - entity: quote_number_persons
-        type: from_entity
-      - not_intent: stop
-        type: from_text
-      quote_state:
-      - entity: state
-        type: from_entity
-      - not_intent: stop
-        type: from_text
+    - AA_quote_insurance_type
+    - quote_number_persons
+    - quote_state
   get_claim_form:
+    ignored_intents: []
     required_slots:
-      claim_id:
-      - entity: claim_id
-        type: from_entity
-      - type: from_text
+    - claim_id
   change_address_form:
+    ignored_intents: []
     required_slots:
-      address_city:
-      - not_intent: stop
-        type: from_text
-      address_state:
-      - entity: state
-        type: from_entity
-      address_street:
-      - not_intent: stop
-        type: from_text
-      address_zip:
-      - not_intent: stop
-        type: from_text
+    - address_city
+    - address_state
+    - address_street
+    - address_zip
   pay_claim_form:
+    ignored_intents: []
     required_slots:
-      claim_id:
-      - entity: claim_id
-        type: from_entity
-      - not_intent:
-        - uncertain
-        - deny
-        - claim_status
-        type: from_text
-      claim_pay_amount:
-      - entity: amount-of-money
-        type: from_entity
-      - entity: number
-        type: from_entity
-      - not_intent:
-        - uncertain
-        - deny
-        type: from_text
-      confirm_payment:
-      - intent: affirm
-        type: from_intent
-        value: true
-      - intent: deny
-        type: from_intent
-        value: false
+    - claim_id
+    - claim_pay_amount
+    - confirm_payment
   scroll_claims_form:
+    ignored_intents: []
     required_slots:
-      scroll_claims:
-      - entity: scroll_claims
-        not_intent: uncertain
-        type: from_entity
-      - type: from_text
+    - scroll_claims
   file_new_claim_form:
+    ignored_intents: []
     required_slots:
-      AA_quote_insurance_type:
-      - entity: quote_insurance_type
-        type: from_entity
-      - not_intent: stop
-        type: from_text
-      claim_amount_submit:
-      - entity: number
-        not_intent: stop
-        type: from_entity
-      - entity: amount-of-money
-        not_intent: stop
-        type: from_entity
-      - intent: inform
-        type: from_text
-      confirm_file_new_claim:
-      - intent: affirm
-        type: from_intent
-        value: yes
-      - intent: deny
-        type: from_intent
-        value: no
-      - intent:
-        - inform
-        - claim_status_form
-        type: from_text
+    - AA_quote_insurance_type
+    - claim_amount_submit
+    - confirm_file_new_claim
 e2e_actions: []
