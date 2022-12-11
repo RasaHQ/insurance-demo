@@ -196,7 +196,3 @@ stories:
   steps:
   - intent: ask_for_help
   - action: utter_my_capability
-- story: get all claims
-  steps:
-    - intent: get_all_claims
-    - action: utter_all_claims

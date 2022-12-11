@@ -411,25 +411,28 @@ class ActionGetAllClaims(Action):
 
     def name(self) -> Text:
         """Unique identifier for the action."""
-        return "utter_all_claims"
+        return "action_get_all_claims"
 
     async def run(
         self,
         dispatcher: CollectingDispatcher,
         tracker: Tracker,
         domain: Dict[Text, Any],
-    ):
-        print("claim1")
-        claims = MOCK_DATA["claims"]
+    ) -> List[Dict[Text, Any]]:
+        logger.debug("Inside ActionGetAllClaims.run()")
+        claims = db.get_claims()
+        total = 0
         for claim in claims:
-            print("claim2")
             clm_params = {
                 "claim_date": str(datetime.datetime.strptime(str(claim["claim_date"]), "%Y%m%d").date()),
                 "claim_id": claim["claim_id"],
                 "claim_balance": f"${str(claim['claim_balance'])}",
                 "claim_status": claim["claim_status"]
             }
+            total += claim['claim_balance']
             dispatcher.utter_message(template="utter_claim_detail", **clm_params)
+        dispatcher.utter_message(f"Total amount owed: ${total}")
+        return []
 
 
 class ValidateGetClaimForm(FormValidationAction):

@@ -62,4 +62,4 @@ rules:
   - rule: Get all claims
     steps:
       - intent: get_all_claims
-      - action: utter_all_claims
+      - action: action_get_all_claims

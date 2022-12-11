@@ -401,7 +401,7 @@ responses:
   utter_start_new_quote:
   - text: I can help you get a new insurance quote. Let's learn a little more about you.
 actions:
-- utter_all_claims
+- action_get_all_claims
 - validate_quote_form
 - action_get_quote
 - action_stop_quote
