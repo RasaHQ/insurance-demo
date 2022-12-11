@@ -406,6 +406,32 @@ class ActionClaimStatus(Action):
         return []
 
 
+class ActionGetAllClaims(Action):
+    """Gets the status of the user's last claim."""
+
+    def name(self) -> Text:
+        """Unique identifier for the action."""
+        return "utter_all_claims"
+
+    async def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ):
+        print("claim1")
+        claims = MOCK_DATA["claims"]
+        for claim in claims:
+            print("claim2")
+            clm_params = {
+                "claim_date": str(datetime.datetime.strptime(str(claim["claim_date"]), "%Y%m%d").date()),
+                "claim_id": claim["claim_id"],
+                "claim_balance": f"${str(claim['claim_balance'])}",
+                "claim_status": claim["claim_status"]
+            }
+            dispatcher.utter_message(template="utter_claim_detail", **clm_params)
+
+
 class ValidateGetClaimForm(FormValidationAction):
     """Validates data entered into the Get Claim Form."""
 

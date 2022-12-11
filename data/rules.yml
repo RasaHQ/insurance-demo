@@ -1,61 +1,65 @@
 version: "2.0"
 rules:
-- rule: Show greeting and options whenever user says hello or asks for help.
-  steps:
-  - intent: greet
-  - action: utter_greet
-- rule: Say goodbye anytime the user says goodbye
-  steps:
-  - intent: goodbye
-  - action: utter_goodbye
-- rule: Say 'I am a bot' anytime the user challenges
-  steps:
-  - intent: bot_challenge
-  - action: utter_iamabot
-- rule: Handle out of scope requests
-  steps:
-  - intent: out_of_scope
-  - action: utter_out_of_scope
-  - action: utter_my_capability
-- rule: Ask user to rephrase their question
-  steps:
-  - intent: nlu_fallback
-  - action: utter_please_rephrase
-- rule: Exit Quote Form
-  condition:
-  - active_loop: quote_form
-  steps:
-  - intent: stop
-  - action: action_deactivate_loop
-  - active_loop: null
-  - action: action_stop_quote
-  - action: utter_cancel_insurance_quote
-  - action: utter_anything_else
-- rule: Exit New Claim Form
-  condition:
-  - active_loop: file_new_claim_form
-  steps:
-  - intent: stop
-  - action: action_deactivate_loop
-  - active_loop: null
-  - action: action_stop_new_claim_form
-  - action: utter_cancel_new_claim_file
-  - action: utter_anything_else
-- rule: Exit Change Address Form
-  condition:
-  - active_loop: change_address_form
-  steps:
-  - intent: stop
-  - action: action_deactivate_loop
-  - active_loop: null
-  - action: action_reset_address
-  - action: utter_cancel_address_change
-  - action: utter_anything_else
-- rule: Ask knows claim if no loop
-  condition:
-  - active_loop: null
-  steps:
-  - intent: claim_status
-  - slot_was_set:
-    - claim_id: null
-  - action: utter_ask_knows_claim_id
+  - rule: Show greeting and options whenever user says hello or asks for help.
+    steps:
+      - intent: greet
+      - action: utter_greet
+  - rule: Say goodbye anytime the user says goodbye
+    steps:
+      - intent: goodbye
+      - action: utter_goodbye
+  - rule: Say 'I am a bot' anytime the user challenges
+    steps:
+      - intent: bot_challenge
+      - action: utter_iamabot
+  - rule: Handle out of scope requests
+    steps:
+      - intent: out_of_scope
+      - action: utter_out_of_scope
+      - action: utter_my_capability
+  - rule: Ask user to rephrase their question
+    steps:
+      - intent: nlu_fallback
+      - action: utter_please_rephrase
+  - rule: Exit Quote Form
+    condition:
+      - active_loop: quote_form
+    steps:
+      - intent: stop
+      - action: action_deactivate_loop
+      - active_loop: null
+      - action: action_stop_quote
+      - action: utter_cancel_insurance_quote
+      - action: utter_anything_else
+  - rule: Exit New Claim Form
+    condition:
+      - active_loop: file_new_claim_form
+    steps:
+      - intent: stop
+      - action: action_deactivate_loop
+      - active_loop: null
+      - action: action_stop_new_claim_form
+      - action: utter_cancel_new_claim_file
+      - action: utter_anything_else
+  - rule: Exit Change Address Form
+    condition:
+      - active_loop: change_address_form
+    steps:
+      - intent: stop
+      - action: action_deactivate_loop
+      - active_loop: null
+      - action: action_reset_address
+      - action: utter_cancel_address_change
+      - action: utter_anything_else
+  - rule: Ask knows claim if no loop
+    condition:
+      - active_loop: null
+    steps:
+      - intent: claim_status
+      - slot_was_set:
+          - claim_id: null
+      - action: utter_ask_knows_claim_id
+  - rule: Get all claims
+    steps:
+      - intent: get_all_claims
+      - action: utter_all_claims
