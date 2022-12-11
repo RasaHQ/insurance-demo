@@ -1,0 +1,26 @@
+[{
+  "claim_id": "XX123456",
+  "claim_date": 20201004,
+  "claim_balance": 0,
+  "claim_status": "Final"
+},{
+  "claim_id": "AB234567",
+  "claim_date": 20200312,
+  "claim_balance": 5000,
+  "claim_status": "Pending"
+},{
+  "claim_id": "Z345678",
+  "claim_date": 20201130,
+  "claim_balance": 200,
+  "claim_status": "Submitted"
+},{
+  "claim_id": "C456789",
+  "claim_date": 20200903,
+  "claim_balance": 500,
+  "claim_status": "Final"
+},{
+  "claim_id": "CL567890",
+  "claim_date": 20200203,
+  "claim_balance": 3000,
+  "claim_status": "Pending"
+}]

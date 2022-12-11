@@ -1,0 +1,8 @@
+[{
+  "insurance_type": {
+    "home": 50,
+    "auto": 100,
+    "life": 30,
+    "health": 500
+  }
+}]
