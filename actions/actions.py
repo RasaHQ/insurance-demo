@@ -1,36 +1,27 @@
 """Custom actions"""
-import json
-import random
 import datetime
-from typing import Dict, Text, Any, List, Optional
 import logging
-from rasa_sdk.interfaces import Action
+import random
+from typing import Dict, Text, Any, List, Optional
+
+from rasa_sdk import Tracker
 from rasa_sdk.events import (
     SlotSet,
-    EventType,
-    ActionExecuted,
-    SessionStarted,
-    Restarted,
-    FollowupAction,
-    UserUtteranceReverted,
-    ActionExecutionRejected
+    EventType
 )
-from rasa_sdk import Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.forms import FormValidationAction
+from rasa_sdk.interfaces import Action
 from rasa_sdk.types import DomainDict
 
+from database.db_manager import DBManager
 
 logger = logging.getLogger(__name__)
 
-MOCK_DATA = json.load(open("actions/mock_data.json", "r"))
+db = DBManager("mongodb://admin:admin@localhost:27017/")
 
-US_STATES = ["AZ", "AL", "AK", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY",
-             "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH",
-             "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
+US_STATES = db.get_states()
 
-
-# Get New Quote Actions
 
 class ActionGetQuote(Action):
     """Gets an insurance quote"""
@@ -52,7 +43,7 @@ class ActionGetQuote(Action):
         insurance_type = tracker.get_slot("AA_quote_insurance_type")
         n_persons = int(tracker.get_slot("quote_number_persons"))
 
-        baseline_rate = MOCK_DATA["policy_quote"]["insurance_type"][insurance_type]
+        baseline_rate = db.get_baseline_rate(insurance_type)
         final_quote = baseline_rate * n_persons
 
         msg_params = {
@@ -163,8 +154,8 @@ class ActionCheckClaimBalance(Action):
         self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
     ) -> List[EventType]:
         active_claim = tracker.get_slot("claim_id")
-
-        clm = next((c for c in MOCK_DATA["claims"] if str(c["claim_id"]) == active_claim), None)
+        claims = db.get_claims()
+        clm = next((c for c in claims if str(c["claim_id"]) == active_claim), None)
 
         has_outstanding_balance = clm["claim_balance"] > 0
 
@@ -185,12 +176,7 @@ class AskConfirmAddress(Action):
         self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
     ) -> List[EventType]:
         # Load the member address from the JSON document.
-        address_slots = {
-            "address_street": MOCK_DATA["member_info"]["home_address"]["address_street"],
-            "address_city": MOCK_DATA["member_info"]["home_address"]["address_city"],
-            "address_state": MOCK_DATA["member_info"]["home_address"]["address_state"],
-            "address_zip": MOCK_DATA["member_info"]["home_address"]["address_zip"]
-        }
+        address_slots = db.get_home_address()
 
         # Build the full address.
         address_line_two = f"{address_slots['address_city']}, {address_slots['address_state']} " \
@@ -269,12 +255,7 @@ class ActionGetAddress(Action):
     def run(
         self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict
     ) -> List[EventType]:
-        address_slots = {
-            "address_street": MOCK_DATA["member_info"]["home_address"]["address_street"],
-            "address_city": MOCK_DATA["member_info"]["home_address"]["address_city"],
-            "address_state": MOCK_DATA["member_info"]["home_address"]["address_state"],
-            "address_zip": MOCK_DATA["member_info"]["home_address"]["address_zip"]
-        }
+        address_slots = db.get_home_address()
 
         # Build the full address.
         address_line_two = f"{address_slots['address_city']}, {address_slots['address_state']} " \
@@ -308,12 +289,12 @@ class ActionUpdateAddress(Action):
         dispatcher.utter_message(full_address)
 
         # Update the address in the data.
-        MOCK_DATA["member_info"]["home_address"] = {
+        db.update_home_address({
             "address_street": address_street,
             "address_city": address_city,
             "address_state": address_state,
             "address_zip": address_zip
-        }
+        })
 
         return [SlotSet("verify_address", None)]
 
@@ -403,7 +384,8 @@ class ActionClaimStatus(Action):
 
         # Get the claim provided by the user.
         user_clm_id = tracker.get_slot("claim_id")
-        clm = next((c for c in MOCK_DATA["claims"] if str(c["claim_id"]) == user_clm_id), None)
+        claims = db.get_claims()
+        clm = next((c for c in claims if str(c["claim_id"]) == user_clm_id), None)
 
         # Display details about the selected claims.
         if clm:
@@ -424,6 +406,35 @@ class ActionClaimStatus(Action):
         return []
 
 
+class ActionGetAllClaims(Action):
+    """Gets the status of the user's last claim."""
+
+    def name(self) -> Text:
+        """Unique identifier for the action."""
+        return "action_get_all_claims"
+
+    async def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+        logger.debug("Inside ActionGetAllClaims.run()")
+        claims = db.get_claims()
+        total = 0
+        for claim in claims:
+            clm_params = {
+                "claim_date": str(datetime.datetime.strptime(str(claim["claim_date"]), "%Y%m%d").date()),
+                "claim_id": claim["claim_id"],
+                "claim_balance": f"${str(claim['claim_balance'])}",
+                "claim_status": claim["claim_status"]
+            }
+            total += claim['claim_balance']
+            dispatcher.utter_message(template="utter_claim_detail", **clm_params)
+        dispatcher.utter_message(f"Total amount owed: ${total}")
+        return []
+
+
 class ValidateGetClaimForm(FormValidationAction):
     """Validates data entered into the Get Claim Form."""
 
@@ -439,7 +450,7 @@ class ValidateGetClaimForm(FormValidationAction):
             domain: Dict[Text, Any],
     ) -> Dict[Text, Any]:
         """Checks if the claim ID is valid for the member."""
-        user_claims = MOCK_DATA["claims"]
+        user_claims = db.get_claims()
         claim_id = tracker.get_slot("claim_id")
 
         # Sometimes slot is being double filled.
@@ -561,7 +572,7 @@ class ActionFileNewClaimForm(Action):
                 "claim_status": "Pending"
             }
 
-            MOCK_DATA["claims"].append(claim_obj)
+            db.create_claim(claim_obj)
             dispatcher.utter_message(f"Your claim has been submitted.\n\nFor reference the claim id is: {claim_id}")
         else:
             dispatcher.utter_message("Ok. Submitting your claim has been canceled.")
@@ -741,14 +752,16 @@ class ActionPayClaim(Action):
             reset_slots.append("claim_id")
             return [SlotSet(slot, None) for slot in reset_slots]
 
+        new_claim_balance = claim_balance - amount_to_pay
         msg_params = {
             "claim_id": user_clm_id,
             "amount_to_pay": amount_to_pay,
-            "claim_balance": claim_balance - amount_to_pay
+            "claim_balance": new_claim_balance
         }
-        for c in MOCK_DATA["claims"]:
+        claims = db.get_claims()
+        for c in claims:
             if c["claim_id"] == user_clm_id:
-                c.update({"claim_balance": claim_balance - amount_to_pay})
+                db.update_claim_balance(user_clm_id, new_claim_balance)
 
         dispatcher.utter_message(template="utter_claim_payment_success", **msg_params)
 
@@ -824,7 +837,7 @@ class ValidatePayClaimForm(FormValidationAction):
             domain: DomainDict,
     ) -> Dict[Text, Any]:
         """Checks if the claim ID is valid for the member."""
-        user_claims = MOCK_DATA["claims"]
+        user_claims = db.get_claims()
         claim_id = tracker.get_slot("claim_id")
 
         if isinstance(claim_id, list):
@@ -834,7 +847,7 @@ class ValidatePayClaimForm(FormValidationAction):
             dispatcher.utter_message("The Claim ID you entered is not valid. Please check and try again.")
             return {"claim_id": None}
 
-        clm = next((c for c in MOCK_DATA["claims"] if str(c["claim_id"]) == claim_id), None)
+        clm = next((c for c in user_claims if str(c["claim_id"]) == claim_id), None)
         if clm["claim_balance"] == 0:
             dispatcher.utter_message(f"Claim {claim_id} is fully paid.")
 
@@ -850,7 +863,8 @@ class ValidatePayClaimForm(FormValidationAction):
         if tracker.slots.get("requested_slot") == "claim_pay_amount":
             claim_id = tracker.get_slot("claim_id")
             payment_amount = tracker.get_slot("claim_pay_amount")
-            clm = next((c for c in MOCK_DATA["claims"] if str(c["claim_id"]) == claim_id), None)
+            claims = db.get_claims()
+            clm = next((c for c in claims if str(c["claim_id"]) == claim_id), None)
 
             # Check that a valid number is provided.
             try:
@@ -889,8 +903,9 @@ def claims_scroll(curr_page, scroll_status):
         if curr_page > 0:
             curr_page -= 1
 
+    claims = db.get_claims()
     # Get claims on the page.
-    page_claims = MOCK_DATA["claims"][curr_page]
+    page_claims = claims[curr_page]
     clm_params = {
         "claim_date": str(datetime.datetime.strptime(str(page_claims["claim_date"]), "%Y%m%d").date()),
         "claim_id": page_claims["claim_id"],
@@ -900,5 +915,5 @@ def claims_scroll(curr_page, scroll_status):
 
     return {"page": curr_page,
             "claims": clm_params,
-            "is_last_page": curr_page + 1 >= len(MOCK_DATA["claims"])}
+            "is_last_page": curr_page + 1 >= len(claims)}
 

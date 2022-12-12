@@ -21,6 +21,8 @@ intents:
     use_entities: true
 - claim_status:
     use_entities: true
+- get_all_claims:
+    use_entities: true
 - get_a_quote:
     use_entities: true
 - inform:
@@ -316,6 +318,8 @@ responses:
       title: Get a Quote
     - payload: /file_a_claim
       title: File a Claim
+    - payload: /get_all_claims
+      title: Get all claims
     text: Howdy! What can I help you with today?
   utter_has_no_balance:
   - text: This claim has no outstanding balance.
@@ -397,6 +401,7 @@ responses:
   utter_start_new_quote:
   - text: I can help you get a new insurance quote. Let's learn a little more about you.
 actions:
+- action_get_all_claims
 - validate_quote_form
 - action_get_quote
 - action_stop_quote

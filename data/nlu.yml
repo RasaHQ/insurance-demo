@@ -33,13 +33,7 @@ nlu:
     - check the status of a claim
     - I need to check my claim status
     - check claim status
-    - view my claims
-    - show my claims
-    - view my recent claims
-    - show me my claims
-    - what is my claim history
     - get claim status
-    - show some claims
     - check claim id 748536
     - check the status of claim [NC239062](claim_id)
     - has my claim been submitted?
@@ -203,6 +197,23 @@ nlu:
     - get new insurance
     - i need [car]{"entity": "quote_insurance_type", "value": "auto"} insurance
     - i need to insure my [car]{"entity": "quote_insurance_type", "value": "auto"}
+- intent: get_all_claims
+  examples: |
+    - get all claims
+    - what claims do I have?
+    - give me my claims
+    - tell me about all my claims
+    - what are my claims?
+    - I want to check the status of all my claims
+    - check the status of all claims
+    - I need to check all my claims
+    - view my claims
+    - show my claims
+    - view my recent claims
+    - show me my claims
+    - what is my claim history
+    - get claim status
+    - show some claims
 - intent: greet
   examples: |
     - hey

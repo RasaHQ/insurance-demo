@@ -126,3 +126,5 @@ results/
 # Secret & local files
 secret/
 run_rasa*
+
+mongo-data/*
