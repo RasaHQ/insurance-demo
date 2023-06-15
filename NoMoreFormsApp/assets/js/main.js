@@ -18,3 +18,4 @@ require.context(
 // Your own code
 require('./plugins');
 require('./script');
+require('./base')
