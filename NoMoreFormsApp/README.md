@@ -2,7 +2,20 @@
 
 A conversational, personalized, text-based insurance quoting experience. No more clunky, finnicky forms!
 
+NOTE: MAKE SURE RASA IS UP AND RUNNING. everything is the same as
+the usual instructions, except you run the rasa API server instead
+of the shell:
+```bash
+rasa run --enable-api
+```
+
+
+
+
 ## Docker Quickstart
+
+
+
 
 This app can be run completely using `Docker` and `docker-compose`. **Using Docker is recommended, as it guarantees the application is run using compatible versions of Python and Node**.
 
@@ -12,6 +25,21 @@ To run the development version of the app
 
 ```bash
 docker-compose up flask-dev
+```
+
+Once you run it the first time, it will likely fail due to missing secret key.
+
+There should be an ".env" file created for you under insurance-demo/NoMoreFormsApp
+
+Inside there, append a single line to the file:
+
+```
+TASKJS_SECRET=<your-secret-key>
+```
+
+then re-build the services:
+```bash
+docker-compose build flask-dev
 ```
 
 To run the production version of the app
