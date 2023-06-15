@@ -1,0 +1,144 @@
+Auto page - 
+
+Greeting:
+    "Welcome to State Farm..."
+Basic Info:
+    Actual website flow = 
+    Zipcode -> 
+    Full name (M.I. optional) Suffix (optional) & 
+    Home Address = Street Address (Apt/Unit optional) City State ZIP code & 
+    Home Ownership status = ['Own With Mortgage', 'Own', 'Rent', 'Other'] 
+        #Savings opportunity! Save up to 8% on your Auto policy when you purchase Renters.
+    Date of birth = '__-__-____' (Hide DD and MM with **-**)
+    Gender = ['Male', 'Female']
+    What's your marital status? = ['Married', 'Single', 'Single with Child', 'Divorced', 'Widowed', 'Seperated']
+    optional lisence number and lisence state
+    This driver is in the U.S. Military? This driver is in the U.S. Military. -> if yes: Does this driver have regular access to any car that's added to this quote?
+    Policy Start date = 'MM-DD-YYYY' with calender selection (Default current date)
+    a disclosure acknowledgement
+
+    "Disclosures To quote and determine eligibility, information from credit, insurance loss history, and other consumer reports may be used.
+    Also a credit-based insurance score using the information may be developed by us or a third party.
+    Please read our Notice of Insurance Information Collection Practices.
+    When applying for insurance, information is gathered about you including your driving record, claim history with other companies and credit information.
+    This information is shared among State Farm affiliates so, e.g., we do not have to ask for the same information again. Click here to read the Notice of Privacy Policy.
+    If you prefer to limit sharing this information, please call a State Farm agent or 1-800-865-6035.
+    By proceeding with your quote, you are providing express consent by electronic signature that you may be contacted by telephone (via call and/or text messages) and/or email for marketing purposes by State Farm Mutual Automobile Insurance Company, its subsidiaries and affiliates (“State Farm”) or an independent contractor State Farm agent regarding insurance products and services using the phone number and/or email address you have provided to State Farm, even if your phone number is listed on a Do Not Call Registry.
+    You further agree that such contact may be made using an automatic telephone dialing system and/or prerecorded voice (message and data rates may apply).
+    Your consent is not a condition of purchase. To proceed with your transaction, select ‘Start Your Quote’.
+    By continuing, you agree to the terms of the disclosures above."
+
+    Hyper links:
+    Notice of Insurance Information Collection Practices -> Information Use Policy & Disclosure
+
+    "The information you will be providing may be shared with State Farm agents and affiliates as permitted by law.
+    Consumer reports, including credit and insurance loss history reports, may be ordered in conjunction with this application to help determine your eligibility for insurance and the price you are charged. In addition, consumer reports may be used to determine the price you are charged at renewal. 
+    We may also obtain and use a credit-based insurance score developed from information contained in these reports. 
+    We may use a third party in connection with the development of your insurance score.
+    A brochure explaining how State Farm uses consumer reports is available upon your request. 
+    For additional information, please contact your State Farm agent."
+
+    Notice of Privacy Policy -> https://www.statefarm.com/customer-care/privacy-security/privacy
+Cars:
+    "Add your cars" 
+    #"How many cars do you have?"
+    Car Inputs:
+        Year
+        Make 
+        Model
+        Body Style
+        OR 
+        -> Vehicle Indentification Number (VIN) <- USE THIS 
+        ??? The Vehicle Identification Number (VIN) is usually located on the driver’s side dashboard or the driver’s side door jamb. You can also find this on the vehicle title.
+    How do you primarily use this car? = ['Personal', 'Business', 'Farm', 'Federal Government']
+        ??? Personal - Used mostly for driving to work, school, or other personal use
+        Business - Used 50% or more for work, not including commute time
+        Farm - Kept on a farm or ranch, not for driving to work outside the farm/ranch, or to school
+        Federal government - Used for performing duties as a federal government employee ???
+    How many miles do you expect to drive in the next 12 months?
+        #"The national average is 12,000 miles per year."
+    Is this car kept at "Display Home Address"? 
+        ???To provide you with the most accurate quote, we need to know where your vehicles are primarily kept.???
+    When Did You Purchas your cars?
+        #Ask for each car, month and year for Input
+    Do you own, lease, or finance?
+        #Ask for each own, lease, or finance for Input
+    Do these cars have a permanently installed anti-theft device? 
+        ???Any permanently installed device that helps to prevent theft of a car, its parts, or its contents.
+        #Yes or No input for each car
+Drivers:
+    Add more Drivers:
+        Full name
+        Date of Birth (MM-DD-YYYY)
+        Gender
+        License type = ['US License', 'US Permit', 'Canada', 'Unlicensed', 'Foreign']
+        What's your marital status?
+    Which Car does Each Driver Use most?
+    Have you voluntarily taken and successfully completed a driving safety course within the last 3 years?
+        ??? A driving safety course is a driver education course: Approved by the Texas Department of Licensing and Regulation (TDLR); OR Taught through a TDLR approved school or course provider. ???
+        #Yes No
+    Is this driver a full-time high school or college student, or a college graduate?
+        #Yes No
+        Yes -> Does this driver go to school over 100 miles from home and only use household vehicles while home for vacation? # Yes No
+            Which best describes Marvin Vettori ? 'High Schooler with proof of good grades', 'College grad with bachelors', 'Bachelors with good grades', 'associates with proof of good grades', 'None of the Above'
+            To qualify for the Good Student Discount, your agent will contact you for proof of good grades, if applicable.
+Driving History:
+    "Tell us about your history on the road"
+    Has any driver had any at-fault accidents in the past 5 years, tickets in the past 3 years, major violations in the past 5 years, or license suspensions/revocations in the past 3 years?
+        #Yes no
+        Select all that apply = ['At-fault accidents in the past 5 years.'
+                                'Tickets in the past 3 years. (ex: speeding, running a red light)
+                                'Major violations in past 5 years. (ex: DUI, reckless driving, etc.)
+                                'Any license suspensions or revocations in the last 3 years.']
+        If yes, inquire more "Tell us about any tickets in the past 3 years"
+            Select a Ticket = ['Speeding', 'Stop sign & traffic signal infraction', 'Improper turn', 'Failure to yield right of way', 'Following too closely', 'Any other moving violation']
+            Enter date of ticket
+    Who are the registered owners?
+        #Ask for each car
+    Auto Search for Insurance info on each car - > manual input request if not find
+Additional Info:
+    Has any household member driven any owned car while uninsured in the past 12 months?
+    Tell us about your household
+        In what type of residence do you live? -> ['House','Apartment','Condominum','Manufactured Home','Farm/Ranch', 'Other']
+    How many vehicles does your household use?
+        #Include all motorcycles, ATVs Classics, any recreatiational vehicle that is licensed for highway use
+Discount:
+    Add a renters policy? (Offer if they live in Apartment)
+        #Save up to 8% on Auto when you add a Renters policy for about $12-$20/month.
+    Would you like to Save up to 30%* with Drive Safe & Save
+        Get a discount based on your driving. It will always be a discount, and we will never sell your data. Enroll today to save an instant 10%1 discount
+        Offer for each car
+Contact Info:
+    What contact info should we use for the policy?
+        We'll save your quote once you enter your email address.
+            Email address
+            Phone Number (optional)
+                Preferred Contact method -> ['email','phone','mail']
+Fill out form in background -> display in UI
+                GET YOUR QUOTE
+
+Payment information?
+Quote:
+
+Finalize & Purchase:
+
+Review:
+
+
+
+
+
+"
+Searching public records for...
+Cars
+Drivers
+Insurance history
+"
+
+
+Test Input #1
+
+"75024"
+"Marvin Vettori"
+"6701 Coit Rd 69 Plano TX 75024"
+"Rent"

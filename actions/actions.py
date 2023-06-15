@@ -46,11 +46,12 @@ class ActionGetQuote(Action):
         domain: Dict[Text, Any],
     ) -> List[Dict]:
         """Executes the action"""
-        slots = ["AA_quote_insurance_type", "quote_state", "quote_number_persons", "number", "state"]
+        slots = ["AA_quote_insurance_type", "quote_state", "quote_number_persons", "date_of_birth", "number", "state"]
 
         # Build the quote from the provided data.
         insurance_type = tracker.get_slot("AA_quote_insurance_type")
         n_persons = int(tracker.get_slot("quote_number_persons"))
+        date_of_birth = str(tracker.get_slot("date_of_birth"))
 
         baseline_rate = MOCK_DATA["policy_quote"]["insurance_type"][insurance_type]
         final_quote = baseline_rate * n_persons
@@ -59,7 +60,8 @@ class ActionGetQuote(Action):
             "final_quote": final_quote,
             "insurance_type": insurance_type.capitalize(),
             "quote_state": tracker.get_slot("quote_state"),
-            "n_persons": n_persons
+            "n_persons": n_persons,
+            "date_of_birth": date_of_birth
         }
         dispatcher.utter_message(template="utter_final_quote", **msg_params)
 
@@ -116,7 +118,6 @@ class ValidateQuoteForm(FormValidationAction):
         """Validates the number of persons entered is valid."""
         if tracker.get_intent_of_latest_message() == "stop":
             return {"quote_number_persons": None}
-
         try:
             int(value)
         except TypeError:
@@ -132,6 +133,31 @@ class ValidateQuoteForm(FormValidationAction):
 
         return {"quote_number_persons": value}
 
+    def validate_date_of_birth(
+            self,
+            value: Text,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]
+    ) -> Dict[Text, Any]:
+        """Validates the date of birth entered is valid."""
+        if tracker.get_intent_of_latest_message() == "stop":
+            return {"date_of_birth": None}
+        try:
+            int(value)
+        except TypeError:
+            dispatcher.utter_message(f"Number of persons must be an integer.")
+            return {"date_of_birth": None}
+        except ValueError:
+            dispatcher.utter_message("You must answer with a number.")
+            return {"date_of_birth": None}
+
+        if int(value) <= 0:
+            dispatcher.utter_message("Number of people on policy must be >= 1.")
+            return {"date_of_birth": None}
+
+        return {"date_of_birth": value}
+    
 
 class ActionStopQuote(Action):
     """Stops quote form and clears collected data."""
@@ -147,7 +173,7 @@ class ActionStopQuote(Action):
         domain: Dict[Text, Any],
     ) -> List[Dict]:
         """Executes the action"""
-        slots = ["AA_quote_insurance_type", "quote_state", "quote_number_persons"]
+        slots = ["AA_quote_insurance_type", "quote_state", "quote_number_persons", "date_of_birth"]
 
         # Reset the slot values.
         return [SlotSet(slot, None) for slot in slots]

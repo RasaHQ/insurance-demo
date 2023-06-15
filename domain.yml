@@ -51,6 +51,7 @@ entities:
 - state
 - ordinal
 - phone-number
+- date_of_birth
 slots:
   address_city:
     type: rasa.shared.core.slots.AnySlot
@@ -152,6 +153,11 @@ slots:
     initial_value: null
     auto_fill: true
     influence_conversation: false
+  date_of_birth:
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
+    influence_conversation: false
   recent_claims:
     type: rasa.shared.core.slots.AnySlot
     initial_value: null
@@ -194,6 +200,8 @@ responses:
   - text: What city do you live in?
   utter_ask_address_state:
   - text: What state do you live in?
+  utter_ask_date_of_birth:
+  - text: What is your date of birth?
   utter_ask_address_zip:
   - text: What is your mailing zip code?
   utter_ask_file_new_claim_form_claim_amount_submit:
@@ -304,6 +312,7 @@ responses:
       Insurance Type: {insurance_type}
       Policy State: {quote_state}
       Number of people on policy: {n_persons}
+      Date of Birth: {date_of_birth}
   utter_greet:
   - buttons:
     - payload: /claim_status
@@ -439,6 +448,11 @@ forms:
         type: from_text
       quote_state:
       - entity: state
+        type: from_entity
+      - not_intent: stop
+        type: from_text
+      date_of_birth:
+      - entity: date_of_birth
         type: from_entity
       - not_intent: stop
         type: from_text
