@@ -75,3 +75,15 @@ def about():
     """About page."""
     form = LoginForm(request.form)
     return render_template("public/about.html", form=form)
+
+
+@blueprint.route("/sendMsg", methods=['POST'])
+def sendMsg():
+
+    # call the rasa rest endpoint (which is localhost)
+    current_app.logger.info("message send callback hit")
+#     print(request)
+#     print(request.json)
+#     print(request.form)
+    # use the response from rasa to call the talk JS rest to add message to conversation
+    return "hi"
