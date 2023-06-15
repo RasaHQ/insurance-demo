@@ -1,0 +1,6 @@
+[run]
+source = NoMoreFormsApp
+omit = 
+    tests/*
+    autoapp.py
+

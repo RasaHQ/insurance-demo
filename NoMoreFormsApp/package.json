@@ -1,0 +1,56 @@
+{
+  "name": "NoMoreFormsApp",
+  "version": "1.0.0",
+  "description": "A conversational, personalized, text-based insurance quoting experience. No more clunky, finnicky forms!",
+  "scripts": {
+    "build": "run-script-os",
+    "build:win32": "SET NODE_ENV=production && webpack --progress --color --optimization-minimize && npm run flask-static-digest",
+    "build:default": "NODE_ENV=production webpack --progress --color --optimization-minimize && npm run flask-static-digest",
+    "start": "run-script-os",
+    "start:win32": "concurrently -n \"WEBPACK,FLASK\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run webpack-watch:win32\" \"npm run flask-server\"",
+    "start:default": "concurrently -n \"WEBPACK,FLASK\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run webpack-watch\" \"npm run flask-server\"",
+    "webpack-watch": "run-script-os",
+    "webpack-watch:win32": "SET NODE_ENV=debug && webpack --mode development --watch",
+    "webpack-watch:default": "NODE_ENV=debug webpack --mode development --watch",
+    "flask-server": "flask run --host=0.0.0.0",
+    "flask-static-digest": "flask digest compile",
+    "lint": "eslint \"assets/js/*.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nikita-traynin/NoMoreFormsApp.git"
+  },
+  "author": "Nikita Traynin",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.16.0"
+  },
+  "bugs": {
+    "url": "https://github.com/nikita-traynin/NoMoreFormsApp/issues"
+  },
+  "homepage": "https://github.com/nikita-traynin/NoMoreFormsApp#readme",
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "6.4.0",
+    "bootstrap": "5.3.0",
+    "jquery": "3.7.0",
+    "@popperjs/core": "2.11.8"
+  },
+  "devDependencies": {
+    "@babel/core": "7.22.5",
+    "@babel/preset-env": "7.22.5",
+    "@babel/eslint-parser": "7.22.5",
+    "babel-loader": "9.1.2",
+    "chokidar": "3.5.3",
+    "concurrently": "8.2.0",
+    "css-loader": "6.8.1",
+    "eslint": "8.42.0",
+    "eslint-config-airbnb-base": "15.0.0",
+    "eslint-plugin-import": "2.27.5",
+    "less": "4.1.3",
+    "less-loader": "11.1.3",
+    "mini-css-extract-plugin": "2.7.6",
+    "run-script-os": "1.1.6",
+    "webpack": "5.86.0",
+    "webpack-cli": "5.1.4"
+  }
+}
