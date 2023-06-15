@@ -17,6 +17,9 @@ from NoMoreFormsApp.user.forms import RegisterForm
 from NoMoreFormsApp.user.models import User
 from NoMoreFormsApp.utils import flash_errors
 
+import requests
+from environs import Env
+
 blueprint = Blueprint("public", __name__, static_folder="../static")
 
 
@@ -82,8 +85,29 @@ def sendMsg():
 
     # call the rasa rest endpoint (which is localhost)
     current_app.logger.info("message send callback hit")
+    current_app.logger.info("message data: " + str(request.json['data']['message']))
+
+    if str(request.json['data']['message']['senderId']) != '123456':
+        current_app.logger.info('wrong user, not forwarding to rasa')
+        return "no rasa sent"
+
+    payload = {'sender': 'you', 'message': str(request.json['data']['message']['text'])}
+    r = requests.post('http://host.docker.internal:5005/webhooks/rest/webhook', json=payload)
+    current_app.logger.info("rasa raw response: " + str(r.json()))
+
+    env = Env()
+    headers = {'Authorization': 'Bearer ' + env("TALKJS_SECRET")}
+    response_payload = [
+                         {
+                           "text": r.json()[0]['text'],
+                           "sender": "654321",
+                           "type": "UserMessage"
+#                            "referencedMessageId": "msg_6TKoWs0Jm8XrjPOmFdOGiX"
+                         }
+                       ]
+    requests.post('https://api.talkjs.com/v1/tuP7sjEL/conversations/7fcfae37bf41727cd5d6/messages', headers=headers, json=response_payload)
 #     print(request)
 #     print(request.json)
 #     print(request.form)
     # use the response from rasa to call the talk JS rest to add message to conversation
-    return "hi"
+    return "rasa sent"

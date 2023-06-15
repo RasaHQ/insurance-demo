@@ -18,6 +18,8 @@ services:
       args:
         <<: *build_args
     image: "nomoreformsapp-development"
+    environment:
+      - TALKJS_SECRET
     ports:
       - "8080:5000"
       - "2992:2992"

@@ -14,6 +14,8 @@ RUN true
 COPY --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules
 COPY requirements requirements
 RUN pip install --no-cache -r requirements/prod.txt
+RUN pip install requests
+RUN pip install environs
 
 COPY package.json ./
 RUN npm install
